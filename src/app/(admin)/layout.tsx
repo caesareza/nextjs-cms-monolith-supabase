@@ -1,14 +1,18 @@
 'use client';
 
 import "../globals.css";
-import { LayoutGrid, Rocket, Search, Plus } from 'lucide-react';
+import { LayoutGrid, Rocket, Search, Plus, Cookie, UserPen } from 'lucide-react';
 import Link from "next/link";
 import {usePathname} from "next/navigation";
+import { createClient } from '@/utils/supabase/client'; // Import from /client
+import { useEffect, useState } from 'react';
 
 // Define your menu structure here for easy maintenance
 const NAVIGATION_ITEMS = [
     { label: 'Dashboard', icon: LayoutGrid, href: '/' },
     { label: 'Article', icon: Rocket, href: '/article' },
+    { label: 'Category', icon: Cookie, href: '/category' },
+    { label: 'Writer', icon: UserPen, href: '/writer' },
 ];
 
 const SidebarItem = ({ icon: Icon, label, href, active }: any) => (
@@ -35,7 +39,23 @@ export default function RootLayout({
 }>) {
     const pathname = usePathname();
 
-    console.log('pathname', pathname)
+    const [user, setUser] = useState<any>(null);
+    const supabase = createClient();
+
+    const getUser = async () => {
+        const {
+            data: { user },
+        } = await supabase.auth.getUser();
+
+        console.log('user', user)
+        setUser(user);
+    };
+
+    useEffect(() => {
+        getUser();
+    }, []);
+
+
 
   return (
       <div className="flex h-screen bg-slate-100  text-slate-900 font-sans transition-colors duration-300">
@@ -66,13 +86,13 @@ export default function RootLayout({
 
               {/* User Profile at Bottom */}
               <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
-                  <div className="flex items-center gap-3 px-2 py-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg cursor-pointer transition-colors">
+                  <div className="flex items-center gap-3 px-2 py-2 rounded-lg transition-colors">
                       <div className="w-8 h-8 rounded-full bg-red-100 dark:bg-slate-700 overflow-hidden border border-slate-200 dark:border-slate-600">
-                          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Dreas" alt="User" />
+                          <img src="https://api.dicebear.com/7.x/avataaars/svg" alt="User" />
                       </div>
                       <div className="flex flex-col min-w-0">
-                          <span className="text-xs font-bold truncate">Benjamin Button</span>
-                          <span className="text-[10px] text-slate-500 truncate">@benjbutt</span>
+                          <span className="text-xs font-bold truncate">{user?.email}</span>
+                          <span className="text-[10px] text-slate-500 truncate">{user?.id}</span>
                       </div>
                   </div>
               </div>
@@ -93,12 +113,11 @@ export default function RootLayout({
 
                   <div className="flex items-center gap-5">
                       <div className="hidden md:flex gap-5 text-sm text-slate-500 dark:text-slate-400 font-medium">
-                          <button className="hover:text-slate-800 transition-colors">Docs</button>
-                          <button className="hover:text-slate-800 transition-colors">Feedback</button>
+                          <Link href="/" className="hover:text-slate-800 transition-colors">Home</Link>
                       </div>
                       <button className="bg-slate-900 dark:bg-red-600 hover:bg-slate-800 dark:hover:bg-red-500 text-white px-4 py-1.5 rounded-lg text-sm font-semibold flex items-center gap-2 transition-all shadow-sm">
                           <Plus size={16} />
-                          New Project
+                          Logout
                       </button>
                   </div>
               </header>
