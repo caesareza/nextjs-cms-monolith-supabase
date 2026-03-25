@@ -147,5 +147,25 @@ export const ArticleService = {
         console.log('data log articleId', articleId)
         if (error) throw error;
         return data || [];
+    },
+
+    async getTopPending(limit = 10) {
+        const supabase = createClient();
+
+        const { data, error } = await supabase
+            .from('article')
+            .select(`
+        id, 
+        title, 
+        created_at, 
+        approval,
+        writer:writer_id(name)
+      `)
+            .eq('approval', 'pending')
+            .order('created_at', { ascending: true }) // Oldest first = highest priority
+            .limit(limit);
+
+        if (error) throw error;
+        return data;
     }
 };
