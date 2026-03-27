@@ -1,5 +1,6 @@
 import ArticleClient from './ArticleClient';
 import { Metadata } from 'next';
+import Link from "next/link";
 
 // Professional Metadata for the Nexus Dashboard
 export const metadata: Metadata = {
@@ -22,9 +23,9 @@ export default function ArticlePage() {
                 </div>
 
                 {/* Action Button for future Create CRUD */}
-                <button className="px-6 py-3 bg-[#EE1C25] text-white rounded-2xl text-sm font-black shadow-lg shadow-red-100 hover:bg-[#D71921] transition-all transform active:scale-95">
+                <Link href="/article/new" className="px-6 py-3 bg-[#EE1C25] text-white rounded-2xl text-sm font-black shadow-lg shadow-red-100 hover:bg-[#D71921] transition-all transform active:scale-95">
                     + Create New Article
-                </button>
+                </Link>
             </div>
 
             {/* The Main Client Component */}

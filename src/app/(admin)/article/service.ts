@@ -167,5 +167,51 @@ export const ArticleService = {
 
         if (error) throw error;
         return data;
+    },
+
+    async createArticle(payload: {
+        title: string;
+        content: string;
+        category_id: number;
+        writer_id: number;
+        production_month: string;
+    }) {
+        const supabase = createClient();
+
+        const { data, error } = await supabase
+            .from('article')
+            .insert([{
+                ...payload,
+                approval: 'pending', // Per your requirement
+                status: 'draft',     // Per your requirement
+                // created_at is handled automatically by Postgres default
+            }])
+            .select()
+            .single();
+
+        if (error) throw error;
+        return data;
+    },
+
+    async getWriters() {
+        const supabase = createClient();
+        const { data, error } = await supabase
+            .from('writer') // Assuming your table name is 'writer'
+            .select('id, name')
+            .order('name', { ascending: true });
+
+        if (error) throw error;
+        return data || [];
+    },
+
+    async getCategories() {
+        const supabase = createClient();
+        const { data, error } = await supabase
+            .from('category') // Ensure your table name is 'category'
+            .select('id, name')
+            .order('name', { ascending: true });
+
+        if (error) throw error;
+        return data || [];
     }
 };
