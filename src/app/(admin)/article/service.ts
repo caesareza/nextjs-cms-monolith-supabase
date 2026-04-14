@@ -171,10 +171,12 @@ export const ArticleService = {
 
     async createArticle(payload: {
         title: string;
-        content: string;
+        content: string; // Now receiving HTML from TipTap
         category_id: number;
         writer_id: number;
-        production_month: string;
+        product_id: string; // New free-text field (e.g., "Nyala")
+        status: string;     // Now dynamic from the dropdown
+        production_month: string; // format: yyyy-mm-dd
     }) {
         const supabase = createClient();
 
@@ -182,9 +184,9 @@ export const ArticleService = {
             .from('article')
             .insert([{
                 ...payload,
-                approval: 'pending', // Per your requirement
-                status: 'draft',     // Per your requirement
-                // created_at is handled automatically by Postgres default
+                approval: 'pending', // Default gate for the Director
+                // status is now part of the spread payload
+                // created_at is handled by Postgres
             }])
             .select()
             .single();
@@ -213,5 +215,62 @@ export const ArticleService = {
 
         if (error) throw error;
         return data || [];
+    },
+
+    async updateArticle(id: number | string, payload: {
+        title: string;
+        content: string;
+        category_id: number;
+        writer_id: number;
+        product_id: string;
+        status: string;
+        production_month: string;
+    }) {
+        const supabase = createClient();
+
+        const { data, error } = await supabase
+            .from('article')
+            .update({
+                ...payload,
+                // We keep approval as is, or you could reset it to 'pending'
+                // if you want the Director to re-approve every edit.
+            })
+            .eq('id', id) // Targets the specific article
+            .select()
+            .single();
+
+        if (error) throw error;
+        return data;
+    },
+
+    async softDeleteArticle(id: number, currentStatus: string, userEmail: string) {
+        const supabase = createClient();
+
+        // 1. Update Article Status and deleted_at
+        const { data: article, error: articleError } = await supabase
+            .from('article')
+            .update({
+                status: 'deleted',
+                deleted_at: new Date().toISOString()
+            })
+            .eq('id', id)
+            .select()
+            .single();
+
+        if (articleError) throw articleError;
+
+        // 2. Insert into workflow_logs
+        const { error: logError } = await supabase
+            .from('workflow_logs')
+            .insert([{
+                article_id: id,
+                user_email: userEmail,
+                old_status: currentStatus,
+                new_status: 'deleted',
+                notes: 'Article moved to trash (soft delete)'
+            }]);
+
+        if (logError) throw logError;
+        return article;
     }
 };

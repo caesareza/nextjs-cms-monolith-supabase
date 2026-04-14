@@ -68,12 +68,10 @@ export default async function Page({params}: {
                         </div>
 
                         {/* Main Content Body */}
-                        <div className="prose prose-slate max-w-none">
-                            <div
-                                className="p-8 bg-slate-50 rounded-4xl border border-slate-100 text-slate-600 leading-relaxed italic text-sm">
-                                {article.content || "No draft content provided yet."}
-                            </div>
-                        </div>
+                        <div
+                            className="prose prose-slate max-w-none prose-p:leading-relaxed prose-headings:text-slate-900"
+                            dangerouslySetInnerHTML={{ __html: article.content }}
+                        />
 
                         {/* Old Content Reference (Updated with Link Logic) */}
                         {article.content_old && (

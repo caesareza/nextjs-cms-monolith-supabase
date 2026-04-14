@@ -10,6 +10,9 @@ import {
     Search, Loader2
 } from 'lucide-react';
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
+import DeleteModal from "@/app/(admin)/article/DeleteModal";
+import {createClient} from "@/utils/supabase/client";
 
 const YEARS = [2025, 2026, 2027];
 const MONTHS = [
@@ -18,9 +21,14 @@ const MONTHS = [
 ];
 
 export default function ArticleClient() {
+    const route = useRouter();
+    const now = new Date();
+    const currentYear = now.getFullYear(); // 2026
+    const currentMonth = now.getMonth() + 1;
+
     // --- State: Filters ---
-    const [year, setYear] = useState(2026);
-    const [month, setMonth] = useState(3); // Default to March
+    const [year, setYear] = useState(currentYear);
+    const [month, setMonth] = useState(currentMonth); // Default to March
     const [writerId, setWriterId] = useState<string>('');
     const [categoryId, setCategoryId] = useState<string>('');
     const [contentType, setContentType] = useState<string>('');
@@ -35,6 +43,41 @@ export default function ArticleClient() {
 
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
+
+    const [deleteState, setDeleteState] = useState({ isOpen: false, loading: false, success: false, article: null as any });
+
+    const handleSoftDelete = async () => {
+        setDeleteState(prev => ({ ...prev, loading: true }));
+        try {
+            // Replace with actual session email
+            const supabase = createClient(); // Your client-side supabase instance
+
+            // 1. Get the current authenticated user
+            const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+            if (userError || !user?.email) {
+                throw new Error("User session not found");
+            }
+
+            await ArticleService.softDeleteArticle(
+                deleteState.article.id,
+                deleteState.article.status,
+                user.email
+            );
+
+            setDeleteState(prev => ({ ...prev, success: true, loading: false }));
+
+            // Auto-close and refresh UI after 1.5s
+            setTimeout(() => {
+                setDeleteState({ isOpen: false, loading: false, success: false, article: null });
+                route.refresh();
+            }, 1500);
+
+        } catch (err) {
+            setDeleteState(prev => ({ ...prev, loading: false }));
+            alert("Delete failed.");
+        }
+    };
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -256,8 +299,27 @@ export default function ArticleClient() {
                                             >
                                                 <Eye size={18}/>
                                             </Link>
-                                            <button className="p-2.5 bg-white shadow-sm border border-slate-100 rounded-xl text-slate-300 hover:text-blue-600 hover:border-blue-100 transition-all"><Edit3 size={18}/></button>
-                                            <button className="p-2.5 bg-white shadow-sm border border-slate-100 rounded-xl text-slate-300 hover:text-[#EE1C25] hover:border-red-100 transition-all"><Trash2 size={18}/></button>
+                                            <Link
+                                                href={`/article/edit/${item.id}`}
+                                                className="p-2.5 bg-white shadow-sm border border-slate-100 rounded-xl text-slate-300 hover:text-slate-900 hover:border-[#EE1C25] transition-all flex items-center justify-center"
+                                            >
+                                                <Edit3 size={18}/>
+                                            </Link>
+
+                                            <button
+                                                onClick={() => {
+                                                    setDeleteState({
+                                                        isOpen: true,
+                                                        loading: false,
+                                                        success: false,
+                                                        article: item
+                                                    });
+                                                }}
+                                                className="p-3 bg-white border border-slate-100 rounded-xl text-slate-300 hover:text-[#EE1C25] hover:bg-red-50 hover:border-red-100 transition-all cursor-pointer group"
+                                                title="Move to Trash"
+                                            >
+                                                <Trash2 size={16} className="group-hover:scale-110 transition-transform" />
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -306,6 +368,15 @@ export default function ArticleClient() {
                     </div>
                 </div>
             </div>
+
+            <DeleteModal
+                isOpen={deleteState.isOpen}
+                loading={deleteState.loading}
+                success={deleteState.success}
+                articleTitle={deleteState.article?.title || ""}
+                onClose={() => setDeleteState({ ...deleteState, isOpen: false })}
+                onConfirm={handleSoftDelete}
+            />
         </div>
     );
 }

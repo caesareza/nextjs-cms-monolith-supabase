@@ -25,14 +25,17 @@ export async function middleware(request: NextRequest) {
 
 
     console.log('user', user)
+    console.log('request.nextUrl.pathname', request.nextUrl.pathname)
 
     // Protect (admin) routes
-    if (!user && request.nextUrl.pathname.startsWith('/')) {
+    if (!user && request.nextUrl.pathname === '/') {
+        console.log('sini')
         return NextResponse.redirect(new URL('/login', request.url))
     }
 
     // Redirect logged-in users away from login page
-    if (user && request.nextUrl.pathname.startsWith('/login')) {
+    if (user && request.nextUrl.pathname === '/login') {
+        console.log('xxxx')
         return NextResponse.redirect(new URL('/', request.url))
     }
 
