@@ -6,6 +6,7 @@ import Link from "next/link";
 import {usePathname} from "next/navigation";
 import { createClient } from '@/utils/supabase/client'; // Import from /client
 import { useEffect, useState } from 'react';
+import LogoutButton from "@/app/(admin)/LogoutButton";
 
 // Define your menu structure here for easy maintenance
 const NAVIGATION_ITEMS = [
@@ -115,10 +116,7 @@ export default function RootLayout({
                       <div className="hidden md:flex gap-5 text-sm text-slate-500 dark:text-slate-400 font-medium">
                           <Link href="/" className="hover:text-slate-800 transition-colors">Home</Link>
                       </div>
-                      <button className="bg-slate-900 dark:bg-red-600 hover:bg-slate-800 dark:hover:bg-red-500 text-white px-4 py-1.5 rounded-lg text-sm font-semibold flex items-center gap-2 transition-all shadow-sm">
-                          <Plus size={16} />
-                          Logout
-                      </button>
+                      <LogoutButton />
                   </div>
               </header>
 

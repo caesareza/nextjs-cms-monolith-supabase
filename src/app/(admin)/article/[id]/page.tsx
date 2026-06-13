@@ -37,10 +37,10 @@ export default async function Page({params}: {
                     <ChevronLeft size={16}/> Production Roadmap
                 </Link>
                 <div className="flex gap-3">
-                    <button
+                    <Link href={`/article/edit/${id}`}
                         className="px-6 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs font-bold hover:shadow-md transition-all">Edit
                         Article
-                    </button>
+                    </Link>
                     <WorkflowActions
                         article={article}
                     />

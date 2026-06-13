@@ -7,7 +7,7 @@ export default async function CreateArticlePage() {
     const categories = await ArticleService.getCategories();
 
     return (
-        <div className="max-w-4xl mx-auto p-10 space-y-10">
+        <div className="p-10 space-y-10">
             <header className="flex items-center justify-between">
                 <h1 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">
                     Content Lab / New Draft
