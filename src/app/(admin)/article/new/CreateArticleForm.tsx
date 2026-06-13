@@ -20,6 +20,15 @@ export default function CreateArticleClient({ writers, categories }: { writers: 
         product_id: '',
         status: 'draft', // Default value
         production_month: new Date().toISOString().split('T')[0],
+
+        // New Fields from Schema Matrix
+        content_old: '',
+        meta_description: '',
+        target_keyword: '',
+        cta_internal_link: '',
+        seo_check: 'pending', // e.g., pending, pass, fail
+        index_status: 'noindex', // e.g., noindex, indexed
+        internal_notes: ''
     });
 
     const handleSave = async (e: React.FormEvent) => {
@@ -56,7 +65,7 @@ export default function CreateArticleClient({ writers, categories }: { writers: 
     }
 
     return (
-        <form onSubmit={handleSave} className="max-w-6xl mx-auto space-y-8 pb-20">
+        <form onSubmit={handleSave} className="space-y-8">
             {/* ACTION BAR */}
             <div className="flex items-center justify-between">
                 <button type="button" onClick={() => router.back()} className="flex items-center gap-2 text-[10px] font-black uppercase text-slate-400 hover:text-slate-900 transition-all cursor-pointer">
@@ -167,6 +176,120 @@ export default function CreateArticleClient({ writers, categories }: { writers: 
                         value={form.content}
                         onChange={(htmlValue) => setForm({ ...form, content: htmlValue })}
                     />
+                </div>
+
+
+                {/* --- OPTIMIZATION & LEGACY AUDIT CONTROL PANEL --- */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-12 border-t border-slate-100">
+
+                    {/* LEFT COLUMN: SEO & STRATEGY (Spans 7 out of 12 columns) */}
+                    <div className="lg:col-span-7 space-y-6">
+                        <div className="flex items-center justify-between border-b border-slate-50 pb-2">
+                            <h3 className="text-[11px] font-black text-slate-950 uppercase tracking-widest">
+                                SEO & Metadata Strategy
+                            </h3>
+                        </div>
+
+                        {/* Target Focus Keyword (Full Width of Left Column) */}
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Target Focus Keyword</label>
+                            <input
+                                type="text"
+                                className="w-full p-4 bg-slate-50 rounded-2xl text-xs font-bold border border-slate-100 outline-none focus:bg-white focus:border-[#EE1C25]/20 transition-all"
+                                placeholder="e.g., cara buka rekening online"
+                                value={form.target_keyword}
+                                onChange={(e) => setForm({...form, target_keyword: e.target.value})}
+                            />
+                        </div>
+
+                        {/* Meta Description Tag */}
+                        <div className="flex flex-col gap-2">
+                            <div className="flex justify-between items-center">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Meta Description Tag</label>
+                                <span className={`text-[9px] font-bold ${form.meta_description.length > 160 ? 'text-red-500' : 'text-slate-300'}`}>
+          {form.meta_description.length}/160 chars
+        </span>
+                            </div>
+                            <textarea
+                                rows={5}
+                                className="w-full p-4 bg-slate-50 rounded-2xl text-xs font-medium border border-slate-100 outline-none focus:bg-white focus:border-[#EE1C25]/20 transition-all resize-none leading-relaxed"
+                                placeholder="Brief summary matching Google's search result snippet parameters..."
+                                value={form.meta_description}
+                                onChange={(e) => setForm({...form, meta_description: e.target.value})}
+                            />
+                        </div>
+
+                        {/* CTA Internal Destination Link (Bigger Textarea) */}
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">CTA Internal Destination Link</label>
+                            <textarea
+                                rows={4}
+                                className="w-full p-4 bg-slate-50 rounded-2xl text-xs font-mono border border-slate-100 outline-none focus:bg-white focus:border-[#EE1C25]/20 transition-all leading-relaxed"
+                                placeholder="e.g., https://www.ocbc.id/id/individu/simpanan/nyala&#10;Paste destination anchors or deep-linking funnels here..."
+                                value={form.cta_internal_link}
+                                onChange={(e) => setForm({...form, cta_internal_link: e.target.value})}
+                            />
+                        </div>
+                    </div>
+
+                    {/* RIGHT COLUMN: REVIEWS, AUDITS & BACKUPS (Spans 5 out of 12 columns) */}
+                    <div className="lg:col-span-5 space-y-6 bg-slate-50/50 p-8 rounded-[2.5rem] border border-slate-100">
+                        <h3 className="text-[11px] font-black text-slate-950 uppercase tracking-widest pb-2 border-b border-slate-100">
+                            Internal Controls & Backups
+                        </h3>
+
+                        {/* Dropdowns side by side for compact layout */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">SEO Check</label>
+                                <select
+                                    className="w-full p-4 bg-white rounded-2xl text-xs font-bold border border-slate-100 outline-none focus:border-[#EE1C25]/20"
+                                    value={form.seo_check}
+                                    onChange={(e) => setForm({...form, seo_check: e.target.value})}
+                                >
+                                    <option value="pending">⏳ Pending</option>
+                                    <option value="pass">✅ Pass</option>
+                                    <option value="fail">❌ Fail</option>
+                                </select>
+                            </div>
+
+                            <div className="flex flex-col gap-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Index Status</label>
+                                <select
+                                    className="w-full p-4 bg-white rounded-2xl text-xs font-bold border border-slate-100 outline-none focus:border-[#EE1C25]/20"
+                                    value={form.index_status}
+                                    onChange={(e) => setForm({...form, index_status: e.target.value})}
+                                >
+                                    <option value="noindex">🚫 Noindex</option>
+                                    <option value="index">🌐 Index</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Internal Editorial Notes */}
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Internal Editorial Notes</label>
+                            <textarea
+                                rows={3}
+                                className="w-full p-4 bg-white rounded-2xl text-xs font-medium border border-slate-100 outline-none focus:border-[#EE1C25]/20 transition-all resize-none leading-relaxed"
+                                placeholder="Notes for reviewers or team production context..."
+                                value={form.internal_notes}
+                                onChange={(e) => setForm({...form, internal_notes: e.target.value})}
+                            />
+                        </div>
+
+                        {/* Legacy Backup Content (Content Old) */}
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Legacy Backup Content (Content Old)</label>
+                            <textarea
+                                rows={2}
+                                className="w-full p-4 bg-white rounded-2xl text-xs font-mono border border-slate-100 outline-none focus:border-[#EE1C25]/20 transition-all leading-relaxed"
+                                placeholder=""
+                                value={form.content_old}
+                                onChange={(e) => setForm({...form, content_old: e.target.value})}
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>

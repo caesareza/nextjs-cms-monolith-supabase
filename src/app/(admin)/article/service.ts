@@ -171,12 +171,21 @@ export const ArticleService = {
 
     async createArticle(payload: {
         title: string;
-        content: string; // Now receiving HTML from TipTap
+        content: string;
         category_id: number;
         writer_id: number;
-        product_id: string; // New free-text field (e.g., "Nyala")
-        status: string;     // Now dynamic from the dropdown
-        production_month: string; // format: yyyy-mm-dd
+        product_id: string;
+        status: string;
+        production_month: string;
+
+        // Wire payload configurations directly
+        content_old?: string;
+        meta_description?: string;
+        target_keyword?: string;
+        cta_internal_link?: string;
+        seo_check?: string;
+        index_status?: string;
+        internal_notes?: string;
     }) {
         const supabase = createClient();
 
@@ -184,9 +193,7 @@ export const ArticleService = {
             .from('article')
             .insert([{
                 ...payload,
-                approval: 'pending', // Default gate for the Director
-                // status is now part of the spread payload
-                // created_at is handled by Postgres
+                approval: 'pending' // Enforce director review guardrails
             }])
             .select()
             .single();

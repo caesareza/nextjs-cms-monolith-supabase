@@ -18,5 +18,20 @@ export async function login(formData: FormData) {
         redirect('/login?error=Could not authenticate user')
     }
 
-    redirect('/dashboard')
+    redirect('/')
+}
+
+export async function logout() {
+    const supabase = await createClient()
+
+    // 1. Terminate the user session and clear auth cookies on the server
+    const { error } = await supabase.auth.signOut()
+
+    if (error) {
+        console.error('Logout error:', error.message)
+        // You can redirect to an error page or handle it as needed
+    }
+
+    // 2. Redirect back to the login page securely
+    redirect('/login')
 }
