@@ -1,0 +1,5 @@
+name = "cms-article-posthinks" # or whatever your current worker name is
+
+[[services]]
+binding = "WORKER_SELF_REFERENCE"
+service = "cms-article-posthinks" # This MUST match the 'name' string above if self-referencing

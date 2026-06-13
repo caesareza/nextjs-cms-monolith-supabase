@@ -1,26 +1,37 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Notion-Style Typography Overrides */
+.prose h1 {
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin-top: 2em;
+  font-size: 2.25rem;
+  color: #1a1a1a;
+}
+
+.prose h2 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-top: 1.5em;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.prose p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  color: #37352f; /* Notion's specific dark gray text color */
+}
+
+/* Placeholder styling */
+.tiptap p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
 }
