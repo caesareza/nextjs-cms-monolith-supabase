@@ -1,7 +1,7 @@
 'use client';
 
 import "../globals.css";
-import { LayoutGrid, Rocket, Search, Plus, Cookie, UserPen } from 'lucide-react';
+import { LayoutGrid, Rocket, Search, Cookie, UserPen } from 'lucide-react';
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import { createClient } from '@/utils/supabase/client'; // Import from /client
@@ -14,6 +14,7 @@ const NAVIGATION_ITEMS = [
     { label: 'Article', icon: Rocket, href: '/article' },
     { label: 'Category', icon: Cookie, href: '/category' },
     { label: 'Writer', icon: UserPen, href: '/writer' },
+    { label: 'Product Tag', icon: UserPen, href: '/product-tag' },
 ];
 
 const SidebarItem = ({ icon: Icon, label, href, active }: any) => (

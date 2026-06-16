@@ -6,7 +6,7 @@ import { Save, Loader2, AlertCircle, CheckCircle2, ChevronLeft, Activity } from 
 import { ArticleService } from '../service';
 import HtmlEditor from "@/components/editor/HtmlEditor";
 
-export default function CreateArticleClient({ writers, categories }: { writers: any[], categories: any[] }) {
+export default function CreateArticleClient({ writers, categories, productTags }: { writers: any[], categories: any[], productTags: any[] }) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -143,17 +143,19 @@ export default function CreateArticleClient({ writers, categories }: { writers: 
                     </div>
 
                     {/* NEW: Product ID Free Text */}
-                    <div className="space-y-3">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                            Product Tag
-                        </label>
-                        <input
-                            type="text"
-                            placeholder="e.g: Nyala, OCBC"
-                            className="w-full p-4 bg-slate-50 rounded-2xl text-xs font-bold border border-slate-100 outline-none focus:bg-white focus:border-[#EE1C25]/20 transition-all"
+                    {/* Inside Create/Edit Article Component Forms */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Product Tag</label>
+                        <select
+                            className="p-4 bg-slate-50 rounded-2xl text-xs font-bold border border-slate-100 outline-none"
                             value={form.product_id}
                             onChange={(e) => setForm({...form, product_id: e.target.value})}
-                        />
+                        >
+                            <option value="">Select Product...</option>
+                            {productTags.map((tag) => (
+                                <option key={tag.id} value={tag.name}>{tag.name}</option>
+                            ))}
+                        </select>
                     </div>
                 </div>
 
