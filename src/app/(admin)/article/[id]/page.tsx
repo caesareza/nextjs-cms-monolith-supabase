@@ -1,4 +1,4 @@
-import {ArticleService} from '../service';
+import { ArticleService } from '../service';
 import Link from 'next/link';
 import {
     ChevronLeft, User, Tag, Calendar,
@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import WorkflowActions from "./WorkflowActions";
 import ArticleHistory from "./ArticleHistory";
+import ShareConsole from "./ShareConsole"; // Imported share controller layout
 
 export default async function Page({params}: {
     params: Promise<{ id: string }>
@@ -36,9 +37,12 @@ export default async function Page({params}: {
                       className="flex items-center gap-2 text-slate-400 hover:text-[#EE1C25] font-black uppercase text-[10px] tracking-widest transition-all">
                     <ChevronLeft size={16}/> Production Roadmap
                 </Link>
-                <div className="flex gap-3">
+                <div className="flex items-center gap-3">
+                    {/* Injected Public Preview & URL Copier Actions Row */}
+                    <ShareConsole articleId={Number(id)} />
+
                     <Link href={`/article/edit/${id}`}
-                        className="px-6 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs font-bold hover:shadow-md transition-all">Edit
+                          className="px-6 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs font-bold hover:shadow-md transition-all">Edit
                         Article
                     </Link>
                     <WorkflowActions
@@ -126,8 +130,8 @@ export default async function Page({params}: {
                             <div className="flex items-center gap-2">
                                 <Link2 size={14} className="text-slate-400" />
                                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-      CTA Internal Links
-    </span>
+                                  CTA Internal Links
+                                </span>
                             </div>
 
                             <div className="flex flex-col gap-2">
@@ -145,13 +149,13 @@ export default async function Page({params}: {
                                                 rel="noopener noreferrer"
                                                 className="group flex flex-col p-3 bg-slate-50 border border-slate-100 rounded-xl hover:border-[#EE1C25]/30 hover:bg-red-50/30 transition-all"
                                             >
-            <span className="text-[9px] font-black text-[#EE1C25] uppercase tracking-tighter mb-1 opacity-70 group-hover:opacity-100">
-              Link {index + 1} • {label}
-            </span>
+                                                <span className="text-[9px] font-black text-[#EE1C25] uppercase tracking-tighter mb-1 opacity-70 group-hover:opacity-100">
+                                                  Link {index + 1} • {label}
+                                                </span>
                                                 <div className="flex items-center justify-between gap-2">
-              <span className="text-[11px] font-medium text-slate-500 truncate group-hover:text-slate-900 transition-colors">
-                {cleanUrl}
-              </span>
+                                                  <span className="text-[11px] font-medium text-slate-500 truncate group-hover:text-slate-900 transition-colors">
+                                                    {cleanUrl}
+                                                  </span>
                                                     <ExternalLink size={12} className="text-slate-300 group-hover:text-[#EE1C25] shrink-0" />
                                                 </div>
                                             </a>
@@ -179,16 +183,16 @@ export default async function Page({params}: {
                                 <span className="text-[10px] font-black text-slate-500 uppercase">Status</span>
                                 <span
                                     className={`text-[10px] font-black px-3 py-1 rounded-full ${article.status === 'Published' ? 'bg-emerald-500 text-white' : 'bg-amber-400 text-slate-900'}`}>
-                    {article.status}
-                  </span>
+                                    {article.status}
+                                </span>
                             </div>
                             <div className="flex items-center justify-between">
                                 <span className="text-[10px] font-black text-slate-500 uppercase">Approval</span>
                                 <span className="flex items-center gap-2 text-xs font-bold">
-                    {article.approval === 'Approved' ? <CheckCircle2 size={14} className="text-emerald-400"/> :
-                        <AlertCircle size={14} className="text-amber-400"/>}
+                                    {article.approval === 'Approved' ? <CheckCircle2 size={14} className="text-emerald-400"/> :
+                                        <AlertCircle size={14} className="text-amber-400"/>}
                                     {article.approval}
-                  </span>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -227,6 +231,7 @@ function SidebarItem({icon, label, value, isLink}: any) {
     );
 }
 
+// Inverted Layout
 function SidebarItemInverted({ icon, label, value, rawValue }: any) {
     return (
         <div className="flex items-center gap-4 group/item">
@@ -237,7 +242,7 @@ function SidebarItemInverted({ icon, label, value, rawValue }: any) {
                 <span className="block text-[9px] font-black text-slate-500 uppercase">{label}</span>
                 <span
                     className="text-xs font-bold text-white"
-                    title={rawValue} // Shows "2026-03-23" on hover
+                    title={rawValue}
                 >
                   {value || 'Unassigned'}
                 </span>
@@ -246,12 +251,10 @@ function SidebarItemInverted({ icon, label, value, rawValue }: any) {
     );
 }
 
-// Component for the Stats Section in app/(admin)/article/[id]/page.tsx
-
+// Live SEO Layout Monitor Box
 function SEOStats({article}: { article: any }) {
     const titleLength = article.title?.length || 0;
     const descLength = article.meta_description?.length || 0;
-    // Simple word count logic: split by spaces
     const wordCount = article.content?.trim().split(/\s+/).length || 0;
 
     return (
@@ -262,7 +265,6 @@ function SEOStats({article}: { article: any }) {
             </div>
 
             <div className="grid grid-cols-1 gap-6">
-                {/* Title Metric */}
                 <MetricRow
                     label="Title Length"
                     value={titleLength}
@@ -271,7 +273,6 @@ function SEOStats({article}: { article: any }) {
                     isError={titleLength > 65}
                 />
 
-                {/* Description Metric */}
                 <MetricRow
                     label="Description Length"
                     value={descLength}
@@ -280,7 +281,6 @@ function SEOStats({article}: { article: any }) {
                     isError={descLength > 160}
                 />
 
-                {/* Word Count Metric */}
                 <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between">
                     <div>
                         <span className="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-wider">Total Word Count</span>
