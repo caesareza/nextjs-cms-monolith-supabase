@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, NextRequest } from 'next/server'
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
     let response = NextResponse.next({
         request: { headers: request.headers },
     })
@@ -21,21 +21,24 @@ export async function middleware(request: NextRequest) {
         }
     )
 
+    // Secure verification method to read user login sessions safely from cookies
     const { data: { user } } = await supabase.auth.getUser()
+    const pathname = request.nextUrl.pathname
 
+    console.log('[Proxy Guard] Active Session Identity:', user?.email || 'Guest')
+    console.log('[Proxy Guard] Request Route Pathname:', pathname)
 
-    console.log('user', user)
-    console.log('request.nextUrl.pathname', request.nextUrl.pathname)
+    const isLoginPage = pathname === '/login'
 
-    // Protect (admin) routes
-    if (!user && request.nextUrl.pathname === '/') {
-        console.log('sini')
+    // 1. Core Shield: If user is not logged in and attempts to access ANY page except /login, force redirect
+    if (!user && !isLoginPage) {
+        console.log('→ Anonymous traffic intercepted. Forcing login redirect.')
         return NextResponse.redirect(new URL('/login', request.url))
     }
 
-    // Redirect logged-in users away from login page
-    if (user && request.nextUrl.pathname === '/login') {
-        console.log('xxxx')
+    // 2. Reverse Shield: If a logged-in user tries to visit /login, redirect them back to the workspace root
+    if (user && isLoginPage) {
+        console.log('→ Active session detected on login screen. Redirecting to home root.')
         return NextResponse.redirect(new URL('/', request.url))
     }
 
@@ -43,5 +46,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
+    // This matcher automatically captures all application page routes while bypassing static media assets
     matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
 }
