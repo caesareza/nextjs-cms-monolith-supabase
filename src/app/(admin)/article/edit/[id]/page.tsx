@@ -17,7 +17,7 @@ export default async function EditArticlePage({
 
     // 2. Now you can safely fetch your data
     const [article, writers, categories, productTags] = await Promise.all([
-        ArticleService.getArticleById(id),
+        ArticleService.getArticleById(Number(id)),
         ArticleService.getWriters(),
         ArticleService.getCategories(),
         ProductTagService.getProductTags()

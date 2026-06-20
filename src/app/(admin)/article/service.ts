@@ -22,7 +22,7 @@ export const ArticleService = {
         year: number;
         month: number;
         page: number;
-        writerId: string | null;
+        writerId?: string | null;
         categoryId: string | null;
         contentType: string | null;
         searchQuery: string | null;
