@@ -1,7 +1,7 @@
 'use client';
 
 import "../globals.css";
-import { LayoutGrid, Rocket, Search, Plus, Cookie, UserPen } from 'lucide-react';
+import { LayoutGrid, Rocket, Search, Cookie, UserPen, FolderRoot, KeySquare } from 'lucide-react';
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import { createClient } from '@/utils/supabase/client'; // Import from /client
@@ -14,6 +14,8 @@ const NAVIGATION_ITEMS = [
     { label: 'Article', icon: Rocket, href: '/article' },
     { label: 'Category', icon: Cookie, href: '/category' },
     { label: 'Writer', icon: UserPen, href: '/writer' },
+    { label: 'Product Tag', icon: FolderRoot, href: '/product-tag' },
+    { label: 'SEO Keyword', icon: KeySquare, href: '/seo-keyword' },
 ];
 
 const SidebarItem = ({ icon: Icon, label, href, active }: any) => (
@@ -59,7 +61,7 @@ export default function RootLayout({
 
 
   return (
-      <div className="flex h-screen bg-slate-100  text-slate-900 font-sans transition-colors duration-300">
+      <div className="flex h-screen  text-slate-900 font-sans transition-colors duration-300">
           {/* Sidebar */}
           <aside className="w-64 border-r border-slate-300  flex flex-col p-4 gap-6 bg-slate-50">
               <div className="flex items-center gap-2 px-2 py-4">

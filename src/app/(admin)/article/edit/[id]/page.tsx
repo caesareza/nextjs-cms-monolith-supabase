@@ -2,6 +2,7 @@
 
 import {ArticleService} from "@/app/(admin)/article/service";
 import EditArticleClient from './EditArticleClient';
+import {ProductTagService} from "@/app/(admin)/product-tag/service";
 
 export default async function EditArticlePage({
                                                   params
@@ -15,10 +16,11 @@ export default async function EditArticlePage({
     console.log('Resolved ID:', id);
 
     // 2. Now you can safely fetch your data
-    const [article, writers, categories] = await Promise.all([
+    const [article, writers, categories, productTags] = await Promise.all([
         ArticleService.getArticleById(id),
         ArticleService.getWriters(),
-        ArticleService.getCategories()
+        ArticleService.getCategories(),
+        ProductTagService.getProductTags()
     ]);
 
     return (
@@ -27,6 +29,7 @@ export default async function EditArticlePage({
                 initialData={article}
                 writers={writers}
                 categories={categories}
+                productTags={productTags}
             />
         </div>
     );

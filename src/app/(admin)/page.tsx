@@ -2,7 +2,7 @@ import PendingListClient from './PendingListClient';
 
 export default function DashboardPage() {
     return (
-        <div className="p-10 max-w-6xl mx-auto space-y-12">
+        <div className="space-y-12">
             <header className="flex flex-col gap-2">
                 <h1 className="text-4xl font-black text-slate-900 tracking-tighter">
                     Editorial Queue

@@ -2,32 +2,30 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Save, Loader2, ChevronLeft, CheckCircle2 } from 'lucide-react';
-import {ArticleService} from "@/app/(admin)/article/service";
+import { Save, Loader2, ChevronLeft, CheckCircle2, Lock } from 'lucide-react';
+import { ArticleService } from "@/app/(admin)/article/service";
 import HtmlEditor from '@/components/editor/HtmlEditor';
 
 interface EditProps {
     initialData: any;
     writers: any[];
     categories: any[];
+    productTags: any[];
 }
 
-export default function EditArticleClient({ initialData, writers, categories }: EditProps) {
+export default function EditArticleClient({ initialData, writers, categories, productTags }: EditProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
-    // 1. Expanded initial state parsing to pull all new metadata fields safely
     const [form, setForm] = useState({
         title: initialData.title || '',
         content: initialData.content || '',
         writer_id: initialData.writer_id || 0,
         category_id: initialData.category_id || 0,
-        product_id: initialData.product_id || '',
+        product_id: initialData.product_id || 0,
         status: initialData.status || 'draft',
         production_month: initialData.production_month || new Date().toISOString().split('T')[0],
-
-        // Schema Matching Inputs
         content_old: initialData.content_old || '',
         meta_description: initialData.meta_description || '',
         target_keyword: initialData.target_keyword || '',
@@ -37,17 +35,16 @@ export default function EditArticleClient({ initialData, writers, categories }: 
         internal_notes: initialData.internal_notes || ''
     });
 
+    // Workflow check: identify if strategy brief is currently unverified
+    const isSeoPending = initialData.status === 'seo pending';
+
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (isSeoPending) return; // Strict functional blocker bypass
+
         setLoading(true);
         try {
-            // const supabase = createClient();
-            // const { data: { user } } = await supabase.auth.getUser();
-            // const userEmail = user?.email || "system@ibox.co.id";
-
-            // Passes updated dataset along with user logging context
             await ArticleService.updateArticle(initialData.id, form);
-
             setSuccess(true);
             setTimeout(() => {
                 router.push('/article');
@@ -83,12 +80,18 @@ export default function EditArticleClient({ initialData, writers, categories }: 
                 </button>
 
                 <button
-                    disabled={loading}
+                    disabled={loading || isSeoPending}
                     type="submit"
-                    className="bg-[#EE1C25] text-white px-10 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-red-100 flex items-center gap-2 hover:brightness-110 active:scale-95 disabled:opacity-50 transition-all cursor-pointer"
+                    className="bg-[#EE1C25] text-white px-10 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-red-100 flex items-center gap-2 hover:brightness-110 active:scale-95 disabled:opacity-40 disabled:bg-slate-300 disabled:shadow-none transition-all cursor-pointer"
                 >
-                    {loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-                    Push Updates
+                    {loading ? (
+                        <Loader2 size={16} className="animate-spin" />
+                    ) : isSeoPending ? (
+                        <Lock size={14} />
+                    ) : (
+                        <Save size={16} />
+                    )}
+                    {isSeoPending ? 'Strategy Locked' : 'Push Updates'}
                 </button>
             </div>
 
@@ -96,9 +99,9 @@ export default function EditArticleClient({ initialData, writers, categories }: 
 
                 {/* HEADLINE */}
                 <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Headline</label>
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Headline</label>
                     <input
-                        className="w-full text-4xl font-black text-slate-900 border-b-2 border-slate-50 focus:border-[#EE1C25] outline-none pb-6 transition-all"
+                        className="w-full text-4xl font-black text-slate-900 border-b-2 border-slate-100 focus:border-[#EE1C25] outline-none pb-6 transition-all"
                         value={form.title}
                         onChange={(e) => setForm({...form, title: e.target.value})}
                     />
@@ -107,12 +110,13 @@ export default function EditArticleClient({ initialData, writers, categories }: 
                 {/* CORE METADATA GRID */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Writer</label>
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Writer</label>
                         <select
-                            className="p-4 bg-slate-50 rounded-2xl text-xs font-bold border border-slate-100 outline-none focus:bg-white focus:border-[#EE1C25]/20"
+                            className="p-4 bg-slate-50 rounded-2xl text-xs font-black text-slate-900 border border-slate-200/60 outline-none focus:bg-white focus:border-[#EE1C25]/20 cursor-pointer"
                             value={form.writer_id}
                             onChange={(e) => setForm({...form, writer_id: parseInt(e.target.value)})}
                         >
+                            <option value={0}>Select Writer...</option>
                             {writers.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
                         </select>
                     </div>
@@ -120,10 +124,11 @@ export default function EditArticleClient({ initialData, writers, categories }: 
                     <div className="flex flex-col gap-2">
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Category</label>
                         <select
-                            className="p-4 bg-slate-50 rounded-2xl text-xs font-bold border border-slate-100 outline-none focus:bg-white focus:border-[#EE1C25]/20"
+                            className="p-4 bg-slate-50 rounded-2xl text-xs font-black text-slate-900 border border-slate-200/60 outline-none focus:bg-white focus:border-[#EE1C25]/20 cursor-pointer"
                             value={form.category_id}
                             onChange={(e) => setForm({...form, category_id: parseInt(e.target.value)})}
                         >
+                            <option value={0}>Select Category...</option>
                             {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                         </select>
                     </div>
@@ -131,11 +136,11 @@ export default function EditArticleClient({ initialData, writers, categories }: 
                     <div className="flex flex-col gap-2">
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</label>
                         <select
-                            className="p-4 bg-slate-50 rounded-2xl text-xs font-bold border border-slate-100 outline-none focus:bg-white focus:border-[#EE1C25]/20"
+                            className="p-4 bg-slate-50 rounded-2xl text-xs font-black text-slate-900 border border-slate-200/60 outline-none focus:bg-white focus:border-[#EE1C25]/20 cursor-pointer"
                             value={form.status}
                             onChange={(e) => setForm({...form, status: e.target.value})}
                         >
-                            <option value="draft">Draft</option>
+                            <option value="writing">Writing</option>
                             <option value="ready for review">Ready for Review</option>
                             <option value="published">Published</option>
                         </select>
@@ -143,21 +148,40 @@ export default function EditArticleClient({ initialData, writers, categories }: 
 
                     <div className="flex flex-col gap-2">
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Product Tag</label>
-                        <input
-                            className="p-4 bg-slate-50 rounded-2xl text-xs font-bold border border-slate-100 outline-none focus:bg-white focus:border-[#EE1C25]/20"
+                        <select
+                            className="p-4 bg-slate-50 rounded-2xl text-xs font-black text-slate-900 border border-slate-200/60 outline-none focus:bg-white focus:border-[#EE1C25]/20 cursor-pointer"
                             value={form.product_id}
-                            onChange={(e) => setForm({...form, product_id: e.target.value})}
-                        />
+                            onChange={(e) => setForm({...form, product_id: parseInt(e.target.value)})}
+                        >
+                            <option value={0}>Select Product...</option>
+                            {productTags.map((tag) => (
+                                <option key={tag.id} value={tag.id}>{tag.name}</option>
+                            ))}
+                        </select>
                     </div>
                 </div>
 
-                {/* TIPTAP EDITING CANVAS */}
-                <div className="pt-4">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 block">Content Body (HTML Mode)</label>
-                    <HtmlEditor
-                        value={form.content}
-                        onChange={(html: string) => setForm({...form, content: html})}
-                    />
+                {/* TIPTAP EDITING CANVAS BLOCK */}
+                <div className="pt-4 relative">
+                    {isSeoPending && (
+                        <div className="absolute inset-0 bg-white/80 backdrop-blur-[0.5px] z-40 rounded-2xl flex flex-col items-center justify-center gap-2 select-none border border-dashed border-slate-200 p-8 text-center">
+                            <div className="w-9 h-9 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-md">
+                                <Lock size={14} />
+                            </div>
+                            <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">Content Editor Canvas Locked</h4>
+                            <p className="text-slate-400 text-[9px] font-bold max-w-xs uppercase tracking-tight">
+                                Will automatically activate once a director changes the strategy status to Approved.
+                            </p>
+                        </div>
+                    )}
+
+                    <div className={isSeoPending ? "opacity-10 pointer-events-none" : ""}>
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 block">Content Body (HTML Mode)</label>
+                        <HtmlEditor
+                            value={form.content}
+                            onChange={(html: string) => setForm({...form, content: html})}
+                        />
+                    </div>
                 </div>
 
                 {/* --- OPTIMIZATION & LEGACY AUDIT CONTROL PANEL (GROUPED VIEW) --- */}
@@ -165,7 +189,7 @@ export default function EditArticleClient({ initialData, writers, categories }: 
 
                     {/* LEFT: SEO STRATEGY (7 Columns wide) */}
                     <div className="lg:col-span-7 space-y-6">
-                        <h3 className="text-[11px] font-black text-slate-950 uppercase tracking-widest border-b border-slate-50 pb-2">
+                        <h3 className="text-[11px] font-black text-slate-950 uppercase tracking-widest border-b border-slate-100 pb-2">
                             SEO & Metadata Strategy
                         </h3>
 
@@ -174,7 +198,7 @@ export default function EditArticleClient({ initialData, writers, categories }: 
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Target Focus Keyword</label>
                             <input
                                 type="text"
-                                className="w-full p-4 bg-slate-50 rounded-2xl text-xs font-bold border border-slate-100 outline-none focus:bg-white focus:border-[#EE1C25]/20 transition-all"
+                                className="w-full p-4 bg-slate-50 rounded-2xl text-xs font-bold text-slate-900 border border-slate-200 outline-none focus:bg-white focus:border-[#EE1C25]/20 transition-all"
                                 placeholder="e.g., cara buka rekening online"
                                 value={form.target_keyword}
                                 onChange={(e) => setForm({...form, target_keyword: e.target.value})}
@@ -185,25 +209,25 @@ export default function EditArticleClient({ initialData, writers, categories }: 
                         <div className="flex flex-col gap-2">
                             <div className="flex justify-between items-center">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Meta Description Tag</label>
-                                <span className={`text-[9px] font-bold ${form.meta_description.length > 160 ? 'text-red-500' : 'text-slate-300'}`}>
-                  {form.meta_description.length}/160 chars
-                </span>
+                                <span className={`text-[9px] font-black ${form.meta_description.length > 160 ? 'text-[#EE1C25]' : 'text-slate-400'}`}>
+                                    {form.meta_description.length} / 160 chars
+                                </span>
                             </div>
                             <textarea
                                 rows={3}
-                                className="w-full p-4 bg-slate-50 rounded-2xl text-xs font-medium border border-slate-100 outline-none focus:bg-white focus:border-[#EE1C25]/20 transition-all resize-none leading-relaxed"
+                                className="w-full p-4 bg-slate-50 rounded-2xl text-xs font-bold text-slate-900 border border-slate-200 outline-none focus:bg-white focus:border-[#EE1C25]/20 transition-all resize-none leading-relaxed"
                                 placeholder="Brief summary matching Google search requirements..."
                                 value={form.meta_description}
                                 onChange={(e) => setForm({...form, meta_description: e.target.value})}
                             />
                         </div>
 
-                        {/* CTA Internal Destination Link (Bigger Box) */}
+                        {/* CTA Internal Destination Link */}
                         <div className="flex flex-col gap-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">CTA Internal Destination Link</label>
                             <textarea
                                 rows={4}
-                                className="w-full p-4 bg-slate-50 rounded-2xl text-xs font-mono border border-slate-100 outline-none focus:bg-white focus:border-[#EE1C25]/20 transition-all leading-relaxed"
+                                className="w-full p-4 bg-slate-50 rounded-2xl text-xs font-mono font-bold text-slate-900 border border-slate-200 outline-none focus:bg-white focus:border-[#EE1C25]/20 transition-all leading-relaxed"
                                 placeholder="Paste destination anchors or deep-linking tracking URLs here..."
                                 value={form.cta_internal_link}
                                 onChange={(e) => setForm({...form, cta_internal_link: e.target.value})}
@@ -212,8 +236,8 @@ export default function EditArticleClient({ initialData, writers, categories }: 
                     </div>
 
                     {/* RIGHT: INTERNAL CONTROLS & BACKUPS (5 Columns wide) */}
-                    <div className="lg:col-span-5 space-y-6 bg-slate-50/50 p-8 rounded-[2.5rem] border border-slate-100">
-                        <h3 className="text-[11px] font-black text-slate-950 uppercase tracking-widest pb-2 border-b border-slate-100">
+                    <div className="lg:col-span-5 space-y-6 bg-slate-50/50 p-8 rounded-[2.5rem] border border-slate-200">
+                        <h3 className="text-[11px] font-black text-slate-950 uppercase tracking-widest pb-2 border-b border-slate-200">
                             Internal Controls & Backups
                         </h3>
 
@@ -221,7 +245,7 @@ export default function EditArticleClient({ initialData, writers, categories }: 
                             <div className="flex flex-col gap-2">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">SEO Check</label>
                                 <select
-                                    className="w-full p-4 bg-white rounded-2xl text-xs font-bold border border-slate-100 outline-none focus:border-[#EE1C25]/20"
+                                    className="w-full p-4 bg-white rounded-2xl text-xs font-bold text-slate-900 border border-slate-200 outline-none focus:border-[#EE1C25]/20 cursor-pointer"
                                     value={form.seo_check}
                                     onChange={(e) => setForm({...form, seo_check: e.target.value})}
                                 >
@@ -234,7 +258,7 @@ export default function EditArticleClient({ initialData, writers, categories }: 
                             <div className="flex flex-col gap-2">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Index Status</label>
                                 <select
-                                    className="w-full p-4 bg-white rounded-2xl text-xs font-bold border border-slate-100 outline-none focus:border-[#EE1C25]/20"
+                                    className="w-full p-4 bg-white rounded-2xl text-xs font-bold text-slate-900 border border-slate-200 outline-none focus:border-[#EE1C25]/20 cursor-pointer"
                                     value={form.index_status}
                                     onChange={(e) => setForm({...form, index_status: e.target.value})}
                                 >
@@ -249,7 +273,7 @@ export default function EditArticleClient({ initialData, writers, categories }: 
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Internal Editorial Notes</label>
                             <textarea
                                 rows={3}
-                                className="w-full p-4 bg-white rounded-2xl text-xs font-medium border border-slate-100 outline-none focus:border-[#EE1C25]/20 transition-all resize-none leading-relaxed"
+                                className="w-full p-4 bg-white rounded-2xl text-xs font-medium text-slate-900 border border-slate-200 outline-none focus:bg-white focus:border-[#EE1C25]/20 transition-all resize-none leading-relaxed"
                                 placeholder="Reviewer logs or audit context notes..."
                                 value={form.internal_notes}
                                 onChange={(e) => setForm({...form, internal_notes: e.target.value})}
@@ -261,7 +285,7 @@ export default function EditArticleClient({ initialData, writers, categories }: 
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Legacy Backup Content (Content Old)</label>
                             <textarea
                                 rows={6}
-                                className="w-full p-4 bg-white rounded-2xl text-xs font-mono border border-slate-100 outline-none focus:border-[#EE1C25]/20 transition-all leading-relaxed"
+                                className="w-full p-4 bg-white rounded-2xl text-xs font-mono font-bold text-slate-900 border border-slate-200 outline-none focus:bg-white focus:border-[#EE1C25]/20 transition-all leading-relaxed"
                                 placeholder="Raw source records fallback..."
                                 value={form.content_old}
                                 onChange={(e) => setForm({...form, content_old: e.target.value})}
