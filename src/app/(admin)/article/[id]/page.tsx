@@ -16,7 +16,7 @@ export default async function Page({params}: {
     console.log('params.id', id)
     // const articleId = parseInt(params.id);
 
-    const article = await ArticleService.getArticleById(id);
+    const article = await ArticleService.getArticleById(Number(id));
     const logs = await ArticleService.getWorkflowLogs(id);
 
     const formatProductionMonth = (dateString: string) => {

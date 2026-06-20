@@ -6,11 +6,12 @@ import { Loader2, Lock } from 'lucide-react';
 import { ArticleService} from "@/app/(admin)/article/service";
 
 interface CreateProps {
+    writers: any[];
     categories: any[];
     productTags: any[];
 }
 
-export default function CreateArticleClient({ categories, productTags }: CreateProps) {
+export default function CreateArticleClient({ writers, categories, productTags }: CreateProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 

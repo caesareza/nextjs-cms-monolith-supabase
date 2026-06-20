@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { ArticleService } from '../article/service';
 import { CategoryService } from '../category/service';
 import { ProductTagService} from "@/app/(admin)/product-tag/service";
-import { Search, Loader2, Filter, Plus, X, Lock } from 'lucide-react';
+import { Search, Loader2, Filter, Plus, X } from 'lucide-react';
 import Link from 'next/link';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
