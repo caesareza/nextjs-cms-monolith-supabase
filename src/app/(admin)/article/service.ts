@@ -6,11 +6,13 @@ export interface ArticleDisplay {
     category: string
     writer: string
     product: string;
-    status: string;
     productionMonth: string;
     type: string;
     meta: string;
     isApproved: boolean;
+    approval: string | null;
+    status: string;
+    pipelineStage?: any;
 }
 
 // services/article.service.ts
@@ -19,11 +21,15 @@ export const ArticleService = {
     async getArticles(params: {
         year: number;
         month: number;
-        page?: number;
-        writerId?: string | null;
-        categoryId?: string | null;
-        contentType?: string | null;
-        searchQuery?: string | null; // New Parameter
+        page: number;
+        writerId: string | null;
+        categoryId: string | null;
+        contentType: string | null;
+        searchQuery: string | null;
+        // Make these optional with a '?' so our simplified component doesn't break
+        status?: string;
+        approval?: string | null;
+        pipelineStage?: any;
     }) {
         const { year, month, page = 1, writerId, categoryId, contentType, searchQuery } = params;
         const supabase = createClient();
@@ -66,13 +72,15 @@ export const ArticleService = {
                 product: item.product_id,
                 status: item.status,
                 type: item.content_type,
-                isApproved: item.approval === 'Approved'
+                approval: item.approval,
+                target_keyword: item.target_keyword,
+                meta_description: item.meta_description
             })),
             total: count || 0
         };
     },
 
-    async getArticleById(id: string) {
+    async getArticleById(id: number) {
         const supabase = createClient();
 
         const { data, error } = await supabase
@@ -89,49 +97,49 @@ export const ArticleService = {
         return data;
     },
 
-    async updateWorkflow(params: {
-        id: string;
-        status: string;
-        approval: string;
-        url_published?: string;
-        oldStatus: string;
-        oldApproval: string;
-    }) {
-        const { id, status, approval, url_published, oldStatus, oldApproval } = params;
-        const supabase = createClient();
-
-        // Get the current user session
-        const { data: { user } } = await supabase.auth.getUser();
-        const userEmail = user?.email || 'nisa@posthink.com';
-
-        // 1. Update the Article
-        const updateData: any = {
-            status,
-            approval,
-            approve_at: approval === 'approved' ? new Date().toISOString() : null,
-            approval_by: user?.email || null
-        };
-
-        if (url_published) updateData.url_published = url_published;
-
-        const { error: updateError } = await supabase
-            .from('article')
-            .update(updateData)
-            .eq('id', id);
-
-        if (updateError) throw updateError;
-
-        // 2. Insert the Log with the Email
-        await supabase.from('workflow_logs').insert({
-            article_id: id,
-            user_email: userEmail,
-            old_status: oldStatus,
-            new_status: status,
-            old_approval: oldApproval,
-            new_approval: approval,
-            notes: url_published ? `Published to: ${url_published}` : null
-        });
-    },
+    // async updateWorkflow(params: {
+    //     id: string;
+    //     status: string;
+    //     approval: string;
+    //     url_published?: string;
+    //     oldStatus: string;
+    //     oldApproval: string;
+    // }) {
+    //     const { id, status, approval, url_published, oldStatus, oldApproval } = params;
+    //     const supabase = createClient();
+    //
+    //     // Get the current user session
+    //     const { data: { user } } = await supabase.auth.getUser();
+    //     const userEmail = user?.email || 'nisa@posthink.com';
+    //
+    //     // 1. Update the Article
+    //     const updateData: any = {
+    //         status,
+    //         approval,
+    //         approve_at: approval === 'approved' ? new Date().toISOString() : null,
+    //         approval_by: user?.email || null
+    //     };
+    //
+    //     if (url_published) updateData.url_published = url_published;
+    //
+    //     const { error: updateError } = await supabase
+    //         .from('article')
+    //         .update(updateData)
+    //         .eq('id', id);
+    //
+    //     if (updateError) throw updateError;
+    //
+    //     // 2. Insert the Log with the Email
+    //     await supabase.from('workflow_logs').insert({
+    //         article_id: id,
+    //         user_email: userEmail,
+    //         old_status: oldStatus,
+    //         new_status: status,
+    //         old_approval: oldApproval,
+    //         new_approval: approval,
+    //         notes: url_published ? `Published to: ${url_published}` : null
+    //     });
+    // },
 
     async getWorkflowLogs(articleId: string) {
         const supabase = createClient();
@@ -173,12 +181,9 @@ export const ArticleService = {
         title: string;
         content: string;
         category_id: number;
-        writer_id: number;
-        product_id: string;
-        status: string;
+        product_id: number;
         production_month: string;
-
-        // Wire payload configurations directly
+        content_type: 'new' | 'adjust';
         content_old?: string;
         meta_description?: string;
         target_keyword?: string;
@@ -186,6 +191,7 @@ export const ArticleService = {
         seo_check?: string;
         index_status?: string;
         internal_notes?: string;
+        status: string
     }) {
         const supabase = createClient();
 
@@ -193,7 +199,6 @@ export const ArticleService = {
             .from('article')
             .insert([{
                 ...payload,
-                approval: 'pending' // Enforce director review guardrails
             }])
             .select()
             .single();
@@ -225,13 +230,17 @@ export const ArticleService = {
     },
 
     async updateArticle(id: number | string, payload: {
-        title: string;
-        content: string;
-        category_id: number;
-        writer_id: number;
-        product_id: string;
-        status: string;
-        production_month: string;
+        title?: string;            // Made optional
+        content?: string;          // Made optional
+        category_id?: number;      // Made optional
+        product_id?: number;       // Made optional
+        production_month?: string; // Made optional
+        content_type?: "new" | "adjust";
+        status?: string;           // Made optional
+        target_keyword?: string;
+        meta_description?: string;
+        cta_internal_link?: string;
+        approval?: string
     }) {
         const supabase = createClient();
 
@@ -279,5 +288,58 @@ export const ArticleService = {
 
         if (logError) throw logError;
         return article;
-    }
+    },
+
+    async updateWorkflow(params: {
+        id: string;
+        status: string;
+        approval: 'approved' | 'rejected' | 'pending' | string;
+        url_published?: string;
+        oldStatus: string;
+        oldApproval: string;
+        internal_notes?: string; // Added field for Director feedback
+    }) {
+        const { id, status, approval, url_published, oldStatus, oldApproval, internal_notes } = params;
+        const supabase = createClient();
+
+        // Get the current user session
+        const { data: { user } } = await supabase.auth.getUser();
+        const userEmail = user?.email || 'nisa@posthink.com';
+
+        // 1. Update the Article
+        const updateData: any = {
+            status,
+            approval,
+            approve_at: approval === 'approved' ? new Date().toISOString() : null,
+            approval_by: user?.email || null
+        };
+
+        if (url_published) updateData.url_published = url_published;
+
+        // Save the director's note if provided during rejection
+        if (internal_notes) updateData.internal_notes = internal_notes;
+
+        const { error: updateError } = await supabase
+            .from('article')
+            .update(updateData)
+            .eq('id', id);
+
+        if (updateError) throw updateError;
+
+        // 2. Insert the Log with the Email and custom message
+        let logNotes = url_published ? `Published to: ${url_published}` : null;
+        if (approval === 'rejected' && internal_notes) {
+            logNotes = `Rejected by Director. Reason: ${internal_notes}`;
+        }
+
+        await supabase.from('workflow_logs').insert({
+            article_id: id,
+            user_email: userEmail,
+            old_status: oldStatus,
+            new_status: status,
+            old_approval: oldApproval,
+            new_approval: approval,
+            notes: logNotes
+        });
+    },
 };
