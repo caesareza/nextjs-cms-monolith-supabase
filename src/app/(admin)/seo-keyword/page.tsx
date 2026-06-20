@@ -11,7 +11,7 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 
 function getStrategyApprovalBadge(approval: string) {
     if (approval === 'pending') {
-        return { label: 'Awaiting Reviewwww', color: 'text-amber-600 bg-amber-50/60 border-amber-100' };
+        return { label: 'Awaiting Review', color: 'text-amber-600 bg-amber-50/60 border-amber-100' };
     }
     if (approval === 'rejected') {
         return { label: 'Revision Needed', color: 'text-red-600 bg-red-50/60 border-red-100' };

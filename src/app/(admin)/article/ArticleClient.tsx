@@ -201,7 +201,9 @@ export default function ArticleProductionPage() {
                                 <tr key={item.id} className="group hover:bg-slate-50/50 transition-colors">
                                     <td className="px-8 py-6">
                                         <div className="flex flex-col max-w-sm">
-                                            <span className="text-sm font-black text-slate-900 group-hover:text-[#EE1C25] transition-colors">{item.title}</span>
+                                            <Link href={`/article/${item.id}`}>
+                                                <span className="text-sm font-black text-slate-900 group-hover:text-[#EE1C25] transition-colors">{item.title}</span>
+                                            </Link>
                                             <span className="text-[10px] text-slate-400 font-black mt-1.5 uppercase tracking-wider">👤 Author: {item.writer || 'Unassigned'}</span>
                                         </div>
                                     </td>

@@ -1,7 +1,16 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, NextRequest } from 'next/server'
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
+    const pathname = request.nextUrl.pathname
+
+    // 1. CRITICAL BYPASS: Force an immediate native bypass for public shared preview links
+    // This stops the proxy from rewriting or evaluating authentication constraints entirely.
+    if (pathname.startsWith('/shared/')) {
+        return NextResponse.next()
+    }
+
+    // --- Rest of your original standard proxy logic ---
     let response = NextResponse.next({
         request: { headers: request.headers },
     })
@@ -22,20 +31,14 @@ export async function middleware(request: NextRequest) {
     )
 
     const { data: { user } } = await supabase.auth.getUser()
+    const isLoginPage = pathname === '/login'
 
-
-    console.log('user', user)
-    console.log('request.nextUrl.pathname', request.nextUrl.pathname)
-
-    // Protect (admin) routes
-    if (!user && request.nextUrl.pathname === '/') {
-        console.log('sini')
+    // Core Guardrails
+    if (!user && !isLoginPage) {
         return NextResponse.redirect(new URL('/login', request.url))
     }
 
-    // Redirect logged-in users away from login page
-    if (user && request.nextUrl.pathname === '/login') {
-        console.log('xxxx')
+    if (user && isLoginPage) {
         return NextResponse.redirect(new URL('/', request.url))
     }
 
