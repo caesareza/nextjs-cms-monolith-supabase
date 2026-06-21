@@ -101,7 +101,8 @@ export default function ArticleProductionPage() {
                 // Explicitly map or default the missing properties TypeScript is asking for:
                 productionMonth: item.production_month || '',
                 meta: item.meta_description || '',
-                isApproved: item.approval === 'approved' || false
+                isApproved: item.approval === 'approved' || false,
+                product_name: item.product_name
             }));
 
             setArticles(formattedArticles);
@@ -209,8 +210,13 @@ export default function ArticleProductionPage() {
                                     </td>
                                     <td className="px-8 py-6">
                                         <div className="flex flex-col gap-1">
-                                            <span className="w-fit px-2 py-0.5 bg-red-50 text-[#EE1C25] text-[9px] font-black rounded border border-red-100 uppercase">{item.category}</span>
-                                            <span className="text-xs font-bold text-slate-400 pl-0.5">{item.product || 'Standard Tag'}</span>
+                                            <span
+                                                className="w-fit px-2 py-0.5 bg-red-50 text-[#EE1C25] text-[9px] font-black rounded border border-red-100 uppercase">
+                                                {item.category}
+                                            </span>
+                                            <span className="text-xs font-bold text-slate-700 pl-0.5">
+                                                {item.product_name || item.product || 'Umum'}
+                                            </span>
                                         </div>
                                     </td>
                                     <td className="px-8 py-6">

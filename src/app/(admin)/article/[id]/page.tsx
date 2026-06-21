@@ -64,7 +64,7 @@ export default async function Page({params}: {
                                 </span>
                                 <span className="text-slate-300">/</span>
                                 <span
-                                    className="text-slate-400 font-bold text-[10px] uppercase tracking-widest italic">{article.product_id}</span>
+                                    className="text-slate-400 font-bold text-[10px] uppercase tracking-widest italic">{article.product.name || 'No Product Tag'}</span>
                             </div>
                             <h1 className="text-4xl font-black text-slate-900 leading-tight tracking-tight">
                                 {article.title}

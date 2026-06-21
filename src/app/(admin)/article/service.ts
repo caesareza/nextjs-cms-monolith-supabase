@@ -13,6 +13,7 @@ export interface ArticleDisplay {
     approval: string | null;
     status: string;
     pipelineStage?: any;
+    product_name: string;
 }
 
 // services/article.service.ts
@@ -44,7 +45,12 @@ export const ArticleService = {
 
         let query = supabase
             .from('article')
-            .select(`*, category(id, name), writer(id, name)`, { count: 'exact' })
+            .select(`*, 
+                category:category_id(id, name),
+                writer:writer_id(id, name),
+                product:product_id(id, name)`,
+                { count: 'exact' }
+            )
             .gte('production_month', startDate)
             .lt('production_month', endDate)
             .is('deleted_at', null);
@@ -64,12 +70,17 @@ export const ArticleService = {
         if (error) throw error;
 
         return {
+            // Look inside your ArticleService.getArticles payload map:
             articles: data.map(item => ({
                 id: item.id,
                 title: item.title,
                 category: item.category?.name || 'Uncategorized',
                 writer: item.writer?.name || 'Unknown',
-                product: item.product_id,
+
+                // CHANGE THIS: If your table links to a product record relation, pull the name parameter!
+                product: item.product_id, // raw code string fallback
+                product_name: item.product?.name || item.product_id || 'Umum',
+
                 status: item.status,
                 type: item.content_type,
                 approval: item.approval,
@@ -86,60 +97,17 @@ export const ArticleService = {
         const { data, error } = await supabase
             .from('article')
             .select(`
-        *,
-        category:category_id(id, name),
-        writer:writer_id(id, name)
-      `)
+                    *,
+                    category:category_id(id, name),
+                    writer:writer_id(id, name),
+                    product:product_id(id, name)
+            `)
             .eq('id', id)
             .single();
 
         if (error) throw error;
         return data;
     },
-
-    // async updateWorkflow(params: {
-    //     id: string;
-    //     status: string;
-    //     approval: string;
-    //     url_published?: string;
-    //     oldStatus: string;
-    //     oldApproval: string;
-    // }) {
-    //     const { id, status, approval, url_published, oldStatus, oldApproval } = params;
-    //     const supabase = createClient();
-    //
-    //     // Get the current user session
-    //     const { data: { user } } = await supabase.auth.getUser();
-    //     const userEmail = user?.email || 'nisa@posthink.com';
-    //
-    //     // 1. Update the Article
-    //     const updateData: any = {
-    //         status,
-    //         approval,
-    //         approve_at: approval === 'approved' ? new Date().toISOString() : null,
-    //         approval_by: user?.email || null
-    //     };
-    //
-    //     if (url_published) updateData.url_published = url_published;
-    //
-    //     const { error: updateError } = await supabase
-    //         .from('article')
-    //         .update(updateData)
-    //         .eq('id', id);
-    //
-    //     if (updateError) throw updateError;
-    //
-    //     // 2. Insert the Log with the Email
-    //     await supabase.from('workflow_logs').insert({
-    //         article_id: id,
-    //         user_email: userEmail,
-    //         old_status: oldStatus,
-    //         new_status: status,
-    //         old_approval: oldApproval,
-    //         new_approval: approval,
-    //         notes: url_published ? `Published to: ${url_published}` : null
-    //     });
-    // },
 
     async getWorkflowLogs(articleId: string) {
         const supabase = createClient();
@@ -151,8 +119,6 @@ export const ArticleService = {
             .order('created_at', { ascending: false }); // Newest logs first
 
 
-        console.log('data log', data)
-        console.log('data log articleId', articleId)
         if (error) throw error;
         return data || [];
     },
