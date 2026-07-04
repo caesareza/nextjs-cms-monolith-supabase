@@ -1,69 +1,148 @@
+// app/(admin)/writer/WriterClient.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
-import { WriterService, type WriterDisplay } from './service';
-import { Eye } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Loader2, Users, Hash, Calendar, Search } from 'lucide-react';
+import { WriterService } from './service';
 
-export default function WritersClient() {
-    const [writers, setWriters] = useState<WriterDisplay[]>([]);
+export default function WriterClient() {
+    const [writers, setWriters] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
 
-    useEffect(() => {
-        async function init() {
-            const data = await WriterService.getAllWriters();
+    const loadWriters = async () => {
+        setLoading(true);
+        try {
+            const data = await WriterService.getWriters();
             setWriters(data);
+        } catch (err) {
+            console.error("Failed loading corporate writers matrix:", err);
+        } finally {
             setLoading(false);
         }
-        init();
-    }, []);
+    };
 
-    const SkeletonRow = () => (
-        <tr className="animate-pulse">
-            <td className="px-8 py-5"><div className="h-4 w-8 bg-slate-100 rounded"></div></td>
-            <td className="px-8 py-5"><div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-slate-100"></div>
-                <div className="h-4 w-32 bg-slate-100 rounded"></div>
-            </div></td>
-            <td className="px-8 py-5"><div className="h-4 w-24 bg-slate-100 rounded"></div></td>
-            <td className="px-8 py-5"><div className="h-8 w-8 bg-slate-100 rounded-xl ml-auto"></div></td>
-        </tr>
+    useEffect(() => { loadWriters(); }, []);
+
+    // Filter writers based on search input
+    const filteredWriters = writers.filter(w =>
+        w.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    // Color theme badge assignment matching your screenshot aesthetics
+    const getBadgeStyle = (index: number) => {
+        const styles = [
+            'bg-emerald-50 text-emerald-700 border-emerald-200',
+            'bg-amber-50 text-amber-700 border-amber-200',
+            'bg-sky-50 text-sky-700 border-sky-200',
+            'bg-purple-50 text-purple-700 border-purple-200'
+        ];
+        return styles[index % styles.length];
+    };
+
     return (
-        <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm">
-            <table className="w-full text-left">
-                <thead>
-                <tr className="bg-slate-50/50 border-b border-slate-100">
-                    <th className="px-8 py-5 text-[11px] font-black uppercase text-slate-400 tracking-widest">ID</th>
-                    <th className="px-8 py-5 text-[11px] font-black uppercase text-slate-400 tracking-widest">Writer</th>
-                    <th className="px-8 py-5 text-[11px] font-black uppercase text-slate-400 tracking-widest">Joined</th>
-                    <th className="px-8 py-5 text-[11px] font-black uppercase text-slate-400 tracking-widest text-right">Action</th>
-                </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-50">
-                {loading ? [1,2,3,4,5].map(i => <SkeletonRow key={i} />) :
-                    writers.map((writer) => (
-                        <tr key={writer.id} className="group hover:bg-slate-50/50 transition-colors">
-                            <td className="px-8 py-5 text-sm font-bold text-[#EE1C25]">#{writer.id}</td>
-                            <td className="px-8 py-5">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-[10px] font-black text-slate-400 border border-slate-100">
-                                        {writer.initial}
-                                    </div>
-                                    <span className="text-sm font-bold text-slate-900">{writer.name}</span>
-                                </div>
-                            </td>
-                            <td className="px-8 py-5 text-sm font-medium text-slate-500">{writer.joinedDate}</td>
-                            <td className="px-8 py-5 text-right">
-                                <button className="p-2 text-slate-300 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all">
-                                    <Eye size={18} />
-                                </button>
-                            </td>
+        <div className="space-y-8"> {/* Enforced Client Container Spacing Rule */}
+
+            {/* BRAND HEADER & METRICS */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-red-50 flex items-center justify-center text-[#EE1C25]">
+                        <Users size={20} />
+                    </div>
+                    <div>
+                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">Writer Directory</h1>
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Registered Editorial Content Authors</p>
+                    </div>
+                </div>
+                <div className="bg-slate-100 text-slate-600 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-wider border border-slate-200/40 w-fit">
+                    Total Active: {filteredWriters.length}
+                </div>
+            </div>
+
+            {/* SEARCH CONTROLLER FILTERS BAR */}
+            <div className="bg-white p-5 border border-slate-200 rounded-3xl shadow-sm flex items-center relative max-w-md">
+                <Search className="absolute left-9 text-slate-400" size={16} />
+                <input
+                    type="text"
+                    placeholder="Search copywriters..."
+                    className="w-full pl-12 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold outline-none focus:bg-white focus:ring-4 focus:ring-red-50 focus:border-[#EE1C25]/20 transition-all"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+            </div>
+
+            {/* HIGH-DENSITY DATATABLE PRESENTATION */}
+            <div className="bg-white border border-slate-200 rounded-[2.5rem] shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                        <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] font-black uppercase tracking-widest text-slate-400 select-none">
+                            <th className="px-8 py-5 font-black flex items-center gap-2"><Hash size={12}/> ID</th>
+                            <th className="px-6 py-5 font-black">Writer Name Label</th>
+                            <th className="px-6 py-5 font-black hidden md:table-cell">Role Group</th>
+                            <th className="px-8 py-5 font-black text-right hidden sm:table-cell"><Calendar size={12} className="inline mr-1"/> Date Joined</th>
                         </tr>
-                    ))
-                }
-                </tbody>
-            </table>
+                        </thead>
+
+                        {loading ? (
+                            <tbody>
+                            <tr>
+                                <td colSpan={4} className="py-24 text-center">
+                                    <div className="flex flex-col items-center justify-center gap-3">
+                                        <Loader2 className="animate-spin text-slate-300" size={28} />
+                                        <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Compiling author ledger...</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        ) : (
+                            <tbody className="divide-y divide-slate-100">
+                            {filteredWriters.map((writer, index) => (
+                                <tr key={writer.id} className="group hover:bg-slate-50/40 transition-colors">
+
+                                    {/* Column 1: DB Alphanumeric Identification Index */}
+                                    <td className="px-8 py-4.5 text-xs font-black text-slate-400 tabular-nums">
+                                        #{writer.id}
+                                    </td>
+
+                                    {/* Column 2: Author Badge Representational Tag */}
+                                    <td className="px-6 py-4.5">
+                                            <span className={`px-3 py-1 border rounded-xl text-xs font-bold tracking-wide shadow-sm whitespace-nowrap ${getBadgeStyle(index)}`}>
+                                                {writer.name}
+                                            </span>
+                                    </td>
+
+                                    {/* Column 3: Fixed Internal Classification Tag */}
+                                    <td className="px-6 py-4.5 hidden md:table-cell">
+                                            <span className="text-xs font-bold text-slate-500">
+                                                Content Contributor
+                                            </span>
+                                    </td>
+
+                                    {/* Column 4: Mapped Timestamp Column */}
+                                    <td className="px-8 py-4.5 text-right text-[11px] font-bold text-slate-400 tracking-tight hidden sm:table-cell whitespace-nowrap">
+                                        {writer.created_at ? new Date(writer.created_at).toLocaleDateString('id-ID', {
+                                            day: 'numeric',
+                                            month: 'short',
+                                            year: 'numeric'
+                                        }) : '-'}
+                                    </td>
+
+                                </tr>
+                            ))}
+
+                            {filteredWriters.length === 0 && (
+                                <tr>
+                                    <td colSpan={4} className="p-16 text-center text-xs font-medium italic text-slate-400">
+                                        {searchTerm ? 'No authors found matching search terms.' : 'Writer lookup database matrix contains zero tracking rows.'}
+                                    </td>
+                                </tr>
+                            )}
+                            </tbody>
+                        )}
+                    </table>
+                </div>
+            </div>
         </div>
     );
 }

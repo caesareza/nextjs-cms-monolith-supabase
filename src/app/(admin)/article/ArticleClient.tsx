@@ -61,7 +61,7 @@ export default function ArticleProductionPage() {
             try {
                 const [w, c] = await Promise.all([
                     WriterService.getAllWriters(),
-                    CategoryService.getAllCategories()
+                    CategoryService.getCategories()
                 ]);
                 setWriters(w);
                 setCategories(c);
