@@ -1,24 +1,8 @@
+// app/(admin)/article/service.ts
 import { createClient } from '@/utils/supabase/client';
 
-export interface ArticleDisplay {
-    id: string;
-    title: string;
-    category: string
-    writer: string
-    product: string;
-    productionMonth: string;
-    type: string;
-    meta: string;
-    isApproved: boolean;
-    approval: string | null;
-    status: string;
-    pipelineStage?: any;
-    product_name: string;
-}
-
-// services/article.service.ts
-
 export const ArticleService = {
+    // Read records using pagination, search filters, and full taxonomy joins
     async getArticles(params: {
         year: number;
         month: number;
@@ -27,12 +11,10 @@ export const ArticleService = {
         categoryId: string | null;
         contentType: string | null;
         searchQuery: string | null;
-        // Make these optional with a '?' so our simplified component doesn't break
         status?: string;
         approval?: string | null;
-        pipelineStage?: any;
     }) {
-        const { year, month, page = 1, writerId, categoryId, contentType, searchQuery } = params;
+        const { year, month, page = 1, writerId, categoryId, contentType, searchQuery, status, approval } = params;
         const supabase = createClient();
         const pageSize = 10;
         const from = (page - 1) * pageSize;
@@ -43,14 +25,31 @@ export const ArticleService = {
         const nextYear = month === 12 ? year + 1 : year;
         const endDate = `${nextYear}-${String(nextMonth).padStart(2, '0')}-01`;
 
+        // Updated Selection parameters to match all corporate taxonomy relationships
         let query = supabase
             .from('article')
-            .select(`*, 
+            .select(`
+                id,
+                title,
+                content,
+                demand,
+                intent,
+                type,
+                classification,
+                status,
+                approval,
+                target_keyword,
+                meta_description,
+                cta_internal_link,
+                created_at,
+                section:section_id(id, name),
                 category:category_id(id, name),
                 writer:writer_id(id, name),
-                product:product_id(id, name)`,
-                { count: 'exact' }
-            )
+                product:product_id(id, name),
+                persona:persona_id(id, name),
+                campaign:campaign_id(id, name),
+                theme:theme_id(id, name)
+            `, { count: 'exact' })
             .gte('production_month', startDate)
             .lt('production_month', endDate)
             .is('deleted_at', null);
@@ -59,34 +58,53 @@ export const ArticleService = {
         if (writerId) query = query.eq('writer_id', writerId);
         if (categoryId) query = query.eq('category_id', categoryId);
         if (contentType) query = query.eq('content_type', contentType);
+        if (status) query = query.eq('status', status);
+        if (approval) query = query.eq('approval', approval);
 
-        // Search Logic: ilike allows for "Contains" searching (e.g. "CC" finds "Credit Card")
+        // Search criteria matching input values
         if (searchQuery) query = query.ilike('title', `%${searchQuery}%`);
 
         const { data, error, count } = await query
-            .order('created_at', { ascending: false })
+            .order('id', { ascending: false }) // Enforced strict sorting constraint
             .range(from, to);
 
         if (error) throw error;
 
         return {
-            // Look inside your ArticleService.getArticles payload map:
-            articles: data.map(item => ({
-                id: item.id,
-                title: item.title,
-                category: item.category?.name || 'Uncategorized',
-                writer: item.writer?.name || 'Unknown',
+            articles: (data || []).map(item => {
+                const categoryObj = Array.isArray(item.category) ? item.category[0] : item.category;
+                const sectionObj = Array.isArray(item.section) ? item.section[0] : item.section;
+                const writerObj = Array.isArray(item.writer) ? item.writer[0] : item.writer;
+                const productObj = Array.isArray(item.product) ? item.product[0] : item.product;
+                const personaObj = Array.isArray(item.persona) ? item.persona[0] : item.persona;
+                const campaignObj = Array.isArray(item.campaign) ? item.campaign[0] : item.campaign;
+                const themeObj = Array.isArray(item.theme) ? item.theme[0] : item.theme;
 
-                // CHANGE THIS: If your table links to a product record relation, pull the name parameter!
-                product: item.product_id, // raw code string fallback
-                product_name: item.product?.name || item.product_id || 'Umum',
+                return {
+                    id: String(item.id),
+                    title: item.title,
+                    category: categoryObj?.name || 'Uncategorized',
+                    writer: writerObj?.name || 'Unknown',
+                    section: sectionObj?.name || 'General',
 
-                status: item.status,
-                type: item.content_type,
-                approval: item.approval,
-                target_keyword: item.target_keyword,
-                meta_description: item.meta_description
-            })),
+                    product: String(productObj?.id || ''),
+                    product_name: productObj?.name || 'Umum',
+
+                    persona: personaObj?.name || 'All Target Profiles',
+                    campaign: campaignObj?.name || 'Organic / None',
+                    theme: themeObj?.name || 'General Topic',
+
+                    demand: item.demand || 0,
+                    intent: item.intent,
+                    type: item.type,
+                    classification: item.classification,
+
+                    isApproved: item.approval === 'approved',
+                    approval: item.approval,
+                    status: item.status,
+                    created_at: item.created_at
+                };
+            }),
             total: count || 0
         };
     },
@@ -97,10 +115,13 @@ export const ArticleService = {
         const { data, error } = await supabase
             .from('article')
             .select(`
-                    *,
-                    category:category_id(id, name),
-                    writer:writer_id(id, name),
-                    product:product_id(id, name)
+                *,
+                category:category_id(id, name),
+                writer:writer_id(id, name),
+                product:product_id(id, name),
+                persona:persona_id(id, name),
+                campaign:campaign_id(id, name),
+                theme:theme_id(id, name)
             `)
             .eq('id', id)
             .single();
@@ -116,8 +137,7 @@ export const ArticleService = {
             .from('workflow_logs')
             .select('*')
             .eq('article_id', Number(articleId))
-            .order('created_at', { ascending: false }); // Newest logs first
-
+            .order('id', { ascending: false }); // ID descending rule consistency
 
         if (error) throw error;
         return data || [];
@@ -129,14 +149,14 @@ export const ArticleService = {
         const { data, error } = await supabase
             .from('article')
             .select(`
-        id, 
-        title, 
-        created_at, 
-        approval,
-        writer:writer_id(name)
-      `)
+                id, 
+                title, 
+                created_at, 
+                approval,
+                writer:writer_id(name)
+            `)
             .eq('approval', 'pending')
-            .order('created_at', { ascending: true }) // Oldest first = highest priority
+            .order('id', { ascending: true })
             .limit(limit);
 
         if (error) throw error;
@@ -147,9 +167,17 @@ export const ArticleService = {
         title: string;
         content: string;
         category_id: number;
+        section_id: number;
         product_id: number;
         production_month: string;
         content_type: 'new' | 'adjust';
+        demand: number;
+        intent: string;
+        type: string;
+        classification: string; // Added to mandatory payload
+        theme_id?: number | null;
+        persona_id?: number | null;
+        campaign_id?: number | null;
         content_old?: string;
         meta_description?: string;
         target_keyword?: string;
@@ -157,7 +185,7 @@ export const ArticleService = {
         seo_check?: string;
         index_status?: string;
         internal_notes?: string;
-        status: string
+        status: string;
     }) {
         const supabase = createClient();
 
@@ -176,8 +204,9 @@ export const ArticleService = {
     async getWriters() {
         const supabase = createClient();
         const { data, error } = await supabase
-            .from('writer') // Assuming your table name is 'writer'
+            .from('writer')
             .select('id, name')
+            .is('deleted_at', null)
             .order('name', { ascending: true });
 
         if (error) throw error;
@@ -187,8 +216,9 @@ export const ArticleService = {
     async getCategories() {
         const supabase = createClient();
         const { data, error } = await supabase
-            .from('category') // Ensure your table name is 'category'
+            .from('category')
             .select('id, name')
+            .is('deleted_at', null)
             .order('name', { ascending: true });
 
         if (error) throw error;
@@ -196,17 +226,26 @@ export const ArticleService = {
     },
 
     async updateArticle(id: number | string, payload: {
-        title?: string;            // Made optional
-        content?: string;          // Made optional
-        category_id?: number;      // Made optional
-        product_id?: number;       // Made optional
-        production_month?: string; // Made optional
+        title?: string;
+        content?: string;
+        writer_id: number;
+        category_id?: number;
+        section_id?: number;
+        product_id?: number;
+        production_month?: string;
         content_type?: "new" | "adjust";
-        status?: string;           // Made optional
+        demand?: number;
+        intent?: string;
+        type?: string;
+        classification?: string;
+        theme_id?: number | null;
+        persona_id?: number | null;
+        campaign_id?: number | null;
+        status?: string;
         target_keyword?: string;
         meta_description?: string;
         cta_internal_link?: string;
-        approval?: string
+        approval?: string;
     }) {
         const supabase = createClient();
 
@@ -214,10 +253,8 @@ export const ArticleService = {
             .from('article')
             .update({
                 ...payload,
-                // We keep approval as is, or you could reset it to 'pending'
-                // if you want the Director to re-approve every edit.
             })
-            .eq('id', id) // Targets the specific article
+            .eq('id', id)
             .select()
             .single();
 
@@ -228,7 +265,6 @@ export const ArticleService = {
     async softDeleteArticle(id: number, currentStatus: string, userEmail: string) {
         const supabase = createClient();
 
-        // 1. Update Article Status and deleted_at
         const { data: article, error: articleError } = await supabase
             .from('article')
             .update({
@@ -241,7 +277,6 @@ export const ArticleService = {
 
         if (articleError) throw articleError;
 
-        // 2. Insert into workflow_logs
         const { error: logError } = await supabase
             .from('workflow_logs')
             .insert([{
@@ -263,16 +298,14 @@ export const ArticleService = {
         url_published?: string;
         oldStatus: string;
         oldApproval: string;
-        internal_notes?: string; // Added field for Director feedback
+        internal_notes?: string;
     }) {
         const { id, status, approval, url_published, oldStatus, oldApproval, internal_notes } = params;
         const supabase = createClient();
 
-        // Get the current user session
         const { data: { user } } = await supabase.auth.getUser();
         const userEmail = user?.email || 'nisa@posthink.com';
 
-        // 1. Update the Article
         const updateData: any = {
             status,
             approval,
@@ -281,8 +314,6 @@ export const ArticleService = {
         };
 
         if (url_published) updateData.url_published = url_published;
-
-        // Save the director's note if provided during rejection
         if (internal_notes) updateData.internal_notes = internal_notes;
 
         const { error: updateError } = await supabase
@@ -292,14 +323,13 @@ export const ArticleService = {
 
         if (updateError) throw updateError;
 
-        // 2. Insert the Log with the Email and custom message
         let logNotes = url_published ? `Published to: ${url_published}` : null;
         if (approval === 'rejected' && internal_notes) {
             logNotes = `Rejected by Director. Reason: ${internal_notes}`;
         }
 
         await supabase.from('workflow_logs').insert({
-            article_id: id,
+            article_id: Number(id),
             user_email: userEmail,
             old_status: oldStatus,
             new_status: status,

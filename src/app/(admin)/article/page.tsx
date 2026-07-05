@@ -1,28 +1,127 @@
-import ArticleClient from './ArticleClient';
-import { Metadata } from 'next';
+'use client';
 
-export const metadata: Metadata = {
-    title: 'Article Management | OCBC Nexus',
-    description: 'Manage production roadmap, SEO checks, and publication status.',
-};
+import { useState, useEffect, useCallback } from 'react';
+import { ArticleService } from './service';
+import { WriterService } from '../writer/service';
+import { CategoryService } from '../category/service';
+import { SectionService } from '../section/service';
+import { LookupOptions, ArticleDisplay } from '@/types/article';
+import ProductionFilterPanel from './ProductionFilterPanel';
+import ProductionDataGrid from './ProductionDataGrid';
 
-export default function ArticlePage() {
+export default function ArticleProductionPage() {
+    const now = new Date();
+
+    // --- Core Filter State Coordinates ---
+    const [year, setYear] = useState(now.getFullYear());
+    const [month, setMonth] = useState(now.getMonth() + 1);
+    const [writerId, setWriterId] = useState<string>('');
+    const [categoryId, setCategoryId] = useState<string>('');
+    const [contentType, setContentType] = useState<string>('');
+    const [page] = useState(1);
+
+    // --- Operational Lifecycle State ---
+    const [articles, setArticles] = useState<ArticleDisplay[]>([]);
+    const [writers, setWriters] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+
+    const [options, setOptions] = useState<LookupOptions>({
+        categories: [],
+        sections: [],
+        productTags: [],
+        themes: [],
+        personas: [],
+        campaigns: []
+    });
+
+    // Handle smooth search text input debounce execution cycles
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearch(searchTerm);
+        }, 400);
+        return () => clearTimeout(handler);
+    }, [searchTerm]);
+
+    // Gather select dropdown parameters concurrently on mount
+    useEffect(() => {
+        async function loadLookupOptions() {
+            try {
+                const [w, c, secData] = await Promise.all([
+                    WriterService.getWriters(),
+                    CategoryService.getCategories(),
+                    SectionService.getSections({ page: 1, limit: 100, search: '' }).then(res => res.sections)
+                ]);
+                setWriters(w);
+                setOptions(prev => ({ ...prev, categories: c, sections: secData }));
+            } catch (err) {
+                console.error("Failed to collect filter lookup arrays:", err);
+            }
+        }
+        loadLookupOptions();
+    }, []);
+
+    // Primary data sync dispatcher mapped out to the service tier
+    const loadProductionData = useCallback(async () => {
+        setLoading(true);
+        try {
+            const { articles: collectedData } = await ArticleService.getArticles({
+                year,
+                month,
+                page,
+                writerId: writerId || null,
+                categoryId: categoryId || null,
+                contentType: contentType || null,
+                searchQuery: debouncedSearch || null
+            });
+            setArticles(collectedData || []);
+        } catch (err) {
+            console.error("Error executing sheet synchronization loop:", err);
+        } finally {
+            setLoading(false);
+        }
+    }, [year, month, page, writerId, categoryId, contentType, debouncedSearch]);
+
+    useEffect(() => {
+        loadProductionData();
+    }, [loadProductionData]);
+
     return (
-        <div className="max-w-400 mx-auto space-y-8">
-            {/* Header Section */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Article - Production Sheet</h1>
-                    <p className="text-sm text-slate-500 font-medium mt-1">Production Roadmap & SEO Performance Tracking</p>
-                </div>
-                {/* Action Button for future Create CRUD */}
-                {/*<Link href="/article/new" className="px-6 py-3 bg-[#EE1C25] text-white rounded-2xl text-sm font-black shadow-lg shadow-red-100 hover:bg-[#D71921] transition-all transform active:scale-95">*/}
-                {/*    + Create New Article*/}
-                {/*</Link>*/}
+        <div className="space-y-8 animate-in fade-in duration-200">
+
+            {/* 1. SECTION TITLE INTRO */}
+            <div>
+                <h1 className="text-2xl font-black tracking-tight text-slate-900">Production Sheet</h1>
+                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mt-0.5">
+                    Corporate Editorial Content Lifecycle
+                </p>
             </div>
 
-            {/* The Main Client Component */}
-            <ArticleClient />
+            {/* 2. ENCAPSULATED CONTROLS & FILTER BAR */}
+            <ProductionFilterPanel
+                year={year}
+                setYear={setYear}
+                month={month}
+                setMonth={setMonth}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                writerId={writerId}
+                setWriterId={setWriterId}
+                categoryId={categoryId}
+                setCategoryId={setCategoryId}
+                contentType={contentType}
+                setContentType={setContentType}
+                writers={writers}
+                options={options}
+            />
+
+            {/* 3. HIGH-DENSITY VISUAL DATA GRID */}
+            <ProductionDataGrid
+                articles={articles}
+                loading={loading}
+            />
+
         </div>
     );
 }
