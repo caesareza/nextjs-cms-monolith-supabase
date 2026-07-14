@@ -1,25 +1,25 @@
-// app/(admin)/category/service.ts
+// app/(admin)/campaign/service.ts
 import { createClient } from '@/utils/supabase/client';
 
-export const CategoryService = {
-    // Read only active records sorted with your strict global rule
-    async getCategories() {
+export const CampaignService = {
+    // Read active records
+    async getCampaigns() {
         const supabase = createClient();
         const { data, error } = await supabase
-            .from('category')
+            .from('campaign')
             .select('*')
             .is('deleted_at', null)
-            .order('id', { ascending: false }); // Enforced sorting constraint
+            .order('id', { ascending: false });
 
         if (error) throw error;
         return data || [];
     },
 
-    // Create a new record
-    async createCategory(name: string) {
+    // Create a new campaign option
+    async createCampaign(name: string) {
         const supabase = createClient();
         const { data, error } = await supabase
-            .from('category')
+            .from('campaign')
             .insert([{ name }])
             .select()
             .single();
@@ -28,11 +28,11 @@ export const CategoryService = {
         return data;
     },
 
-    // Update an existing record
-    async updateCategory(id: number, name: string) {
+    // Update campaign parameters
+    async updateCampaign(id: number, name: string) {
         const supabase = createClient();
         const { data, error } = await supabase
-            .from('category')
+            .from('campaign')
             .update({ name })
             .eq('id', id)
             .select()
@@ -42,11 +42,11 @@ export const CategoryService = {
         return data;
     },
 
-    // Safe Soft Delete execution
-    async softDeleteCategory(id: number) {
+    // Safe soft-delete execution
+    async softDeleteCampaign(id: number) {
         const supabase = createClient();
         const { data, error } = await supabase
-            .from('category')
+            .from('campaign')
             .update({ deleted_at: new Date().toISOString() })
             .eq('id', id)
             .select()

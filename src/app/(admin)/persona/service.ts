@@ -1,25 +1,25 @@
-// app/(admin)/category/service.ts
+// app/(admin)/persona/service.ts
 import { createClient } from '@/utils/supabase/client';
 
-export const CategoryService = {
-    // Read only active records sorted with your strict global rule
-    async getCategories() {
+export const PersonaService = {
+    // 1. Fetch only active (non-deleted) records
+    async getPersonas() {
         const supabase = createClient();
         const { data, error } = await supabase
-            .from('category')
+            .from('persona')
             .select('*')
-            .is('deleted_at', null)
-            .order('id', { ascending: false }); // Enforced sorting constraint
+            .is('deleted_at', null) // Filter out items marked as soft-deleted
+            .order('id', { ascending: false });
 
         if (error) throw error;
         return data || [];
     },
 
     // Create a new record
-    async createCategory(name: string) {
+    async createPersona(name: string) {
         const supabase = createClient();
         const { data, error } = await supabase
-            .from('category')
+            .from('persona')
             .insert([{ name }])
             .select()
             .single();
@@ -29,10 +29,10 @@ export const CategoryService = {
     },
 
     // Update an existing record
-    async updateCategory(id: number, name: string) {
+    async updatePersona(id: number, name: string) {
         const supabase = createClient();
         const { data, error } = await supabase
-            .from('category')
+            .from('persona')
             .update({ name })
             .eq('id', id)
             .select()
@@ -42,12 +42,14 @@ export const CategoryService = {
         return data;
     },
 
-    // Safe Soft Delete execution
-    async softDeleteCategory(id: number) {
+    // 2. SOFT DELETE MECHANISM: Write a timestamp instead of dropping the row
+    async softDeletePersona(id: number) {
         const supabase = createClient();
         const { data, error } = await supabase
-            .from('category')
-            .update({ deleted_at: new Date().toISOString() })
+            .from('persona')
+            .update({
+                deleted_at: new Date().toISOString()
+            })
             .eq('id', id)
             .select()
             .single();

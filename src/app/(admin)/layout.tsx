@@ -1,7 +1,7 @@
 'use client';
 
 import "../globals.css";
-import { LayoutGrid, Rocket, Search, Cookie, UserPen, FolderRoot, KeySquare } from 'lucide-react';
+import { LayoutGrid, Rocket, Search, Tags, UserPen, Package, KeySquare, Axe, Palette, PersonStanding, Megaphone } from 'lucide-react';
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import { createClient } from '@/utils/supabase/client'; // Import from /client
@@ -12,10 +12,14 @@ import LogoutButton from "@/app/(admin)/LogoutButton";
 const NAVIGATION_ITEMS = [
     { label: 'Dashboard', icon: LayoutGrid, href: '/' },
     { label: 'Article', icon: Rocket, href: '/article' },
-    { label: 'Category', icon: Cookie, href: '/category' },
+    { label: 'Section', icon: Axe, href: '/section' },
+    { label: 'Category', icon: Tags, href: '/category' },
     { label: 'Writer', icon: UserPen, href: '/writer' },
-    { label: 'Product Tag', icon: FolderRoot, href: '/product-tag' },
+    { label: 'Product Tag', icon: Package, href: '/product-tag' },
     { label: 'SEO Keyword', icon: KeySquare, href: '/seo-keyword' },
+    { label: 'Theme', icon: Palette, href: '/theme' },
+    { label: 'Persona', icon: PersonStanding, href: '/persona' },
+    { label: 'Campaign', icon: Megaphone, href: '/campaign' },
 ];
 
 const SidebarItem = ({ icon: Icon, label, href, active }: any) => (

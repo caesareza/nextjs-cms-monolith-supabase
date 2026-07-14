@@ -1,18 +1,17 @@
-// app/(admin)/product-tag/service.ts
+// app/(admin)/section/service.ts
 import { createClient } from '@/utils/supabase/client';
 
-export const ProductTagService = {
-    // Read records using pagination, search, and target table parameters
-    async getProductTags(params: { page: number; limit: number; search: string }) {
+export const SectionService = {
+    // Read records using pagination, search, and soft-delete criteria
+    async getSections(params: { page: number; limit: number; search: string }) {
         const supabase = createClient();
         const { page, limit, search } = params;
 
         const from = (page - 1) * limit;
         const to = from + limit - 1;
 
-        // Base query targeted cleanly at your mapped table
         let query = supabase
-            .from('product_tag')
+            .from('section')
             .select('*', { count: 'exact' });
 
         if (search.trim()) {
@@ -26,16 +25,16 @@ export const ProductTagService = {
         if (error) throw error;
 
         return {
-            productTags: data || [],
+            sections: data || [],
             total: count || 0
         };
     },
 
-    // Create a new entry row node
-    async createProductTag(name: string) {
+    // Create a new entry row
+    async createSection(name: string) {
         const supabase = createClient();
         const { data, error } = await supabase
-            .from('product_tag')
+            .from('section')
             .insert([{ name }])
             .select()
             .single();
@@ -45,10 +44,10 @@ export const ProductTagService = {
     },
 
     // Update row name values
-    async updateProductTag(id: number, name: string) {
+    async updateSection(id: number, name: string) {
         const supabase = createClient();
         const { data, error } = await supabase
-            .from('product_tag')
+            .from('section')
             .update({ name })
             .eq('id', id)
             .select()
@@ -64,7 +63,7 @@ export const ProductTagService = {
         const timestamp = currentlyDeleted ? null : new Date().toISOString();
 
         const { data, error } = await supabase
-            .from('product_tag')
+            .from('section')
             .update({ deleted_at: timestamp })
             .eq('id', id)
             .select()
