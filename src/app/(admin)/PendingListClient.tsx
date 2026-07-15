@@ -95,7 +95,7 @@ export default function PendingListClient() {
     );
 
     return (
-        <div className="bg-white rounded-[2.5rem] border border-brand-light-blue/20 shadow-2xl shadow-brand-navy/5 overflow-hidden">
+        <div className="bg-white rounded-3xl border border-brand-light-blue/20 shadow-2xl shadow-brand-navy/5 overflow-hidden">
 
             {/* HEADER CONTROLS */}
             <div className="p-10 border-b border-brand-light-blue/20 flex flex-col md:flex-row md:items-center justify-between bg-brand-cream/30 gap-6">

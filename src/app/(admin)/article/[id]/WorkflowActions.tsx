@@ -75,7 +75,7 @@ export default function WorkflowActions({ article }: WorkflowProps) {
                     <button
                         disabled={loading}
                         onClick={() => handleUpdate('ready for review', 'pending')}
-                        className="flex items-center gap-2 px-6 py-2.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-slate-200"
+                        className="flex items-center gap-2 px-6 py-2.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all cursor-pointer disabled:bg-slate-105 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed shadow-lg shadow-slate-200"
                     >
                         <Send size={14} /> Submit for Review
                     </button>
@@ -86,7 +86,7 @@ export default function WorkflowActions({ article }: WorkflowProps) {
                     <button
                         disabled={loading}
                         onClick={() => handleUpdate('ready for review', 'approved')}
-                        className="flex items-center gap-2 px-6 py-2.5 bg-brand-accent text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-brand-accent/20 cursor-pointer hover:bg-brand-navy transition-all"
+                        className="flex items-center gap-2 px-6 py-2.5 bg-brand-accent text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-brand-accent/20 cursor-pointer hover:bg-brand-navy transition-all disabled:bg-slate-105 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed"
                     >
                         <CheckCircle size={14} /> Approve Content
                     </button>
@@ -150,7 +150,7 @@ export default function WorkflowActions({ article }: WorkflowProps) {
                                 <button
                                     disabled={!isValidUrl || loading}
                                     onClick={() => handleUpdate('published', 'approved', urlPublished)}
-                                    className="flex-1 md:flex-none flex items-center justify-center gap-3 px-10 py-4 bg-brand-accent hover:bg-brand-navy text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-brand-accent/20 active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+                                    className="flex-1 md:flex-none flex items-center justify-center gap-3 px-10 py-4 bg-brand-accent hover:bg-brand-navy text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-brand-accent/20 active:scale-95 disabled:bg-slate-105 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed transition-all"
                                 >
                                     {loading ? <Loader2 size={16} className="animate-spin" /> : <>Confirm <ArrowRight size={14}/></>}
                                 </button>

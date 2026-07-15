@@ -32,14 +32,14 @@ export default async function Page({params}: {
             {/* 1. Header & Navigation */}
             <div className="flex items-center justify-between">
                 <Link href="/article"
-                      className="flex items-center gap-2 text-slate-400 hover:text-[#EE1C25] font-black uppercase text-[10px] tracking-widest transition-all">
+                      className="flex items-center gap-2 text-slate-400 hover:text-brand-accent font-black uppercase text-[10px] tracking-widest transition-all">
                     <ChevronLeft size={16}/> Production Roadmap
                 </Link>
                 <div className="flex items-center gap-3">
                     <ShareConsole articleId={Number(id)} />
 
                     <Link href={`/article/edit/${id}`}
-                          className="px-6 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs font-bold hover:shadow-md transition-all">
+                          className="px-6 py-2.5 bg-brand-accent hover:bg-brand-navy text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-md shadow-brand-accent/15 transition-all">
                         Edit Article
                     </Link>
                     <WorkflowActions article={article} />
@@ -50,11 +50,11 @@ export default async function Page({params}: {
 
                 {/* LEFT COLUMN: PRIMARY CONTENT FOCUS CANVAS */}
                 <div className="lg:col-span-2 space-y-6">
-                    <div className="bg-white p-10 rounded-[3rem] border border-slate-200 shadow-sm space-y-8">
+                    <div className="bg-white p-10 rounded-3xl border border-slate-200 shadow-sm space-y-8">
                         <div className="space-y-4">
                             <div className="flex items-center gap-3">
                                 <span
-                                    className="px-3 py-1 bg-red-50 text-[#EE1C25] font-black text-[9px] uppercase tracking-widest rounded-full border border-red-100">
+                                    className="px-3 py-1 bg-brand-accent/10 text-brand-accent font-black text-[9px] uppercase tracking-widest rounded-full border border-brand-accent/20">
                                   {article.content_type || 'New Content'}
                                 </span>
                                 <span className="text-slate-300">/</span>
@@ -113,7 +113,7 @@ export default async function Page({params}: {
                     {/* NEW UPGRADE: SEOStats pulls new global enums and demand figures */}
                     <SEOStats article={article}/>
 
-                    <div className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm space-y-6">
+                    <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
                         <h3 className="font-black text-slate-900 uppercase text-[10px] tracking-widest border-b border-slate-50 pb-4">
                             SEO & Publication
                         </h3>
@@ -165,7 +165,7 @@ export default async function Page({params}: {
                     </div>
 
                     {/* NEW UPGRADE: Corporate Ownership strip includes section taxonomy, target personas and theme maps */}
-                    <div className="bg-slate-900 p-8 rounded-[2.5rem] text-white space-y-6 shadow-xl shadow-slate-200">
+                    <div className="bg-slate-900 p-8 rounded-3xl text-white space-y-6 shadow-xl shadow-slate-200">
                         <h3 className="font-black text-slate-400 uppercase text-[10px] tracking-widest">Corporate Ownership</h3>
 
                         <SidebarItemInverted icon={<User size={16}/>} label="Writer" value={article.writer?.name}/>
@@ -256,7 +256,7 @@ function SEOStats({article}: { article: any }) {
     const wordCount = article.content?.trim().split(/\s+/).filter(Boolean).length || 0;
 
     return (
-        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm space-y-8">
+        <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm space-y-8">
             <div className="flex items-center justify-between border-b border-slate-50 pb-4">
                 <h3 className="font-black text-slate-900 uppercase text-xs tracking-[0.2em]">Meta Strategy Specs</h3>
                 <span className="text-[10px] font-bold text-slate-400">LIVE METRICS</span>

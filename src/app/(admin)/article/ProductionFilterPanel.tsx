@@ -31,7 +31,7 @@ export default function ProductionFilterPanel({
     return (
         <div className="space-y-6 shrink-0">
             {/* YEAR & MONTH SELECTOR BAR */}
-            <div className="flex flex-wrap items-center gap-4 bg-white p-4 rounded-4xl border border-slate-200 shadow-sm">
+            <div className="flex flex-wrap items-center gap-4 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
                 <select
                     value={year}
                     onChange={(e) => setYear(Number(e.target.value))}
@@ -56,7 +56,7 @@ export default function ProductionFilterPanel({
             </div>
 
             {/* FILTERS RIBBON */}
-            <div className="flex flex-wrap items-center gap-3 bg-slate-50/50 p-3 rounded-3xl border border-slate-200/60">
+            <div className="flex flex-wrap items-center gap-3 bg-slate-50/50 p-3 rounded-2xl border border-slate-200/60">
                 <div className="relative flex-1 min-w-75">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                     <input
