@@ -23,12 +23,12 @@ import { createClient } from "@/utils/supabase/client"; // Import from /client
 // Define your menu structure here for easy maintenance
 const NAVIGATION_ITEMS = [
   { label: "Dashboard", icon: LayoutGrid, href: "/" },
+  { label: "SEO Keyword", icon: KeySquare, href: "/seo-keyword" },
   { label: "Article", icon: Rocket, href: "/article" },
   { label: "Section", icon: Axe, href: "/section" },
   { label: "Category", icon: Tags, href: "/category" },
   { label: "Writer", icon: UserPen, href: "/writer" },
   { label: "Product Tag", icon: Package, href: "/product-tag" },
-  { label: "SEO Keyword", icon: KeySquare, href: "/seo-keyword" },
   { label: "Theme", icon: Palette, href: "/theme" },
   { label: "Persona", icon: PersonStanding, href: "/persona" },
   { label: "Campaign", icon: Megaphone, href: "/campaign" },
@@ -37,11 +37,10 @@ const NAVIGATION_ITEMS = [
 const SidebarItem = ({ icon: Icon, label, href, active }: any) => (
   <Link
     href={href}
-    className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 group ${
-      active
-        ? "bg-brand-accent/10 text-brand-accent shadow-sm"
-        : "text-slate-500 hover:bg-brand-cream/60 hover:text-brand-navy"
-    }`}
+    className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 group ${active
+      ? "bg-brand-accent/10 text-brand-accent shadow-sm"
+      : "text-slate-500 hover:bg-brand-cream/60 hover:text-brand-navy"
+      }`}
   >
     <Icon
       size={18}
