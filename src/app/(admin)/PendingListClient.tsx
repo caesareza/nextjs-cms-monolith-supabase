@@ -95,16 +95,16 @@ export default function PendingListClient() {
     );
 
     return (
-        <div className="bg-white rounded-[3rem] border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden">
+        <div className="bg-white rounded-[2.5rem] border border-brand-light-blue/20 shadow-2xl shadow-brand-navy/5 overflow-hidden">
 
             {/* HEADER CONTROLS */}
-            <div className="p-10 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between bg-slate-50/30 gap-6">
+            <div className="p-10 border-b border-brand-light-blue/20 flex flex-col md:flex-row md:items-center justify-between bg-brand-cream/30 gap-6">
                 <div className="flex items-center gap-4">
-                    <div className={`w-3 h-3 rounded-full bg-[#EE1C25] ${loading ? 'animate-ping' : 'animate-pulse'}`} />
-                    <h3 className="font-black text-slate-900 uppercase text-xs tracking-[0.2em]">
+                    <div className={`w-3 h-3 rounded-full bg-brand-accent ${loading ? 'animate-ping' : 'animate-pulse'}`} />
+                    <h3 className="font-black text-brand-navy uppercase text-xs tracking-[0.2em]">
                         Needs Approval
                     </h3>
-                    <span className="text-[10px] bg-red-50 text-[#EE1C25] border border-red-100 px-2 py-0.5 rounded-md font-black">
+                    <span className="text-[10px] bg-brand-accent/10 text-brand-accent border border-brand-accent/20 px-2.5 py-1 rounded-lg font-bold">
                         {filteredArticles.length} Pending
                     </span>
                 </div>
@@ -114,7 +114,7 @@ export default function PendingListClient() {
                     <input
                         type="text"
                         placeholder="Search queue..."
-                        className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-[10px] font-bold uppercase tracking-widest focus:ring-4 focus:ring-red-50 focus:border-[#EE1C25]/20 outline-none transition-all"
+                        className="w-full pl-12 pr-4 py-3 bg-white border border-brand-light-blue/30 rounded-2xl text-[10px] font-bold uppercase tracking-widest focus:ring-4 focus:ring-brand-light-blue/30 focus:border-brand-steel-blue/40 outline-none transition-all placeholder:text-slate-400"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -143,14 +143,14 @@ export default function PendingListClient() {
                                 >
                                     {/* Title Segment */}
                                     <div className="flex-1">
-                                        <h4 className="text-sm font-bold text-slate-800 group-hover:text-[#EE1C25] transition-colors leading-relaxed line-clamp-1">
+                                        <h4 className="text-sm font-bold text-brand-navy group-hover:text-brand-accent transition-colors leading-relaxed line-clamp-1">
                                             {article.title}
                                         </h4>
                                     </div>
 
                                     {/* Writer Track */}
                                     <div className="hidden md:flex items-center gap-3 w-48 shrink-0">
-                                        <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 group-hover:bg-red-50 group-hover:text-[#EE1C25] transition-colors">
+                                        <div className="w-8 h-8 bg-brand-cream/60 rounded-full flex items-center justify-center text-brand-steel-blue/60 group-hover:bg-brand-accent/10 group-hover:text-brand-accent transition-colors">
                                             <User size={14} />
                                         </div>
                                         <span className="text-[10px] font-black text-slate-500 uppercase truncate">
@@ -167,7 +167,7 @@ export default function PendingListClient() {
                                     </div>
 
                                     {/* Toggle Action Control Icon */}
-                                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all shrink-0 ${isExpanded ? 'bg-slate-900 text-white' : 'bg-slate-50 text-slate-300 group-hover:bg-slate-100 group-hover:text-slate-600'}`}>
+                                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all shrink-0 ${isExpanded ? 'bg-brand-navy text-brand-cream' : 'bg-brand-cream/60 text-brand-steel-blue/50 group-hover:bg-brand-cream group-hover:text-brand-navy'}`}>
                                         {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                                     </div>
                                 </div>
@@ -178,50 +178,50 @@ export default function PendingListClient() {
 
                                         {/* Row 1: Triple Metrics Overview Context */}
                                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                            <div className="bg-white p-4 border border-slate-200/60 rounded-2xl flex items-center gap-3">
+                                            <div className="bg-white p-4 border border-brand-light-blue/20 rounded-2xl flex items-center gap-3">
                                                 <div className="p-2.5 bg-orange-50 text-orange-500 rounded-xl"><Flame size={16}/></div>
                                                 <div>
-                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Search Demand</p>
-                                                    <p className="text-sm font-black text-slate-800 tabular-nums">{(article.demand || 0).toLocaleString('id-ID')}</p>
+                                                    <p className="text-[9px] font-black text-brand-steel-blue/60 uppercase tracking-wider">Search Demand</p>
+                                                    <p className="text-sm font-black text-brand-navy tabular-nums">{(article.demand || 0).toLocaleString('id-ID')}</p>
                                                 </div>
                                             </div>
 
-                                            <div className="bg-white p-4 border border-slate-200/60 rounded-2xl flex items-center gap-3">
-                                                <div className="p-2.5 bg-emerald-50 text-emerald-500 rounded-xl"><HelpCircle size={16}/></div>
+                                            <div className="bg-white p-4 border border-brand-light-blue/20 rounded-2xl flex items-center gap-3">
+                                                <div className="p-2.5 bg-brand-light-blue/10 text-brand-steel-blue rounded-xl"><HelpCircle size={16}/></div>
                                                 <div>
-                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Search Intent</p>
-                                                    <p className="text-xs font-black text-slate-700">{article.intent || 'Informational'}</p>
+                                                    <p className="text-[9px] font-black text-brand-steel-blue/60 uppercase tracking-wider">Search Intent</p>
+                                                    <p className="text-xs font-black text-brand-steel-blue">{article.intent || 'Informational'}</p>
                                                 </div>
                                             </div>
 
-                                            <div className="bg-white p-4 border border-slate-200/60 rounded-2xl flex items-center gap-3">
-                                                <div className="p-2.5 bg-red-50 text-[#EE1C25] rounded-xl"><ShieldCheck size={16}/></div>
+                                            <div className="bg-white p-4 border border-brand-light-blue/20 rounded-2xl flex items-center gap-3">
+                                                <div className="p-2.5 bg-brand-accent/10 text-brand-accent rounded-xl"><ShieldCheck size={16}/></div>
                                                 <div>
-                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Classification</p>
-                                                    <p className="text-xs font-black text-slate-700">{article.classification || 'Infantry'}</p>
+                                                    <p className="text-[9px] font-black text-brand-steel-blue/60 uppercase tracking-wider">Classification</p>
+                                                    <p className="text-xs font-black text-brand-accent">{article.classification || 'Infantry'}</p>
                                                 </div>
                                             </div>
                                         </div>
 
                                         {/* Row 2: Deep Intent Keyword Copy Deck Data */}
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div className="space-y-1 bg-white p-4 border border-slate-200/60 rounded-2xl">
-                                                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Target Focus Keyword</span>
-                                                <p className="text-xs font-mono font-bold text-slate-800 bg-slate-50 px-2.5 py-1.5 rounded border border-slate-100 mt-1">{article.target_keyword || '—'}</p>
+                                            <div className="space-y-1 bg-white p-4 border border-brand-light-blue/20 rounded-2xl">
+                                                <span className="text-[9px] font-black uppercase tracking-widest text-brand-steel-blue/60 block">Target Focus Keyword</span>
+                                                <p className="text-xs font-mono font-bold text-brand-navy bg-brand-cream/40 px-2.5 py-1.5 rounded border border-brand-light-blue/10 mt-1">{article.target_keyword || '—'}</p>
                                             </div>
 
-                                            <div className="space-y-1 bg-white p-4 border border-slate-200/60 rounded-2xl">
-                                                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Meta Description Snippet</span>
-                                                <p className="text-xs font-medium text-slate-600 leading-relaxed mt-1">{article.meta_description || '—'}</p>
+                                            <div className="space-y-1 bg-white p-4 border border-brand-light-blue/20 rounded-2xl">
+                                                <span className="text-[9px] font-black uppercase tracking-widest text-brand-steel-blue/60 block">Meta Description Snippet</span>
+                                                <p className="text-xs font-medium text-brand-steel-blue leading-relaxed mt-1">{article.meta_description || '—'}</p>
                                             </div>
                                         </div>
 
                                         {/* Row 3: Live Decision Trigger Toolbar */}
-                                        <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-100">
+                                        <div className="flex items-center justify-end gap-3 pt-2 border-t border-brand-light-blue/15">
                                             <button
                                                 disabled={isActionBusy}
                                                 onClick={() => setShowRejectModalId(article.id)}
-                                                className="px-5 py-2.5 border border-red-200 bg-white hover:bg-red-50 text-red-600 rounded-xl text-xs font-black uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-40"
+                                                className="px-5 py-2.5 border border-brand-accent/20 bg-white hover:bg-brand-accent/10 text-brand-accent rounded-xl text-xs font-black uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-40"
                                             >
                                                 <AlertTriangle size={14} /> Request Revision
                                             </button>
@@ -229,7 +229,7 @@ export default function PendingListClient() {
                                             <button
                                                 disabled={isActionBusy}
                                                 onClick={() => handleInlineApprove(article)}
-                                                className="px-6 py-2.5 bg-[#EE1C25] hover:bg-red-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer flex items-center gap-1.5 disabled:opacity-40"
+                                                className="px-6 py-2.5 bg-brand-accent hover:bg-brand-navy text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer flex items-center gap-1.5 disabled:opacity-40"
                                             >
                                                 {isActionBusy ? (
                                                     <>
@@ -248,16 +248,16 @@ export default function PendingListClient() {
 
                                 {/* INDEPENDENT FLOATING INLINE OVERLAY FOR ENTRY LEVEL REJECTIONS */}
                                 {showRejectModalId === article.id && (
-                                    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-                                        <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 animate-in zoom-in-95 duration-150">
-                                            <h3 className="text-base font-black text-slate-900 mb-1">Reject Strategic Concepts</h3>
-                                            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-4">Provide clear internal instructions</p>
+                                    <div className="fixed inset-0 bg-brand-navy/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+                                        <div className="bg-brand-cream rounded-2xl max-w-md w-full p-6 shadow-2xl border border-brand-light-blue/20 animate-in zoom-in-95 duration-150">
+                                            <h3 className="text-base font-black text-brand-navy mb-1">Reject Strategic Concepts</h3>
+                                            <p className="text-xs text-brand-steel-blue font-bold uppercase tracking-wider mb-4">Provide clear internal instructions</p>
 
                                             <form onSubmit={(e) => handleInlineRejectSubmit(e, article)}>
                                                 <textarea
                                                     required
                                                     rows={4}
-                                                    className="w-full bg-slate-50/70 border border-slate-200 rounded-xl p-3.5 text-xs font-medium text-slate-700 outline-none focus:bg-white focus:ring-4 focus:ring-red-50 focus:border-[#EE1C25]/20 transition-all resize-none"
+                                                    className="w-full bg-white border border-brand-light-blue/30 rounded-xl p-3.5 text-xs font-medium text-brand-navy outline-none focus:ring-4 focus:ring-brand-light-blue/20 focus:border-brand-steel-blue transition-all resize-none placeholder:text-slate-400"
                                                     placeholder="Specify exact optimizations required (e.g. adjust alignment, target commercial metrics instead...)"
                                                     value={internalNote}
                                                     onChange={(e) => setInternalNote(e.target.value)}
@@ -266,7 +266,7 @@ export default function PendingListClient() {
                                                 <div className="flex justify-end gap-2 mt-4">
                                                     <button
                                                         type="button"
-                                                        className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-500 hover:bg-slate-50 rounded-xl transition-colors"
+                                                        className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-brand-steel-blue hover:bg-brand-light-blue/10 rounded-xl transition-colors"
                                                         onClick={() => { setShowRejectModalId(null); setInternalNote(''); }}
                                                     >
                                                         Cancel
@@ -274,7 +274,7 @@ export default function PendingListClient() {
                                                     <button
                                                         type="submit"
                                                         disabled={!internalNote.trim()}
-                                                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 text-xs font-black uppercase tracking-widest rounded-xl transition-colors disabled:opacity-40"
+                                                        className="bg-brand-accent hover:bg-brand-navy text-white px-4 py-2 text-xs font-black uppercase tracking-widest rounded-xl transition-colors disabled:opacity-40"
                                                     >
                                                         Confirm Reject
                                                     </button>

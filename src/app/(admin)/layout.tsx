@@ -27,14 +27,14 @@ const SidebarItem = ({ icon: Icon, label, href, active }: any) => (
         href={href}
         className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 group ${
             active
-                ? 'bg-red-50 text-red-500 dark:bg-slate-800 dark:text-white shadow-sm'
-                : 'text-slate-500 hover:bg-slate-100'
+                ? 'bg-brand-accent/10 text-brand-accent shadow-sm'
+                : 'text-slate-500 hover:bg-brand-cream/60 hover:text-brand-navy'
         }`}
     >
-        <Icon size={18} className={active ? 'text-red-600 dark:text-red-400' : 'group-hover:scale-110 transition-transform'} />
+        <Icon size={18} className={active ? 'text-brand-accent' : 'group-hover:scale-110 transition-transform text-slate-400 group-hover:text-brand-steel-blue'} />
         <span className="text-sm font-semibold">{label}</span>
         {active && (
-            <div className="ml-auto w-1.5 h-1.5 rounded-full bg-red-500 dark:bg-red-400 animate-pulse" />
+            <div className="ml-auto w-1.5 h-1.5 rounded-full bg-brand-accent animate-pulse" />
         )}
     </Link>
 );
@@ -67,12 +67,16 @@ export default function RootLayout({
   return (
       <div className="flex h-screen  text-slate-900 font-sans transition-colors duration-300">
           {/* Sidebar */}
-          <aside className="w-64 border-r border-slate-300  flex flex-col p-4 gap-6 bg-slate-50">
-              <div className="flex items-center gap-2 px-2 py-4">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center shadow-lg shadow-red-500/20">
-                      <Rocket size={18} className="text-slate-700" />
+          <aside className="w-64 border-r border-brand-light-blue/20 flex flex-col p-4 gap-6 bg-brand-cream/30">
+              <div className="flex items-center gap-2.5 px-2 py-4">
+                  <div className="w-8 h-8 bg-brand-red rounded-lg flex items-center justify-center shadow-lg shadow-brand-red/20">
+                      <svg className="w-5 h-5 text-brand-cream" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="15" y="15" width="70" height="70" rx="20" fill="currentColor" />
+                          <rect x="30" y="30" width="40" height="30" rx="8" fill="#1D3557" />
+                          <path d="M35 55L32 63L43 59" fill="#1D3557" />
+                      </svg>
                   </div>
-                  <span className="font-bold tracking-tight text-xl">OCBC</span>
+                  <span className="font-extrabold tracking-tight text-xl text-brand-navy">Post<span className="text-brand-red font-light">hinks</span></span>
               </div>
 
               {/* Navigation */}
@@ -92,9 +96,9 @@ export default function RootLayout({
               </nav>
 
               {/* User Profile at Bottom */}
-              <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
+              <div className="mt-auto pt-4 border-t border-brand-light-blue/15">
                   <div className="flex items-center gap-3 px-2 py-2 rounded-lg transition-colors">
-                      <div className="w-8 h-8 rounded-full bg-red-100 dark:bg-slate-700 overflow-hidden border border-slate-200 dark:border-slate-600">
+                      <div className="w-8 h-8 rounded-full bg-brand-light-blue/20 overflow-hidden border border-brand-light-blue/30">
                           <img src="https://api.dicebear.com/7.x/avataaars/svg" alt="User" />
                       </div>
                       <div className="flex flex-col min-w-0">
@@ -114,7 +118,7 @@ export default function RootLayout({
                       <input
                           type="text"
                           placeholder="Search projects..."
-                          className="w-full border border-slate-200 rounded-lg py-1.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all placeholder:text-slate-400"
+                          className="w-full border border-brand-light-blue/30 rounded-lg py-1.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand-steel-blue/30 focus:border-brand-steel-blue transition-all placeholder:text-slate-400"
                       />
                   </div>
 
