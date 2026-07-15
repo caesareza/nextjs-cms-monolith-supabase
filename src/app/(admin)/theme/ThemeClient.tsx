@@ -67,7 +67,7 @@ export default function ThemeClient() {
 
             {/* HEADER METRICS */}
             <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-red-50 flex items-center justify-center text-[#EE1C25]">
+                <div className="w-10 h-10 rounded-2xl bg-brand-accent/10 flex items-center justify-center text-brand-accent">
                     <Palette size={20} />
                 </div>
                 <div>
@@ -81,7 +81,7 @@ export default function ThemeClient() {
                 <input
                     type="text"
                     placeholder="E.g., Kesehatan & Lingkungan, Life Series..."
-                    className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold outline-none focus:bg-white focus:ring-4 focus:ring-red-50 focus:border-[#EE1C25]/20 transition-all"
+                    className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold outline-none focus:bg-white focus:ring-4 focus:ring-brand-light-blue/20 focus:border-brand-accent/20 transition-all"
                     value={newThemeName}
                     onChange={(e) => setNewThemeName(e.target.value)}
                 />
@@ -138,7 +138,7 @@ export default function ThemeClient() {
                                             <button onClick={() => { setEditingId(theme.id); setEditingName(theme.name); }} className="p-2 text-slate-400 hover:text-slate-700 bg-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-all">
                                                 <Edit2 size={14} />
                                             </button>
-                                            <button onClick={() => handleDelete(theme.id)} className="p-2 text-slate-400 hover:text-[#EE1C25] bg-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-all">
+                                            <button onClick={() => handleDelete(theme.id)} className="p-2 text-slate-400 hover:text-brand-accent bg-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-all">
                                                 <Trash2 size={14} />
                                             </button>
                                         </>

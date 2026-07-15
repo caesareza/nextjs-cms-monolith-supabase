@@ -91,7 +91,7 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                     <div className="bg-white p-6 border border-slate-200/70 rounded-3xl space-y-4 shadow-xs">
                         <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
                             <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-1.5">
-                                <span className="w-1.5 h-3 bg-[#EE1C25] rounded-xs" /> Content Taxonomy Cluster
+                                <span className="w-1.5 h-3 bg-brand-accent rounded-xs" /> Content Taxonomy Cluster
                             </span>
                             <span className="text-[9px] font-bold text-slate-400 uppercase">Step 1 of 3</span>
                         </div>
@@ -100,7 +100,7 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Proposed Headline Title</label>
                             <input
                                 type="text"
-                                className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:bg-white focus:ring-4 focus:ring-red-50 focus:border-[#EE1C25]/20 transition-all placeholder:text-slate-300"
+                                className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:bg-white focus:ring-4 focus:ring-brand-light-blue/20 focus:border-brand-accent/20 transition-all placeholder:text-slate-300"
                                 placeholder="Enter content concept topic header..."
                                 value={form.title}
                                 onChange={(e) => setForm({...form, title: e.target.value})}
@@ -139,7 +139,7 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                     <div className="bg-white p-6 border border-slate-200/70 rounded-3xl space-y-4 shadow-xs">
                         <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
                             <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-1.5">
-                                <span className="w-1.5 h-3 bg-[#EE1C25] rounded-xs" /> Market Alignment Matrix
+                                <span className="w-1.5 h-3 bg-brand-accent rounded-xs" /> Market Alignment Matrix
                             </span>
                             <span className="text-[9px] font-bold text-slate-400 uppercase">Step 2 of 3</span>
                         </div>
@@ -190,7 +190,7 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                     <div className="bg-white p-6 border border-slate-200/70 rounded-3xl space-y-5 shadow-xs">
                         <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
                             <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-1.5">
-                                <span className="w-1.5 h-3 bg-[#EE1C25] rounded-xs" /> Performance Analytics & Suite
+                                <span className="w-1.5 h-3 bg-brand-accent rounded-xs" /> Performance Analytics & Suite
                             </span>
                             <span className="text-[9px] font-bold text-slate-400 uppercase">Step 3 of 3</span>
                         </div>
@@ -198,7 +198,7 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                         {/* Operational Classification dropdown select parameter */}
                         <div className="space-y-1.5">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5">
-                                <ShieldCheck size={11} className="text-[#EE1C25]" /> Content Operational Classification
+                                <ShieldCheck size={11} className="text-brand-accent" /> Content Operational Classification
                             </label>
                             <select
                                 className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer"
@@ -216,7 +216,7 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                         <div className="grid grid-cols-3 gap-3 bg-slate-50 p-4 border border-slate-200/60 rounded-2xl">
                             <div className="space-y-1">
                                 <label className="text-[9px] font-black text-slate-500 uppercase tracking-wider flex items-center gap-1"><Flame size={10} className="text-orange-500"/> Search Vol</label>
-                                <input type="number" className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-red-100" placeholder="E.g. 1000" value={form.demand} onChange={(e) => setForm({...form, demand: e.target.value})} />
+                                <input type="number" className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-brand-light-blue/30" placeholder="E.g. 1000" value={form.demand} onChange={(e) => setForm({...form, demand: e.target.value})} />
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Search Intent</label>
@@ -250,7 +250,7 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
 
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">CTA Destination Links</label>
-                                <input type="url" className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:bg-white transition-all placeholder:text-slate-300" placeholder="https://ocbc.id/..." value={form.cta_internal_link} onChange={(e) => setForm({...form, cta_internal_link: e.target.value})} />
+                                <input type="url" className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:bg-white focus:ring-4 focus:ring-brand-light-blue/20 focus:border-brand-accent/20 transition-all placeholder:text-slate-300" placeholder="https://ocbc.id/..." value={form.cta_internal_link} onChange={(e) => setForm({...form, cta_internal_link: e.target.value})} />
                             </div>
                         </div>
                     </div>
@@ -265,7 +265,7 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                         type="submit"
                         disabled={submitLoading || !form.title.trim() || !form.target_keyword.trim()}
                         onClick={handleSubmitInternal}
-                        className="flex-1 py-3.5 bg-[#EE1C25] hover:bg-[#d6141c] disabled:opacity-40 text-white font-black text-xs uppercase tracking-[0.15em] rounded-xl transition-all shadow-md shadow-red-200 flex items-center justify-center gap-2"
+                        className="flex-1 py-3.5 bg-brand-accent hover:bg-brand-navy disabled:opacity-40 text-white font-black text-xs uppercase tracking-[0.15em] rounded-xl transition-all shadow-md shadow-brand-accent/20 flex items-center justify-center gap-2"
                     >
                         {submitLoading ? <Loader2 size={14} className="animate-spin" /> : 'Commit Strategy Data'}
                     </button>

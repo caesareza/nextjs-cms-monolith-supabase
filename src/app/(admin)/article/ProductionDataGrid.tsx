@@ -57,7 +57,7 @@ export default function ProductionDataGrid({ articles, loading }: ProductionData
                                 {/* 1. TOPIC & AUTHOR BLOCK */}
                                 <td className="pl-8 pr-4 py-5">
                                     <div className="flex flex-col space-y-1 max-w-xl">
-                                        <Link href={`/article/${item.id}`} className="text-sm font-bold text-slate-900 group-hover:text-[#EE1C25] transition-colors leading-snug line-clamp-1 cursor-pointer">
+                                        <Link href={`/article/${item.id}`} className="text-sm font-bold text-slate-900 group-hover:text-brand-accent transition-colors leading-snug line-clamp-1 cursor-pointer">
                                             {item.title}
                                         </Link>
                                         <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 select-none">

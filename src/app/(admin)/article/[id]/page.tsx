@@ -86,7 +86,7 @@ export default async function Page({params}: {
                                         href={article.content_old}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center gap-2 text-sm font-bold text-amber-700 hover:text-[#EE1C25] transition-colors group"
+                                        className="flex items-center gap-2 text-sm font-bold text-amber-700 hover:text-brand-accent transition-colors group"
                                     >
                                         <span className="truncate">{article.content_old}</span>
                                         <ExternalLink size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -143,16 +143,16 @@ export default async function Page({params}: {
                                                 href={cleanUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="group flex flex-col p-3 bg-slate-50 border border-slate-100 rounded-xl hover:border-[#EE1C25]/30 hover:bg-red-50/30 transition-all"
+                                                className="group flex flex-col p-3 bg-slate-50 border border-slate-100 rounded-xl hover:border-brand-accent/30 hover:bg-brand-accent/5 transition-all"
                                             >
-                                                <span className="text-[9px] font-black text-[#EE1C25] uppercase tracking-tighter mb-1 opacity-70 group-hover:opacity-100">
+                                                <span className="text-[9px] font-black text-brand-accent uppercase tracking-tighter mb-1 opacity-70 group-hover:opacity-100">
                                                   Link {index + 1} • {label}
                                                 </span>
                                                 <div className="flex items-center justify-between gap-2">
                                                   <span className="text-[11px] font-medium text-slate-500 truncate group-hover:text-slate-900 transition-colors">
                                                     {cleanUrl}
                                                   </span>
-                                                    <ExternalLink size={12} className="text-slate-300 group-hover:text-[#EE1C25] shrink-0" />
+                                                    <ExternalLink size={12} className="text-slate-300 group-hover:text-brand-accent shrink-0" />
                                                 </div>
                                             </a>
                                         );
@@ -224,7 +224,7 @@ function SidebarItem({icon, label, value, isLink}: any) {
                 <div className="text-slate-300">{icon}</div>
                 {isLink && value ? (
                     <a href={value} target="_blank" rel="noopener noreferrer"
-                       className="text-xs font-bold text-[#EE1C25] hover:underline truncate">{value}</a>
+                       className="text-xs font-bold text-brand-accent hover:text-brand-navy hover:underline truncate">{value}</a>
                 ) : (
                     <span className="text-xs font-bold text-slate-700">{value || '-'}</span>
                 )}
@@ -236,7 +236,7 @@ function SidebarItem({icon, label, value, isLink}: any) {
 function SidebarItemInverted({ icon, label, value, rawValue }: any) {
     return (
         <div className="flex items-center gap-4 group/item">
-            <div className="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center text-slate-400 group-hover/item:text-[#EE1C25] transition-colors shrink-0">
+            <div className="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center text-slate-400 group-hover/item:text-brand-accent transition-colors shrink-0">
                 {icon}
             </div>
             <div>
@@ -278,7 +278,7 @@ function SEOStats({article}: { article: any }) {
                 </div>
                 <div className="space-y-0.5">
                     <span className="block text-[8px] font-black uppercase text-slate-400 tracking-wider">Classification</span>
-                    <span className="text-[10px] font-bold text-red-600 uppercase tracking-tighter block truncate px-1">
+                    <span className="text-[10px] font-bold text-brand-accent uppercase tracking-tighter block truncate px-1">
                         {article.classification || 'Infantry'}
                     </span>
                 </div>
@@ -323,13 +323,13 @@ function MetricRow({label, value, limit, unit, isError}: any) {
         <div className="space-y-2">
             <div className="flex justify-between items-end select-none">
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">{label}</span>
-                <span className={`text-xs font-black tabular-nums ${isError ? 'text-[#EE1C25]' : 'text-emerald-500'}`}>
+                <span className={`text-xs font-black tabular-nums ${isError ? 'text-orange-650' : 'text-emerald-500'}`}>
                     {value} / {limit} {unit}
                 </span>
             </div>
             <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                 <div
-                    className={`h-full transition-all duration-500 ${isError ? 'bg-[#EE1C25]' : 'bg-emerald-500'}`}
+                    className={`h-full transition-all duration-500 ${isError ? 'bg-orange-500' : 'bg-emerald-500'}`}
                     style={{width: `${Math.min((value / limit) * 100, 100)}%`}}
                 />
             </div>

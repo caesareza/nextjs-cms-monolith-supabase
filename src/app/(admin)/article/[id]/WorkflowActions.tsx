@@ -68,7 +68,7 @@ export default function WorkflowActions({ article }: WorkflowProps) {
         <>
             {/* THE MAIN ACTION BUTTONS */}
             <div className="flex items-center gap-3">
-                {loading && <Loader2 size={18} className="animate-spin text-[#EE1C25]" />}
+                {loading && <Loader2 size={18} className="animate-spin text-brand-accent" />}
 
                 {/* STAGE: DRAFT -> READY FOR REVIEW */}
                 {(status === 'draft' || status === 'progress') && (
@@ -86,7 +86,7 @@ export default function WorkflowActions({ article }: WorkflowProps) {
                     <button
                         disabled={loading}
                         onClick={() => handleUpdate('ready for review', 'approved')}
-                        className="flex items-center gap-2 px-6 py-2.5 bg-[#EE1C25] text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-red-100 cursor-pointer hover:brightness-110 transition-all"
+                        className="flex items-center gap-2 px-6 py-2.5 bg-brand-accent text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-brand-accent/20 cursor-pointer hover:bg-brand-navy transition-all"
                     >
                         <CheckCircle size={14} /> Approve Content
                     </button>
@@ -96,7 +96,7 @@ export default function WorkflowActions({ article }: WorkflowProps) {
                 {status === 'ready for review' && approval === 'approved' && !showUrlInput && (
                     <button
                         onClick={() => setShowUrlInput(true)}
-                        className="flex items-center gap-2 px-6 py-2.5 bg-[#EE1C25] text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-red-100 cursor-pointer animate-pulse active:scale-95 transition-all"
+                        className="flex items-center gap-2 px-6 py-2.5 bg-brand-accent text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-brand-accent/20 cursor-pointer animate-pulse active:scale-95 hover:bg-brand-navy transition-all"
                     >
                         <Globe size={14} /> Finalize Publication
                     </button>
@@ -118,7 +118,7 @@ export default function WorkflowActions({ article }: WorkflowProps) {
                             {/* URL Input Area */}
                             <div className="flex-1 w-full">
                                 <div className="flex items-center justify-between mb-2">
-                                    <label className="text-[10px] font-black text-[#EE1C25] uppercase tracking-[0.2em] flex items-center gap-2">
+                                    <label className="text-[10px] font-black text-brand-accent uppercase tracking-[0.2em] flex items-center gap-2">
                                         <Link2 size={14} /> Paste Production URL
                                     </label>
                                     {!isValidUrl && urlPublished.length > 0 && (
@@ -134,7 +134,7 @@ export default function WorkflowActions({ article }: WorkflowProps) {
                                         value={urlPublished}
                                         onChange={(e) => setUrlPublished(e.target.value)}
                                         placeholder="https://www.ocbc.id/id/article/..."
-                                        className="w-full pl-6 pr-6 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-sm font-bold outline-none focus:border-[#EE1C25]/20 focus:bg-white transition-all placeholder:text-slate-300"
+                                        className="w-full pl-6 pr-6 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-sm font-bold outline-none focus:border-brand-accent/20 focus:ring-4 focus:ring-brand-light-blue/20 focus:bg-white transition-all placeholder:text-slate-300"
                                     />
                                 </div>
                             </div>
@@ -150,7 +150,7 @@ export default function WorkflowActions({ article }: WorkflowProps) {
                                 <button
                                     disabled={!isValidUrl || loading}
                                     onClick={() => handleUpdate('published', 'approved', urlPublished)}
-                                    className="flex-1 md:flex-none flex items-center justify-center gap-3 px-10 py-4 bg-[#EE1C25] text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-red-200 hover:brightness-110 active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+                                    className="flex-1 md:flex-none flex items-center justify-center gap-3 px-10 py-4 bg-brand-accent hover:bg-brand-navy text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-brand-accent/20 active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed transition-all"
                                 >
                                     {loading ? <Loader2 size={16} className="animate-spin" /> : <>Confirm <ArrowRight size={14}/></>}
                                 </button>

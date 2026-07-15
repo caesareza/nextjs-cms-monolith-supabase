@@ -135,7 +135,7 @@ export default function EditArticleClient({
                 <button
                     disabled={loading || isSeoPending}
                     type="submit"
-                    className="bg-[#EE1C25] text-white px-10 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-red-100 flex items-center gap-2 hover:brightness-110 active:scale-95 disabled:opacity-40 transition-all cursor-pointer"
+                    className="bg-brand-accent text-white px-10 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-brand-accent/20 flex items-center gap-2 hover:bg-brand-navy active:scale-95 disabled:opacity-40 transition-all cursor-pointer"
                 >
                     {loading ? <Loader2 className="animate-spin" size={16} /> : isSeoPending ? <Lock size={14} /> : <Save size={16} />}
                     {isSeoPending ? 'Strategy Locked' : 'Push Updates'}
@@ -144,15 +144,15 @@ export default function EditArticleClient({
 
             {/* VALIDATION ALERT PANEL */}
             {error && (
-                <div className="bg-red-50 border border-red-200/80 rounded-2xl p-4 flex items-start gap-3 text-red-800 shadow-xs animate-in slide-in-from-top-3 duration-200">
-                    <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center shrink-0 text-[#EE1C25] mt-0.5">
+                <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4 flex items-start gap-3 text-orange-850 shadow-xs animate-in slide-in-from-top-3 duration-200">
+                    <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center shrink-0 text-orange-600 mt-0.5">
                         <Info size={16} />
                     </div>
                     <div className="flex-1 space-y-0.5">
                         <h4 className="text-xs font-black uppercase tracking-wider">Required Field Validation Alert</h4>
-                        <p className="text-xs font-medium text-red-700/90 leading-relaxed">{error}</p>
+                        <p className="text-xs font-medium text-orange-700/90 leading-relaxed">{error}</p>
                     </div>
-                    <button type="button" onClick={() => setError(null)} className="text-red-400 hover:text-red-700 text-[10px] font-black uppercase tracking-tight px-2 py-1 hover:bg-red-100 rounded-md transition-colors cursor-pointer">Dismiss</button>
+                    <button type="button" onClick={() => setError(null)} className="text-orange-500 hover:text-orange-700 text-[10px] font-black uppercase tracking-tight px-2 py-1 hover:bg-orange-100 rounded-md transition-colors cursor-pointer">Dismiss</button>
                 </div>
             )}
 
@@ -174,7 +174,7 @@ export default function EditArticleClient({
                             {/* Writer Selector Input Field */}
                             <div className="flex flex-col gap-2">
                                 <label className="text-[10px] font-black text-slate-500 uppercase flex items-center gap-1">
-                                    <User className="text-slate-400" size={12}/> Writer Assignment <span className="text-[#EE1C25] font-bold">*</span>
+                                    <User className="text-slate-400" size={12}/> Writer Assignment <span className="text-brand-accent font-bold">*</span>
                                 </label>
                                 <select
                                     className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:bg-white cursor-pointer"
@@ -215,7 +215,7 @@ export default function EditArticleClient({
                                 </div>
                             )}
                             <div className={isSeoPending ? "opacity-10 pointer-events-none" : ""}>
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">Content Body (HTML Mode) <span className="text-[#EE1C25] font-bold">*</span></label>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">Content Body (HTML Mode) <span className="text-brand-accent font-bold">*</span></label>
                                 <HtmlEditor value={form.content} onChange={(html: string) => setForm({...form, content: html})} />
                             </div>
                         </div>
@@ -227,7 +227,7 @@ export default function EditArticleClient({
                             </label>
                             <textarea
                                 rows={3}
-                                className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-mono font-bold text-slate-900 outline-none focus:bg-white focus:border-[#EE1C25]/20 transition-all leading-relaxed"
+                                className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-mono font-bold text-slate-900 outline-none focus:bg-white focus:border-brand-accent/20 focus:ring-4 focus:ring-brand-light-blue/20 transition-all leading-relaxed"
                                 placeholder="Paste structural target linking parameters..."
                                 value={form.cta_internal_link}
                                 onChange={(e) => setForm({...form, cta_internal_link: e.target.value})}
@@ -294,8 +294,8 @@ export default function EditArticleClient({
                                 <span className="font-extrabold text-amber-400 uppercase">{form.type}</span>
                             </p>
                             <p className="flex justify-between px-1 items-center">
-                                <span className="flex items-center gap-1 text-slate-400"><ShieldCheck className="text-red-400 shrink-0" size={12}/> Classification:</span>
-                                <span className="font-extrabold text-red-400 uppercase">{form.classification}</span>
+                                <span className="flex items-center gap-1 text-slate-400"><ShieldCheck className="text-brand-accent shrink-0" size={12}/> Classification:</span>
+                                <span className="font-extrabold text-brand-accent uppercase">{form.classification}</span>
                             </p>
                         </div>
                     </div>
