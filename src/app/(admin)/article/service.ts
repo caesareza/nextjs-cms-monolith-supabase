@@ -228,7 +228,7 @@ export const ArticleService = {
     async updateArticle(id: number | string, payload: {
         title?: string;
         content?: string;
-        writer_id: number;
+        writer_id?: number;
         category_id?: number;
         section_id?: number;
         product_id?: number;
