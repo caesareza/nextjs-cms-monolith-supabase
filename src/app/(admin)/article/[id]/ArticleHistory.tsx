@@ -36,7 +36,7 @@ export default function ArticleHistory({ logs = [] }: { logs: any[] }) {
         return (
             <div className="bg-white rounded-[2.5rem] border border-slate-200 p-10 shadow-sm">
                 <div className="flex items-center gap-3 border-b border-slate-50 pb-6 mb-6">
-                    <Clock className="text-[#EE1C25]" size={20} />
+                    <Clock className="text-brand-accent" size={20} />
                     <h3 className="font-black text-slate-900 uppercase text-xs tracking-[0.2em]">Audit Trail & History</h3>
                 </div>
                 <div className="flex flex-col items-center justify-center py-10 text-slate-300">
@@ -51,7 +51,7 @@ export default function ArticleHistory({ logs = [] }: { logs: any[] }) {
         <div className="bg-white rounded-[2.5rem] border border-slate-200 p-10 shadow-sm space-y-8">
             <div className="flex items-center justify-between border-b border-slate-50 pb-6">
                 <div className="flex items-center gap-3">
-                    <Clock className="text-[#EE1C25]" size={20} />
+                    <Clock className="text-brand-accent" size={20} />
                     <h3 className="font-black text-slate-900 uppercase text-xs tracking-[0.2em]">Audit Trail & History</h3>
                 </div>
 
@@ -78,8 +78,8 @@ export default function ArticleHistory({ logs = [] }: { logs: any[] }) {
                 {logs.map((log) => (
                     <div key={log.id} className="relative flex items-start gap-6 group">
                         {/* Timeline Dot */}
-                        <div className="absolute left-0 w-10 h-10 rounded-xl bg-white border-2 border-slate-100 flex items-center justify-center z-10 group-hover:border-[#EE1C25] transition-all">
-                            <div className="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-[#EE1C25]" />
+                        <div className="absolute left-0 w-10 h-10 rounded-xl bg-white border-2 border-slate-100 flex items-center justify-center z-10 group-hover:border-brand-accent transition-all">
+                            <div className="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-brand-accent" />
                         </div>
 
                         <div className="pl-14 space-y-3 flex-1">
@@ -94,7 +94,7 @@ export default function ArticleHistory({ logs = [] }: { logs: any[] }) {
                   })}
                 </span>
                                 <div className="flex items-center gap-2 text-[9px] font-bold text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
-                                    <User size={12} className="text-[#EE1C25]" />
+                                    <User size={12} className="text-brand-accent" />
                                     {log.user_email || 'System'}
                                 </div>
                             </div>

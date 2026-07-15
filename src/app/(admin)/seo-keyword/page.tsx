@@ -17,7 +17,7 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 
 function getStrategyApprovalBadge(approval: string) {
     if (approval === 'pending') return { label: 'Awaiting Review', color: 'text-amber-600 bg-amber-50/60 border-amber-100' };
-    if (approval === 'rejected') return { label: 'Revision Needed', color: 'text-red-600 bg-red-50/60 border-red-100' };
+    if (approval === 'rejected') return { label: 'Revision Needed', color: 'text-orange-700 bg-orange-50 border-orange-200' };
     return { label: 'Approved', color: 'text-emerald-600 bg-emerald-50/60 border-emerald-100' };
 }
 
@@ -141,7 +141,7 @@ export default function UnifiedSeoKeywordPage() {
                 </div>
                 <button
                     onClick={() => setShowCreateForm(true)}
-                    className="bg-[#EE1C25] text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-red-700 transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
+                    className="bg-brand-accent text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-brand-navy transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
                 >
                     <Plus size={14} /> Create Strategy
                 </button>
@@ -242,7 +242,7 @@ export default function UnifiedSeoKeywordPage() {
                                 <tr key={item.id} className="group hover:bg-slate-50/40 transition-colors">
                                     <td className="px-6 py-4.5">
                                         <div className="flex flex-col">
-                                            <span className="text-sm font-bold text-slate-900 group-hover:text-[#EE1C25] transition-colors line-clamp-1">{item.title}</span>
+                                            <span className="text-sm font-bold text-slate-900 group-hover:text-brand-accent transition-colors line-clamp-1">{item.title}</span>
                                             <span className="text-[10px] text-slate-400 font-black mt-1 uppercase tracking-tight">
                                                     {item.section || item.category} • 🛠️ {item.contentType === 'new' ? 'NEW' : 'ADJUST'}
                                                 </span>

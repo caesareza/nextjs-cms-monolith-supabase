@@ -1,7 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
+@theme {
+  --color-brand-red: #E63946;
+  --color-brand-cream: #F1FAEE;
+  --color-brand-light-blue: #A8DADC;
+  --color-brand-steel-blue: #457B9D;
+  --color-brand-navy: #1D3557;
+  --color-brand-accent: #457B9D;
+
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+
+  --animate-float-slow: float-slow 15s ease-in-out infinite;
+  --animate-float-slower: float-slower 20s ease-in-out infinite;
+
+  @keyframes float-slow {
+    0%, 100% { transform: translate(0px, 0px) scale(1); }
+    50% { transform: translate(30px, -50px) scale(1.1); }
+  }
+  @keyframes float-slower {
+    0%, 100% { transform: translate(0px, 0px) scale(1.1); }
+    50% { transform: translate(-30px, 50px) scale(0.95); }
+  }
+}
+
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
 }
 
 /* Notion-Style Typography Overrides */

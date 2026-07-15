@@ -29,10 +29,10 @@ export default function LogoutButton() {
         <button
             onClick={handleLogout}
             disabled={loading}
-            className="flex items-center gap-3 px-6 py-4 w-full rounded-2xl text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 hover:text-[#EE1C25] hover:bg-red-50/50 active:scale-[0.98] disabled:opacity-50 transition-all duration-200 cursor-pointer group"
+            className="flex items-center gap-3 px-6 py-4 w-full rounded-2xl text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 hover:text-brand-accent hover:bg-brand-accent/10 active:scale-[0.98] disabled:opacity-50 transition-all duration-200 cursor-pointer group"
         >
             {loading ? (
-                <Loader2 size={16} className="animate-spin text-[#EE1C25]" />
+                <Loader2 size={16} className="animate-spin text-brand-accent" />
             ) : (
                 <LogOut size={16} className="group-hover:translate-x-0.5 transition-transform duration-200" />
             )}

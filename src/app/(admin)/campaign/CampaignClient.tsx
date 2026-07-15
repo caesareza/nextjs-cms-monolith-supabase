@@ -68,7 +68,7 @@ export default function CampaignClient() {
             {/* BRAND HEADER */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-red-50 flex items-center justify-center text-[#EE1C25]">
+                    <div className="w-10 h-10 rounded-2xl bg-brand-accent/10 flex items-center justify-center text-brand-accent">
                         <Megaphone size={20} />
                     </div>
                     <div>
@@ -86,7 +86,7 @@ export default function CampaignClient() {
                 <input
                     type="text"
                     placeholder="E.g., Promo Pemilu, NyalaFest, #KartuWajibLiburan..."
-                    className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold outline-none focus:bg-white focus:ring-4 focus:ring-red-50 focus:border-[#EE1C25]/20 transition-all"
+                    className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold outline-none focus:bg-white focus:ring-4 focus:ring-brand-light-blue/20 focus:border-brand-accent/20 transition-all"
                     value={newCampaignName}
                     onChange={(e) => setNewCampaignName(e.target.value)}
                 />
@@ -146,8 +146,8 @@ export default function CampaignClient() {
                                     </td>
 
                                     <td className="px-6 py-4.5 hidden md:table-cell">
-                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-red-50 text-[#EE1C25] text-[9px] font-black uppercase tracking-wider rounded-md border border-red-100">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-[#EE1C25] animate-pulse" />
+                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-brand-accent/10 text-brand-accent text-[9px] font-black uppercase tracking-wider rounded-md border border-brand-accent/20">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-brand-accent animate-pulse" />
                                                 Live Track
                                             </span>
                                     </td>
@@ -176,7 +176,7 @@ export default function CampaignClient() {
                                                     <button type="button" onClick={() => { setEditingId(campaign.id); setEditingName(campaign.name); }} className="p-2 text-slate-400 hover:text-slate-800 bg-slate-50 hover:bg-slate-100 border border-slate-200/40 sm:opacity-0 sm:group-hover:opacity-100 rounded-xl transition-all">
                                                         <Edit2 size={13} />
                                                     </button>
-                                                    <button type="button" onClick={() => handleDelete(campaign.id)} className="p-2 text-slate-400 hover:text-[#EE1C25] bg-slate-50 hover:bg-red-50 border border-slate-200/40 sm:opacity-0 sm:group-hover:opacity-100 rounded-xl transition-all">
+                                                    <button type="button" onClick={() => handleDelete(campaign.id)} className="p-2 text-slate-400 hover:text-brand-accent bg-slate-50 hover:bg-brand-accent/10 border border-slate-200/40 sm:opacity-0 sm:group-hover:opacity-100 rounded-xl transition-all">
                                                         <Trash2 size={13} />
                                                     </button>
                                                 </>

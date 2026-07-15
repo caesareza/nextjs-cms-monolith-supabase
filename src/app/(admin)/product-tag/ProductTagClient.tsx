@@ -87,7 +87,7 @@ export default function ProductTagClient() {
             {/* TITLES HEADER BLOCK */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-red-50 flex items-center justify-center text-[#EE1C25]">
+                    <div className="w-10 h-10 rounded-2xl bg-brand-accent/10 flex items-center justify-center text-brand-accent">
                         <Package size={20} />
                     </div>
                     <div>
@@ -107,7 +107,7 @@ export default function ProductTagClient() {
                     <input
                         type="text"
                         placeholder="Search product tags..."
-                        className="w-full pl-12 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold outline-none focus:bg-white focus:ring-4 focus:ring-red-50 focus:border-[#EE1C25]/20 transition-all"
+                        className="w-full pl-12 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold outline-none focus:bg-white focus:ring-4 focus:ring-brand-light-blue/20 focus:border-brand-accent/20 transition-all"
                         value={search}
                         onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                     />
@@ -117,7 +117,7 @@ export default function ProductTagClient() {
                     <input
                         type="text"
                         placeholder="Insert sub product tag label name (e.g. Tabungan Emas, KPR Syariah)..."
-                        className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold outline-none focus:bg-white focus:ring-4 focus:ring-red-50 focus:border-[#EE1C25]/20 transition-all"
+                        className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold outline-none focus:bg-white focus:ring-4 focus:ring-brand-light-blue/20 focus:border-brand-accent/20 transition-all"
                         value={newTagName}
                         onChange={(e) => setNewTagName(e.target.value)}
                     />
@@ -218,7 +218,7 @@ export default function ProductTagClient() {
                                                         <button
                                                             type="button"
                                                             onClick={() => handleToggleDelete(tag.id, isArchived)}
-                                                            className={`p-2 border border-slate-200/40 sm:opacity-0 sm:group-hover:opacity-100 rounded-xl transition-all ${isArchived ? 'text-blue-500 bg-blue-50 hover:bg-blue-100' : 'text-slate-400 hover:text-[#EE1C25] bg-slate-50 hover:bg-red-50'}`}
+                                                            className={`p-2 border border-slate-200/40 sm:opacity-0 sm:group-hover:opacity-100 rounded-xl transition-all ${isArchived ? 'text-blue-500 bg-blue-50 hover:bg-blue-100' : 'text-slate-400 hover:text-brand-accent bg-slate-50 hover:bg-brand-accent/10'}`}
                                                             title={isArchived ? "Restore Tag" : "Soft Delete"}
                                                         >
                                                             {isArchived ? <RotateCcw size={13} /> : <Trash2 size={13} />}

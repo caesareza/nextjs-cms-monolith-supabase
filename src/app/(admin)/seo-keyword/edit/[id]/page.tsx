@@ -153,7 +153,7 @@ export default function SeoDirectorReviewFormShell() {
     if (loading) {
         return (
             <div className="w-full h-96 flex flex-col items-center justify-center gap-3">
-                <Loader2 className="animate-spin text-[#EE1C25]" size={28} />
+                <Loader2 className="animate-spin text-brand-accent" size={28} />
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Compiling Strategy Metrics...</p>
             </div>
         );
@@ -178,14 +178,14 @@ export default function SeoDirectorReviewFormShell() {
                         <form onSubmit={handleRejectSubmit}>
                             <textarea
                                 required rows={4}
-                                className="w-full border border-slate-200 rounded-xl p-3 text-sm outline-none resize-none focus:ring-2 focus:ring-red-500"
+                                className="w-full border border-slate-200 rounded-xl p-3 text-sm outline-none resize-none focus:ring-2 focus:ring-brand-accent/40"
                                 placeholder="Type internal feedback here..."
                                 value={internalNote}
                                 onChange={(e) => setInternalNote(e.target.value)}
                             />
                             <div className="flex justify-end gap-2 mt-4">
                                 <button type="button" className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-xl" onClick={() => { setShowRejectModal(false); setInternalNote(''); }}>Cancel</button>
-                                <button type="submit" disabled={!internalNote.trim() || isRejecting} className="bg-red-600 text-white px-4 py-2 text-sm font-medium rounded-xl disabled:opacity-40">Confirm Reject</button>
+                                <button type="submit" disabled={!internalNote.trim() || isRejecting} className="bg-brand-accent hover:bg-brand-navy text-white px-4 py-2 text-sm font-medium rounded-xl disabled:opacity-40">Confirm Reject</button>
                             </div>
                         </form>
                     </div>

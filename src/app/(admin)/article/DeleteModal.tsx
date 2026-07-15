@@ -25,11 +25,11 @@ export default function DeleteModal({
                     </div>
                 ) : (
                     <>
-                        <div className="w-16 h-16 bg-red-50 text-[#EE1C25] rounded-full flex items-center justify-center mx-auto">
+                        <div className="w-16 h-16 bg-brand-accent/15 text-brand-accent rounded-full flex items-center justify-center mx-auto">
                             <AlertCircle size={32} />
                         </div>
                         <div className="text-center space-y-2">
-                            <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight text-red-600">Archive Article?</h3>
+                            <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight text-brand-navy">Archive Article?</h3>
                             <p className="text-slate-500 text-xs font-bold leading-relaxed">
                                 Confirming will hide <span className="text-slate-900">"{articleTitle}"</span> from the active list.
                             </p>
@@ -39,7 +39,7 @@ export default function DeleteModal({
                             <button
                                 disabled={loading}
                                 onClick={onConfirm}
-                                className="flex-1 py-4 bg-[#EE1C25] text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2"
+                                className="flex-1 py-4 bg-brand-accent hover:bg-brand-navy text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2"
                             >
                                 {loading ? <Loader2 size={14} className="animate-spin" /> : 'Confirm Delete'}
                             </button>

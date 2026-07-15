@@ -71,14 +71,14 @@ export default function StrategyDetailView({
                                 <button
                                     disabled={isActionDisabled}
                                     onClick={onRejectClick}
-                                    className="border border-red-200 bg-red-50/50 text-red-600 hover:bg-red-50 px-5 py-2.5 rounded-full flex items-center gap-2 text-sm font-semibold transition cursor-pointer disabled:opacity-50"
+                                    className="border border-brand-accent/20 bg-brand-accent/10 text-brand-accent hover:bg-brand-accent/20 px-5 py-2.5 rounded-full flex items-center gap-2 text-sm font-semibold transition cursor-pointer disabled:opacity-50"
                                 >
                                     <AlertTriangle size={16} /> Reject
                                 </button>
                                 <button
                                     disabled={isActionDisabled}
                                     onClick={onApprove}
-                                    className="bg-[#EE1D23] hover:bg-red-700 text-white px-6 py-2.5 rounded-full flex items-center gap-2 text-sm font-semibold transition shadow-sm cursor-pointer disabled:opacity-70"
+                                    className="bg-brand-accent hover:bg-brand-navy text-white px-6 py-2.5 rounded-full flex items-center gap-2 text-sm font-semibold transition shadow-sm cursor-pointer disabled:opacity-70"
                                 >
                                     <CheckCircle size={16} /> Approve Strategy
                                 </button>
@@ -117,7 +117,7 @@ export default function StrategyDetailView({
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Proposed Strategy Headline</span>
                 {isEditing ? (
                     <input
-                        className="w-full text-xl font-bold text-slate-900 border-b-2 border-slate-950 focus:border-[#EE1C25] outline-none pb-1 transition-all bg-slate-50/70 p-3 rounded-xl"
+                        className="w-full text-xl font-bold text-slate-900 border-b-2 border-slate-950 focus:border-brand-accent outline-none pb-1 transition-all bg-slate-50/70 p-3 rounded-xl"
                         value={form.title}
                         onChange={(e) => setForm({...form, title: e.target.value})}
                         required
@@ -131,7 +131,7 @@ export default function StrategyDetailView({
 
             {/* 4. TAXONOMY MATRIX LAYOUT GROUP */}
             <div className="space-y-6">
-                <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider border-l-4 border-[#EE1C25] pl-3">
+                <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider border-l-4 border-brand-accent pl-3">
                     Taxonomy Cluster Allocations
                 </h3>
 
@@ -187,7 +187,7 @@ export default function StrategyDetailView({
 
             {/* 5. AUDIENCE & STRATEGY MATRICES */}
             <div className="space-y-6">
-                <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider border-l-4 border-[#EE1C25] pl-3">
+                <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider border-l-4 border-brand-accent pl-3">
                     Marketing Strategy Matrix
                 </h3>
 
@@ -296,7 +296,7 @@ export default function StrategyDetailView({
 
             {/* 7. TECHNICAL SEO PARAMETERS */}
             <div className="space-y-6">
-                <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider border-l-4 border-[#EE1C25] pl-3">
+                <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider border-l-4 border-brand-accent pl-3">
                     SEO Copy Suite Validation
                 </h3>
 
@@ -339,7 +339,7 @@ export default function StrategyDetailView({
                         <MessageSquare size={14} />
                         <h4 className="text-[10px] font-black uppercase tracking-widest">Director Revision Notes</h4>
                     </div>
-                    <div className="w-full text-xs font-bold text-red-700 bg-red-50/60 border border-red-100 rounded-2xl p-4 leading-relaxed">
+                    <div className="w-full text-xs font-bold text-orange-750 bg-orange-50 border border-orange-200 rounded-2xl p-4 leading-relaxed">
                         {dbSnapshot.internal_notes}
                     </div>
                 </div>

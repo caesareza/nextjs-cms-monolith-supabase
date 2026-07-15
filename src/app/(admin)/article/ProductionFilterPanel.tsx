@@ -35,7 +35,7 @@ export default function ProductionFilterPanel({
                 <select
                     value={year}
                     onChange={(e) => setYear(Number(e.target.value))}
-                    className="bg-slate-50 border-none text-sm font-black px-6 py-2.5 rounded-xl outline-none ring-1 ring-slate-200 focus:ring-2 focus:ring-[#EE1C25]/20 transition-all cursor-pointer text-slate-800"
+                    className="bg-slate-50 border-none text-sm font-black px-6 py-2.5 rounded-xl outline-none ring-1 ring-slate-200 focus:ring-2 focus:ring-brand-light-blue/30 transition-all cursor-pointer text-slate-800"
                 >
                     {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
                 </select>
@@ -46,7 +46,7 @@ export default function ProductionFilterPanel({
                             key={m}
                             onClick={() => setMonth(idx + 1)}
                             className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
-                                month === idx + 1 ? 'bg-white text-[#EE1C25] shadow-md scale-105' : 'text-slate-400 hover:text-slate-600'
+                                month === idx + 1 ? 'bg-white text-brand-accent shadow-md scale-105' : 'text-slate-400 hover:text-slate-600'
                             }`}
                         >
                             {m}
@@ -64,7 +64,7 @@ export default function ProductionFilterPanel({
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Search workspace title headers..."
-                        className="w-full pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold outline-none placeholder:text-slate-300 focus:border-[#EE1C25]/20 text-slate-800"
+                        className="w-full pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold outline-none placeholder:text-slate-300 focus:border-brand-accent/20 focus:ring-4 focus:ring-brand-light-blue/20 transition-all text-slate-800"
                     />
                 </div>
 
