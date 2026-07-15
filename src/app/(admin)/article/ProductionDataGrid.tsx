@@ -29,7 +29,7 @@ function getArticleWorkflowBadge(status: string, content?: string) {
 
 export default function ProductionDataGrid({ articles, loading }: ProductionDataGridProps) {
     return (
-        <div className="bg-white border border-slate-200/60 rounded-4xl shadow-xs overflow-hidden">
+        <div className="bg-white border border-slate-200/60 rounded-3xl shadow-xs overflow-hidden">
             <table className="w-full text-left border-collapse">
                 <thead>
                 <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] font-black uppercase tracking-widest text-slate-400 select-none">

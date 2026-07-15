@@ -71,14 +71,14 @@ export default function StrategyDetailView({
                                 <button
                                     disabled={isActionDisabled}
                                     onClick={onRejectClick}
-                                    className="border border-brand-accent/20 bg-brand-accent/10 text-brand-accent hover:bg-brand-accent/20 px-5 py-2.5 rounded-full flex items-center gap-2 text-sm font-semibold transition cursor-pointer disabled:opacity-50"
+                                    className="border border-brand-accent/20 bg-brand-accent/10 text-brand-accent hover:bg-brand-accent/20 px-5 py-2.5 rounded-full flex items-center gap-2 text-sm font-semibold transition cursor-pointer disabled:bg-slate-50 disabled:text-slate-400 disabled:border-slate-200 disabled:cursor-not-allowed"
                                 >
                                     <AlertTriangle size={16} /> Reject
                                 </button>
                                 <button
                                     disabled={isActionDisabled}
                                     onClick={onApprove}
-                                    className="bg-brand-accent hover:bg-brand-navy text-white px-6 py-2.5 rounded-full flex items-center gap-2 text-sm font-semibold transition shadow-sm cursor-pointer disabled:opacity-70"
+                                    className="bg-brand-accent hover:bg-brand-navy text-white px-6 py-2.5 rounded-full flex items-center gap-2 text-sm font-semibold transition shadow-sm cursor-pointer disabled:bg-slate-105 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed"
                                 >
                                     <CheckCircle size={16} /> Approve Strategy
                                 </button>

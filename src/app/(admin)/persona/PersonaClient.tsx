@@ -94,7 +94,7 @@ export default function PersonaClient() {
             </form>
 
             {/* ENTERPRISE DATATABLE PRESENTATION OPTION */}
-            <div className="bg-white border border-slate-200 rounded-[2.5rem] shadow-sm overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>

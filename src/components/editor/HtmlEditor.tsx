@@ -10,7 +10,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
     if (!editor) return null;
 
     const btnClass = (active: boolean) =>
-        `p-2 rounded-lg transition-all cursor-pointer ${active ? 'bg-red-50 text-[#EE1C25]' : 'text-slate-400 hover:bg-slate-50'}`;
+        `p-2 rounded-lg transition-all cursor-pointer ${active ? 'bg-brand-accent/10 text-brand-accent' : 'text-slate-400 hover:bg-slate-50'}`;
 
     // ✨ UX Handler: Set or update hyper-link anchors
     const setHyperlink = () => {
@@ -86,7 +86,7 @@ export default function HtmlEditor({ value, onChange }: { value: string, onChang
                 autolink: true,     // Automatically parses copy-pasted URLs into dynamic link elements
                 HTMLAttributes: {
                     // Styles link targets with matching corporate red highlight styling colors
-                    class: 'text-[#EE1C25] font-bold underline transition-colors cursor-pointer hover:text-red-700',
+                    class: 'text-brand-accent font-bold underline transition-colors cursor-pointer hover:text-brand-navy',
                 },
             }),
         ],
@@ -102,7 +102,7 @@ export default function HtmlEditor({ value, onChange }: { value: string, onChang
     });
 
     return (
-        <div className="border border-slate-200 overflow-hidden bg-white shadow-sm focus-within:border-[#EE1C25]/30 transition-all">
+        <div className="border border-slate-200 overflow-hidden bg-white shadow-sm focus-within:border-brand-accent/30 transition-all rounded-xl">
             <MenuBar editor={editor} />
             <EditorContent editor={editor} />
         </div>

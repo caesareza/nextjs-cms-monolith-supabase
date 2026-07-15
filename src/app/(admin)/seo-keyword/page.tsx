@@ -214,7 +214,7 @@ export default function UnifiedSeoKeywordPage() {
             )}
 
             {/* DATATABLE LIST BOARD */}
-            <div className="bg-white border border-slate-200 rounded-[2rem] shadow-sm overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
                 <table className="w-full text-left border-collapse">
                     <thead>
                     <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] font-black uppercase tracking-widest text-slate-400 select-none">

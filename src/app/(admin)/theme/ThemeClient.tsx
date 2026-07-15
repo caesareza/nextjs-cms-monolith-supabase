@@ -91,7 +91,7 @@ export default function ThemeClient() {
             </form>
 
             {/* MANAGEMENT TABLE CONTAINER */}
-            <div className="bg-white border border-slate-200 rounded-[2.5rem] shadow-sm overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
                 <div className="px-8 py-5 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-slate-400">
                     <span>Topic Name Hierarchy</span>
                     <span>Actions</span>

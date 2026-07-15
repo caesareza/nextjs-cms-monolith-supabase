@@ -18,8 +18,8 @@ interface EditProps {
 }
 
 export default function EditArticleClient({
-                                              initialData, writers, categories, sections, productTags, themes, personas, campaigns
-                                          }: EditProps) {
+    initialData, writers, categories, sections, productTags, themes, personas, campaigns
+}: EditProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -113,7 +113,7 @@ export default function EditArticleClient({
 
     if (success) {
         return (
-            <div className="max-w-xl mx-auto mt-32 p-12 bg-white rounded-[3rem] text-center shadow-2xl animate-in zoom-in-95">
+            <div className="max-w-xl mx-auto mt-32 p-12 bg-white rounded-3xl text-center shadow-2xl animate-in zoom-in-95">
                 <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <CheckCircle2 size={32} />
                 </div>
@@ -135,7 +135,7 @@ export default function EditArticleClient({
                 <button
                     disabled={loading || isSeoPending}
                     type="submit"
-                    className="bg-brand-accent text-white px-10 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-brand-accent/20 flex items-center gap-2 hover:bg-brand-navy active:scale-95 disabled:opacity-40 transition-all cursor-pointer"
+                    className="text-white px-10 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-brand-accent/20 flex items-center gap-2 bg-brand-navy active:scale-95 disabled:bg-slate-105 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed transition-all cursor-pointer"
                 >
                     {loading ? <Loader2 className="animate-spin" size={16} /> : isSeoPending ? <Lock size={14} /> : <Save size={16} />}
                     {isSeoPending ? 'Strategy Locked' : 'Push Updates'}
@@ -161,7 +161,7 @@ export default function EditArticleClient({
 
                 {/* LEFT CANVAS: INTERACTIVE FORM LAYOUT CANVAS */}
                 <div className="lg:col-span-8 space-y-6">
-                    <div className="bg-white rounded-[2.5rem] border border-slate-200 p-10 shadow-xs space-y-6">
+                    <div className="bg-white rounded-3xl border border-slate-200 p-10 shadow-xs space-y-6">
 
                         {/* READ-ONLY TITLE ACCORDION ABOVE INPUTS */}
                         <div className="space-y-1 pb-4 border-b border-slate-100">
@@ -174,12 +174,12 @@ export default function EditArticleClient({
                             {/* Writer Selector Input Field */}
                             <div className="flex flex-col gap-2">
                                 <label className="text-[10px] font-black text-slate-500 uppercase flex items-center gap-1">
-                                    <User className="text-slate-400" size={12}/> Writer Assignment <span className="text-brand-accent font-bold">*</span>
+                                    <User className="text-slate-400" size={12} /> Writer Assignment <span className="text-brand-accent font-bold">*</span>
                                 </label>
                                 <select
                                     className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:bg-white cursor-pointer"
                                     value={form.writer_id}
-                                    onChange={(e) => setForm({...form, writer_id: parseInt(e.target.value)})}
+                                    onChange={(e) => setForm({ ...form, writer_id: parseInt(e.target.value) })}
                                 >
                                     <option value={0}>Select Writer...</option>
                                     {writers.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
@@ -189,12 +189,12 @@ export default function EditArticleClient({
                             {/* ✨ NEW FEATURE: WORKFLOW STATUS SELECT MENU DROPDOWN */}
                             <div className="flex flex-col gap-2">
                                 <label className="text-[10px] font-black text-slate-500 uppercase flex items-center gap-1">
-                                    <Activity className="text-slate-400" size={12}/> Article Workflow Status
+                                    <Activity className="text-slate-400" size={12} /> Article Workflow Status
                                 </label>
                                 <select
                                     className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black text-slate-800 outline-none focus:bg-white cursor-pointer lowercase"
                                     value={form.status}
-                                    onChange={(e) => setForm({...form, status: e.target.value})}
+                                    onChange={(e) => setForm({ ...form, status: e.target.value })}
                                 >
                                     <option value="seo pending">seo pending</option>
                                     <option value="writing">writing</option>
@@ -209,35 +209,35 @@ export default function EditArticleClient({
                         <div className="relative pt-2">
                             {isSeoPending && (
                                 <div className="absolute inset-0 bg-white/80 backdrop-blur-[0.5px] z-40 rounded-2xl flex flex-col items-center justify-center gap-2 select-none text-center">
-                                    <div className="w-9 h-9 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-md"><Lock size={14}/></div>
+                                    <div className="w-9 h-9 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-md"><Lock size={14} /></div>
                                     <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">Canvas Locked</h4>
                                     <p className="text-slate-400 text-[9px] max-w-xs uppercase tracking-tight">Active strategy briefs require director verification.</p>
                                 </div>
                             )}
                             <div className={isSeoPending ? "opacity-10 pointer-events-none" : ""}>
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">Content Body (HTML Mode) <span className="text-brand-accent font-bold">*</span></label>
-                                <HtmlEditor value={form.content} onChange={(html: string) => setForm({...form, content: html})} />
+                                <HtmlEditor value={form.content} onChange={(html: string) => setForm({ ...form, content: html })} />
                             </div>
                         </div>
 
                         {/* CTA Internal Link Textarea */}
                         <div className="flex flex-col gap-2 pt-4 border-t border-slate-100">
                             <label className="text-[10px] font-black text-slate-400 uppercase flex items-center gap-1">
-                                <Link2 className="text-slate-400" size={12}/> CTA Internal Destination Links
+                                <Link2 className="text-slate-400" size={12} /> CTA Internal Destination Links
                             </label>
                             <textarea
                                 rows={3}
                                 className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-mono font-bold text-slate-900 outline-none focus:bg-white focus:border-brand-accent/20 focus:ring-4 focus:ring-brand-light-blue/20 transition-all leading-relaxed"
                                 placeholder="Paste structural target linking parameters..."
                                 value={form.cta_internal_link}
-                                onChange={(e) => setForm({...form, cta_internal_link: e.target.value})}
+                                onChange={(e) => setForm({ ...form, cta_internal_link: e.target.value })}
                             />
                         </div>
 
                     </div>
 
                     {/* COMPLIANCE CONTROLS & BACKUPS */}
-                    <div className="bg-white rounded-[2.5rem] border border-slate-200 p-10 shadow-xs space-y-6">
+                    <div className="bg-white rounded-3xl border border-slate-200 p-10 shadow-xs space-y-6">
                         <h3 className="text-[10px] font-black text-slate-950 uppercase tracking-[0.2em] border-b border-slate-100 pb-3 select-none">
                             Internal Compliance Systems & Logs
                         </h3>
@@ -245,7 +245,7 @@ export default function EditArticleClient({
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="flex flex-col gap-2">
                                 <label className="text-[10px] font-black text-slate-400 uppercase">System SEO Check</label>
-                                <select className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 outline-none focus:bg-white" value={form.seo_check} onChange={(e) => setForm({...form, seo_check: e.target.value})}>
+                                <select className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 outline-none focus:bg-white" value={form.seo_check} onChange={(e) => setForm({ ...form, seo_check: e.target.value })}>
                                     <option value="pending">⏳ Pending Review</option>
                                     <option value="pass">✅ Pass Verification</option>
                                     <option value="fail">❌ Fail / Blocked</option>
@@ -253,7 +253,7 @@ export default function EditArticleClient({
                             </div>
                             <div className="flex flex-col gap-2">
                                 <label className="text-[10px] font-black text-slate-400 uppercase">Google Index Intent</label>
-                                <select className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 outline-none focus:bg-white" value={form.index_status} onChange={(e) => setForm({...form, index_status: e.target.value})}>
+                                <select className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 outline-none focus:bg-white" value={form.index_status} onChange={(e) => setForm({ ...form, index_status: e.target.value })}>
                                     <option value="noindex">🚫 Noindex Header Block</option>
                                     <option value="index">🌐 Index Crawler Access</option>
                                 </select>
@@ -262,12 +262,12 @@ export default function EditArticleClient({
 
                         <div className="flex flex-col gap-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase">Internal Reviewer Logs</label>
-                            <textarea rows={2} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-medium text-slate-900 outline-none focus:bg-white resize-none leading-relaxed" placeholder="Type internal feedback or review specifications notes..." value={form.internal_notes} onChange={(e) => setForm({...form, internal_notes: e.target.value})} />
+                            <textarea rows={2} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-medium text-slate-900 outline-none focus:bg-white resize-none leading-relaxed" placeholder="Type internal feedback or review specifications notes..." value={form.internal_notes} onChange={(e) => setForm({ ...form, internal_notes: e.target.value })} />
                         </div>
 
                         <div className="flex flex-col gap-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase">Legacy Source Backup Archive (Content Old)</label>
-                            <textarea rows={3} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-mono font-bold text-slate-800 outline-none focus:bg-white resize-none leading-relaxed" placeholder="Raw markdown snapshot backup records fallback..." value={form.content_old} onChange={(e) => setForm({...form, content_old: e.target.value})} />
+                            <textarea rows={3} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-mono font-bold text-slate-800 outline-none focus:bg-white resize-none leading-relaxed" placeholder="Raw markdown snapshot backup records fallback..." value={form.content_old} onChange={(e) => setForm({ ...form, content_old: e.target.value })} />
                         </div>
                     </div>
                 </div>
@@ -278,11 +278,11 @@ export default function EditArticleClient({
                 <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-6">
 
                     {/* CARD 1: HIGH-DENSITY PERFORMANCE HUD CODES */}
-                    <div className="bg-slate-950 text-white p-6 rounded-[2.5rem] shadow-md space-y-4 select-none">
+                    <div className="bg-slate-950 text-white p-6 rounded-3xl shadow-md space-y-4 select-none">
                         <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block">Forecast & Core Pillars</span>
                         <div className="space-y-3 text-xs font-medium">
                             <div className="flex justify-between items-center bg-slate-900 p-2.5 rounded-xl border border-slate-800">
-                                <span className="flex items-center gap-1 text-slate-400"><Flame className="text-orange-400 shrink-0" size={12}/> Search Demand</span>
+                                <span className="flex items-center gap-1 text-slate-400"><Flame className="text-orange-400 shrink-0" size={12} /> Search Demand</span>
                                 <span className="font-black tabular-nums text-white text-sm">{Number(form.demand).toLocaleString('id-ID')}</span>
                             </div>
                             <p className="flex justify-between px-1">
@@ -294,57 +294,57 @@ export default function EditArticleClient({
                                 <span className="font-extrabold text-amber-400 uppercase">{form.type}</span>
                             </p>
                             <p className="flex justify-between px-1 items-center">
-                                <span className="flex items-center gap-1 text-slate-400"><ShieldCheck className="text-brand-accent shrink-0" size={12}/> Classification:</span>
+                                <span className="flex items-center gap-1 text-slate-400"><ShieldCheck className="text-brand-accent shrink-0" size={12} /> Classification:</span>
                                 <span className="font-extrabold text-brand-accent uppercase">{form.classification}</span>
                             </p>
                         </div>
                     </div>
 
                     {/* CARD 2: TAXONOMY HIERARCHY MAP */}
-                    <div className="bg-white p-8 border border-slate-200 rounded-[2.5rem] shadow-xs space-y-4 font-medium text-slate-700">
+                    <div className="bg-white p-8 border border-slate-200 rounded-3xl shadow-xs space-y-4 font-medium text-slate-700">
                         <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest block select-none">Taxonomy Hierarchies</h4>
 
                         <div className="space-y-3.5 text-xs pt-1">
                             <div className="flex items-start gap-3">
-                                <FolderKanban className="text-slate-300 mt-0.5 shrink-0" size={14}/>
+                                <FolderKanban className="text-slate-300 mt-0.5 shrink-0" size={14} />
                                 <div><span className="block text-[9px] font-black text-slate-400 uppercase select-none">Section Cluster</span><span className="font-bold text-slate-800">{currentSection}</span></div>
                             </div>
                             <div className="flex items-start gap-3">
-                                <FolderKanban className="text-slate-300 mt-0.5 shrink-0" size={14}/>
+                                <FolderKanban className="text-slate-300 mt-0.5 shrink-0" size={14} />
                                 <div><span className="block text-[9px] font-black text-slate-400 uppercase select-none">Category Cluster</span><span className="font-bold text-slate-800">{currentCategory}</span></div>
                             </div>
                             <div className="flex items-start gap-3">
-                                <Tag className="text-slate-300 mt-0.5 shrink-0" size={14}/>
+                                <Tag className="text-slate-300 mt-0.5 shrink-0" size={14} />
                                 <div><span className="block text-[9px] font-black text-slate-400 uppercase select-none">Product Association</span><span className="font-bold text-slate-800">{currentProduct}</span></div>
                             </div>
                             <div className="flex items-start gap-3">
-                                <Calendar className="text-slate-300 mt-0.5 shrink-0" size={14}/>
+                                <Calendar className="text-slate-300 mt-0.5 shrink-0" size={14} />
                                 <div><span className="block text-[9px] font-black text-slate-400 uppercase select-none">Production Cycle</span><span className="font-bold text-slate-800 tracking-tight">{formattedMonth}</span></div>
                             </div>
                         </div>
                     </div>
 
                     {/* CARD 3: CORPORATE MARKETING SUITE CONTEXT */}
-                    <div className="bg-white p-8 border border-slate-200 rounded-[2.5rem] shadow-xs space-y-4 font-medium text-slate-600">
+                    <div className="bg-white p-8 border border-slate-200 rounded-3xl shadow-xs space-y-4 font-medium text-slate-600">
                         <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest block select-none">Marketing Matrix Context</h4>
                         <div className="space-y-3 text-xs pt-1">
                             <div className="flex items-start gap-3">
-                                <Sparkles className="text-slate-300 mt-0.5 shrink-0" size={14}/>
+                                <Sparkles className="text-slate-300 mt-0.5 shrink-0" size={14} />
                                 <div><span className="block text-[9px] font-black text-slate-400 uppercase select-none">Strategic Theme</span><span className="font-bold text-slate-800">{currentTheme}</span></div>
                             </div>
                             <div className="flex items-start gap-3">
-                                <Target className="text-slate-300 mt-0.5 shrink-0" size={14}/>
+                                <Target className="text-slate-300 mt-0.5 shrink-0" size={14} />
                                 <div><span className="block text-[9px] font-black text-slate-400 uppercase select-none">Audience Persona</span><span className="font-bold text-slate-800">{currentPersona}</span></div>
                             </div>
                             <div className="flex items-start gap-3">
-                                <Megaphone className="text-slate-300 mt-0.5 shrink-0" size={14}/>
+                                <Megaphone className="text-slate-300 mt-0.5 shrink-0" size={14} />
                                 <div><span className="block text-[9px] font-black text-slate-400 uppercase select-none">Campaign Attribution</span><span className="font-bold text-slate-800">{currentCampaign}</span></div>
                             </div>
                         </div>
                     </div>
 
                     {/* CARD 4: PERSISTENT KEYWORD CONSTRAINT CHEAT SHEET */}
-                    <div className="bg-white p-8 border border-slate-200 rounded-[2.5rem] shadow-xs space-y-4">
+                    <div className="bg-white p-8 border border-slate-200 rounded-3xl shadow-xs space-y-4">
                         <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest block select-none">Brief Validation Strategy</h4>
                         <div className="space-y-3">
                             <div>

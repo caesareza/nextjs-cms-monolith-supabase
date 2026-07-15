@@ -14,7 +14,7 @@ export default function DeleteModal({
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
-            <div className="bg-white rounded-[2.5rem] p-10 max-w-md w-full shadow-2xl space-y-6">
+            <div className="bg-white rounded-3xl p-10 max-w-md w-full shadow-2xl space-y-6">
                 {success ? (
                     <div className="text-center space-y-4 animate-in zoom-in-95">
                         <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto">
