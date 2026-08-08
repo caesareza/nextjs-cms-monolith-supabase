@@ -1,5 +1,7 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+import { ArticleService } from '@/app/(admin)/article/service';
 import { EditFormState, LookupOptions } from '@/types/article';
 import {
     Edit2,
@@ -17,7 +19,9 @@ import {
     Flame,
     ShieldCheck,
     Megaphone,
-    Loader2
+    Loader2,
+    Link2,
+    Package
 } from 'lucide-react';
 
 interface StrategyDetailViewProps {
@@ -40,6 +44,50 @@ export default function StrategyDetailView({
                                                form, setForm, isEditing, setIsEditing, isApproved, isActionDisabled, actionLoading,
                                                dbSnapshot, lookups, onBack, onSave, onApprove, onRejectClick
                                            }: StrategyDetailViewProps) {
+
+    // Marketing assets states
+    const [marketingAssets, setMarketingAssets] = useState<any[]>([]);
+    const [loadingAssets, setLoadingAssets] = useState(false);
+    const [newAssetType, setNewAssetType] = useState<'cta' | 'product'>('cta');
+    const [newAssetValue, setNewAssetValue] = useState('');
+    const [submittingAsset, setSubmittingAsset] = useState(false);
+
+    useEffect(() => {
+        if (!dbSnapshot?.id) return;
+        const fetchAssets = async () => {
+            setLoadingAssets(true);
+            try {
+                const data = await ArticleService.getMarketingAssets(Number(dbSnapshot.id));
+                setMarketingAssets(data || []);
+            } catch (err) {
+                console.error("Failed loading marketing assets:", err);
+            } finally {
+                setLoadingAssets(false);
+            }
+        };
+        fetchAssets();
+    }, [dbSnapshot?.id]);
+
+    const handleAddAsset = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!newAssetValue.trim() || !dbSnapshot?.id) return;
+
+        setSubmittingAsset(true);
+        try {
+            const newAsset = await ArticleService.createMarketingAsset({
+                article_id: Number(dbSnapshot.id),
+                asset_type: newAssetType,
+                asset_value: newAssetValue.trim()
+            });
+            setMarketingAssets(prev => [...prev, newAsset]);
+            setNewAssetValue('');
+        } catch (err) {
+            console.error("Failed adding marketing asset:", err);
+            alert("Failed to save marketing asset.");
+        } finally {
+            setSubmittingAsset(false);
+        }
+    };
 
     const cat = lookups.categories.find(c => c.id === Number(form.category_id))?.name || 'Unspecified';
     const sec = lookups.sections.find(s => s.id === Number(form.section_id))?.name || 'Unspecified';
@@ -375,6 +423,128 @@ export default function StrategyDetailView({
                             {form.cta_internal_link || 'No dynamic internal reference paths generated.'}
                         </div>
                     )}
+                </div>
+            </div>
+
+            {/* 7.5 DYNAMIC MARKETING ASSETS SUITE */}
+            <div className="space-y-6 pt-6 border-t border-slate-100">
+                <div className="flex items-center gap-2">
+                    <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider border-l-4 border-brand-accent pl-3">
+                        Marketing Assets Suite (CTAs & Products)
+                    </h3>
+                    <span className="text-[8px] font-black bg-slate-100 border border-slate-200 text-slate-400 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                        Async Live Log
+                    </span>
+                </div>
+
+                <div className="bg-white p-6 border border-slate-200 rounded-3xl shadow-xs space-y-8">
+                    {/* TWO-COLUMN SPLIT GRID */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* LEFT COLUMN: CTAs */}
+                        <div className="space-y-3">
+                            <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest border-b border-slate-100 pb-2 flex items-center gap-1.5">
+                                <Link2 size={13} className="text-slate-400" /> Call To Actions (CTAs)
+                            </h4>
+                            <div className="space-y-2.5">
+                                {loadingAssets ? (
+                                    <div className="flex items-center gap-1.5 py-4 text-slate-400">
+                                        <Loader2 size={12} className="animate-spin" />
+                                        <span className="text-[10px] font-bold uppercase tracking-wider">Fetching...</span>
+                                    </div>
+                                ) : marketingAssets.filter(a => a.asset_type === 'cta').length > 0 ? (
+                                    marketingAssets.filter(a => a.asset_type === 'cta').map((a, i) => (
+                                        <div key={a.id} className="text-xs bg-slate-50 border border-slate-100 rounded-2xl p-4 shadow-2xs hover:border-slate-200 transition-colors">
+                                            <div className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1.5">CTA {i + 1}</div>
+                                            <a 
+                                                href={a.asset_value} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer" 
+                                                className="font-mono text-brand-accent hover:text-brand-navy underline break-all font-semibold leading-relaxed transition-colors cursor-pointer"
+                                            >
+                                                {a.asset_value}
+                                            </a>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-xs text-slate-400 font-bold italic py-4">No Call to Actions allocated.</p>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* RIGHT COLUMN: PRODUCTS */}
+                        <div className="space-y-3">
+                            <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest border-b border-slate-100 pb-2 flex items-center gap-1.5">
+                                <Package size={13} className="text-slate-400" /> Recommended Products
+                            </h4>
+                            <div className="space-y-2.5">
+                                {loadingAssets ? (
+                                    <div className="flex items-center gap-1.5 py-4 text-slate-400">
+                                        <Loader2 size={12} className="animate-spin" />
+                                        <span className="text-[10px] font-bold uppercase tracking-wider">Fetching...</span>
+                                    </div>
+                                ) : marketingAssets.filter(a => a.asset_type === 'product').length > 0 ? (
+                                    marketingAssets.filter(a => a.asset_type === 'product').map((a, i) => (
+                                        <div key={a.id} className="text-xs bg-slate-50 border border-slate-100 rounded-2xl p-4 shadow-2xs hover:border-slate-200 transition-colors">
+                                            <div className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Product {i + 1}</div>
+                                            <div className="font-mono text-slate-700 font-bold leading-relaxed">
+                                                {a.asset_value}
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-xs text-slate-400 font-bold italic py-4">No recommended products.</p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* INTERACTIVE ASSET APPEND BAR */}
+                    <div className="border-t border-slate-100/80 pt-6">
+                        <form onSubmit={handleAddAsset} className="bg-slate-50 border border-slate-200/80 rounded-2.5xl p-5 space-y-4 shadow-3xs">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/50 pb-4">
+                                <div>
+                                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">Add Strategy Asset</span>
+                                    <p className="text-[10px] text-slate-500 font-bold mt-0.5">Quick-log a CTA url or a Product recommendation card</p>
+                                </div>
+
+                                {/* TOGGLE BUTTONS */}
+                                <div className="flex bg-slate-200/60 p-1 rounded-xl w-fit">
+                                    <button
+                                        type="button"
+                                        onClick={() => setNewAssetType('cta')}
+                                        className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${newAssetType === 'cta' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                    >
+                                        🔗 CTA
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setNewAssetType('product')}
+                                        className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${newAssetType === 'product' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                    >
+                                        📦 Product Tag
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                                <input
+                                    type="text"
+                                    required
+                                    value={newAssetValue}
+                                    onChange={(e) => setNewAssetValue(e.target.value)}
+                                    placeholder={newAssetType === 'cta' ? "Enter asset URL destination link (e.g. https://www.ocbc.id/...)" : "Enter product slug or recommendation tag (e.g. tabungan)"}
+                                    className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-semibold outline-none focus:border-slate-400 placeholder:text-slate-400/80 transition-all shadow-3xs"
+                                />
+                                <button
+                                    type="submit"
+                                    disabled={submittingAsset || !newAssetValue.trim()}
+                                    className="px-5 py-2.5 bg-slate-900 text-white hover:bg-slate-800 disabled:bg-slate-100 disabled:text-slate-400 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer flex items-center gap-1.5"
+                                >
+                                    {submittingAsset ? <Loader2 size={13} className="animate-spin" /> : 'Add Asset'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
 

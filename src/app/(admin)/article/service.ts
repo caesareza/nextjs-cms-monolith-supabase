@@ -207,6 +207,30 @@ export const ArticleService = {
         return data;
     },
 
+    async getMarketingAssets(articleId: number) {
+        const supabase = createClient();
+        const { data, error } = await supabase
+            .from('article_marketing_asset')
+            .select('id, asset_type, asset_value')
+            .eq('article_id', articleId)
+            .order('id', { ascending: true });
+
+        if (error) throw error;
+        return data;
+    },
+
+    async createMarketingAsset(payload: { article_id: number; asset_type: 'product' | 'cta'; asset_value: string }) {
+        const supabase = createClient();
+        const { data, error } = await supabase
+            .from('article_marketing_asset')
+            .insert([payload])
+            .select()
+            .single();
+
+        if (error) throw error;
+        return data;
+    },
+
     async getWriters() {
         const supabase = createClient();
         const { data, error } = await supabase
