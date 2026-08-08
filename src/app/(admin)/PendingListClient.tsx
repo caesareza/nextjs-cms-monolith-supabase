@@ -146,6 +146,9 @@ export default function PendingListClient() {
                                         <h4 className="text-sm font-bold text-brand-navy group-hover:text-brand-accent transition-colors leading-relaxed line-clamp-1">
                                             {article.title}
                                         </h4>
+                                        <span className="text-[10px] font-mono font-bold text-slate-400 block mt-0.5">
+                                            {article.job_code || '—'}
+                                        </span>
                                     </div>
 
                                     {/* Writer Track */}

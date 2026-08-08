@@ -112,21 +112,67 @@ export default function StrategyDetailView({
                 </div>
             )}
 
-            {/* 3. PROPOSED HEADLINE */}
-            <div className="space-y-1.5">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Proposed Strategy Headline</span>
-                {isEditing ? (
-                    <input
-                        className="w-full text-xl font-bold text-slate-900 border-b-2 border-slate-950 focus:border-brand-accent outline-none pb-1 transition-all bg-slate-50/70 p-3 rounded-xl"
-                        value={form.title}
-                        onChange={(e) => setForm({...form, title: e.target.value})}
-                        required
-                    />
-                ) : (
-                    <h1 className="text-2xl font-black text-slate-900 leading-tight bg-transparent py-1 border-b border-slate-100">
-                        {form.title}
-                    </h1>
-                )}
+            {/* 3. PROPOSED HEADLINE & JOB ID */}
+            <div className="space-y-3">
+                <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                    <div className="space-y-1.5 flex-1 w-full">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Proposed Strategy Headline</span>
+                        {isEditing ? (
+                            <input
+                                className="w-full text-xl font-bold text-slate-900 border-b-2 border-slate-950 focus:border-brand-accent outline-none pb-1 transition-all bg-slate-50/70 p-3 rounded-xl"
+                                value={form.title}
+                                onChange={(e) => setForm({...form, title: e.target.value})}
+                                required
+                            />
+                        ) : (
+                            <h1 className="text-2xl font-black text-slate-900 leading-tight bg-transparent py-1 border-b border-slate-100">
+                                {form.title}
+                            </h1>
+                        )}
+                    </div>
+
+                    {/* JOB CODE DISPLAY CARD */}
+                    <div className="bg-slate-900 text-white px-5 py-3.5 rounded-2xl flex flex-col justify-center min-w-[280px] border border-slate-950 shadow-md md:self-end">
+                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-wider block">Job Identifier (JOB_CODE)</span>
+                        <span className="text-xs font-mono font-bold tracking-wider text-brand-light-blue mt-1">
+                            {isEditing ? (
+                                // Dynamically calculate job code during edit state
+                                (() => {
+                                    const prefix = 'OID';
+                                    let yearMonth = '??????';
+                                    if (form.production_month) {
+                                        const parts = form.production_month.split('-');
+                                        if (parts.length >= 2) {
+                                            yearMonth = `${parts[0]}${parts[1]}`;
+                                        }
+                                    }
+                                    let taxonomyCode = '???';
+                                    if (form.section_id) {
+                                        const section = lookups.sections.find(s => String(s.id) === String(form.section_id));
+                                        if (section && section.name) {
+                                            taxonomyCode = section.name.trim().substring(0, 3).toUpperCase();
+                                        }
+                                    }
+                                    const typeCode = form.content_type === 'new' ? 'NC' : 'UC';
+                                    let keywordCode = '???';
+                                    if (form.target_keyword) {
+                                        keywordCode = form.target_keyword
+                                            .trim()
+                                            .split(/\s+/)
+                                            .map(word => word.charAt(0))
+                                            .join('')
+                                            .toUpperCase()
+                                            .replace(/[^A-Z0-9]/g, '');
+                                        if (!keywordCode) keywordCode = '???';
+                                    }
+                                    return `${prefix}-${yearMonth}-${taxonomyCode}-${typeCode}-${keywordCode}`;
+                                })()
+                            ) : (
+                                dbSnapshot?.job_code || 'No JOB_CODE allocated'
+                            )}
+                        </span>
+                    </div>
+                </div>
             </div>
 
             {/* 4. TAXONOMY MATRIX LAYOUT GROUP */}

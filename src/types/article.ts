@@ -2,6 +2,7 @@
 export interface ArticleDisplay {
     id: string;
     title: string;
+    job_code: string;
     category: string;
     section: string;
     writer: string;
@@ -31,6 +32,7 @@ export interface LookupOptions {
 
 export interface EditFormState {
     title: string;
+    job_code: string;
     category_id: number;
     section_id: number;
     product_id: number;

@@ -31,6 +31,7 @@ export const ArticleService = {
             .select(`
                 id,
                 title,
+                job_code,
                 content,
                 demand,
                 intent,
@@ -83,9 +84,11 @@ export const ArticleService = {
                 return {
                     id: String(item.id),
                     title: item.title,
+                    job_code: item.job_code,
                     category: categoryObj?.name || 'Uncategorized',
                     writer: writerObj?.name || 'Unknown',
                     section: sectionObj?.name || 'General',
+                    target_keyword: item.target_keyword,
 
                     product: String(productObj?.id || ''),
                     product_name: productObj?.name || 'Umum',
@@ -151,6 +154,7 @@ export const ArticleService = {
             .select(`
                 id, 
                 title, 
+                job_code,
                 created_at, 
                 approval,
                 writer:writer_id(name)
@@ -165,6 +169,7 @@ export const ArticleService = {
 
     async createArticle(payload: {
         title: string;
+        job_code: string;
         content: string;
         category_id: number;
         section_id: number;
@@ -188,6 +193,7 @@ export const ArticleService = {
         status: string;
     }) {
         const supabase = createClient();
+        console.log('createArticle payload:', payload);
 
         const { data, error } = await supabase
             .from('article')
@@ -227,6 +233,7 @@ export const ArticleService = {
 
     async updateArticle(id: number | string, payload: {
         title?: string;
+        job_code?: string;
         content?: string;
         writer_id?: number;
         category_id?: number;

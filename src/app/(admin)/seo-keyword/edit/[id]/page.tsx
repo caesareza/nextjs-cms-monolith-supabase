@@ -32,7 +32,7 @@ export default function SeoDirectorReviewFormShell() {
     });
 
     const [form, setForm] = useState<EditFormState>({
-        title: '', category_id: 0, section_id: 0, product_id: 0, content_type: 'new',
+        title: '', job_code: '', category_id: 0, section_id: 0, product_id: 0, content_type: 'new',
         production_month: '', demand: '', intent: 'Informational', type: 'Evergreen', classification: 'Infantry',
         theme_id: '', persona_id: '', campaign_id: '', target_keyword: '', meta_description: '', cta_internal_link: ''
     });
@@ -57,6 +57,7 @@ export default function SeoDirectorReviewFormShell() {
 
             setForm({
                 title: data.title || '',
+                job_code: data.job_code || '',
                 category_id: data.category_id || 0,
                 section_id: data.section_id || 0,
                 product_id: data.product_id || 0,
@@ -89,8 +90,39 @@ export default function SeoDirectorReviewFormShell() {
     const handleSaveUpdates = async () => {
         setActionLoading(true);
         try {
+            // Generate updated job_id
+            const prefix = 'OID';
+            let yearMonth = '??????';
+            if (form.production_month) {
+                const parts = form.production_month.split('-');
+                if (parts.length >= 2) {
+                    yearMonth = `${parts[0]}${parts[1]}`;
+                }
+            }
+            let taxonomyCode = '???';
+            if (form.section_id) {
+                const section = lookups.sections.find(s => String(s.id) === String(form.section_id));
+                if (section && section.name) {
+                    taxonomyCode = section.name.trim().substring(0, 3).toUpperCase();
+                }
+            }
+            const typeCode = form.content_type === 'new' ? 'NC' : 'UC';
+            let keywordCode = '???';
+            if (form.target_keyword) {
+                keywordCode = form.target_keyword
+                    .trim()
+                    .split(/\s+/)
+                    .map(word => word.charAt(0))
+                    .join('')
+                    .toUpperCase()
+                    .replace(/[^A-Z0-9]/g, '');
+                if (!keywordCode) keywordCode = '???';
+            }
+            const calculatedJobCode = `${prefix}-${yearMonth}-${taxonomyCode}-${typeCode}-${keywordCode}`;
+
             await ArticleService.updateArticle(Number(id), {
                 title: form.title,
+                job_code: calculatedJobCode,
                 category_id: Number(form.category_id),
                 section_id: Number(form.section_id),
                 product_id: Number(form.product_id),
