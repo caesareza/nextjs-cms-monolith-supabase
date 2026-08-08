@@ -128,6 +128,7 @@ export default async function Page({params}: {
 
                         <SidebarItem icon={<Link2 size={16}/>} label="Target Keyword" value={article.target_keyword}/>
                         <SidebarItem icon={<ExternalLink size={16}/>} label="URL Published" value={article.url_published} isLink/>
+                        <SidebarItem icon={<ExternalLink size={16}/>} label="Google Drive Draft" value={article.gdrive_draft_content} isLink/>
                         <SidebarItem icon={<BarChart3 size={16}/>} label="Index Status" value={article.index_status}/>
 
                         {/* Internal Links Split System Block */}

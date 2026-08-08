@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Loader2, User, ArrowRight } from 'lucide-react';
+import { Loader2, User, ArrowRight, ExternalLink } from 'lucide-react';
 import type { ArticleDisplay } from '@/types/article';
 
 interface ProductionDataGridProps {
@@ -65,9 +65,22 @@ export default function ProductionDataGrid({ articles, loading }: ProductionData
                                 {/* 2. TOPIC & AUTHOR BLOCK */}
                                 <td className="px-6 py-5">
                                     <div className="flex flex-col space-y-1 max-w-xl">
-                                        <Link href={`/article/${item.id}`} className="text-sm font-bold text-slate-900 group-hover:text-brand-accent transition-colors leading-snug line-clamp-1 cursor-pointer">
-                                            {item.title}
-                                        </Link>
+                                        <div className="flex items-center gap-2">
+                                            <Link href={`/article/${item.id}`} className="text-sm font-bold text-slate-900 group-hover:text-brand-accent transition-colors leading-snug line-clamp-1 cursor-pointer">
+                                                {item.title}
+                                            </Link>
+                                            {item.gdrive_draft_content && (
+                                                <a
+                                                    href={item.gdrive_draft_content}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    title="Open Google Drive Draft"
+                                                    className="text-brand-accent hover:text-brand-navy p-1 bg-brand-accent/5 hover:bg-brand-accent/15 border border-brand-accent/20 rounded-md transition-all shrink-0 cursor-pointer"
+                                                >
+                                                    <ExternalLink size={10} />
+                                                </a>
+                                            )}
+                                        </div>
                                         <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 select-none">
                                             <User size={11} className="text-slate-300 shrink-0" />
                                             <span>{item.writer || 'Unassigned Writer'}</span>

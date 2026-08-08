@@ -48,7 +48,8 @@ export default function EditArticleClient({
         classification: initialData.classification || 'Infantry',
         theme_id: initialData.theme_id ? String(initialData.theme_id) : '',
         persona_id: initialData.persona_id ? String(initialData.persona_id) : '',
-        campaign_id: initialData.campaign_id ? String(initialData.campaign_id) : ''
+        campaign_id: initialData.campaign_id ? String(initialData.campaign_id) : '',
+        gdrive_draft_content: initialData.gdrive_draft_content || ''
     });
 
     // Strategy blocker condition assignment check matching system rules
@@ -239,6 +240,20 @@ export default function EditArticleClient({
                                 placeholder="Paste structural target linking parameters..."
                                 value={form.cta_internal_link}
                                 onChange={(e) => setForm({ ...form, cta_internal_link: e.target.value })}
+                            />
+                        </div>
+
+                        {/* Google Drive Draft Content Link Input */}
+                        <div className="flex flex-col gap-2 pt-4 border-t border-slate-100">
+                            <label className="text-[10px] font-black text-slate-400 uppercase flex items-center gap-1">
+                                <Link2 className="text-slate-400" size={12} /> Google Drive Draft Content Link
+                            </label>
+                            <input
+                                type="url"
+                                className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-mono font-bold text-slate-900 outline-none focus:bg-white focus:border-brand-accent/20 focus:ring-4 focus:ring-brand-light-blue/20 transition-all"
+                                placeholder="https://docs.google.com/document/d/..."
+                                value={form.gdrive_draft_content}
+                                onChange={(e) => setForm({ ...form, gdrive_draft_content: e.target.value })}
                             />
                         </div>
 

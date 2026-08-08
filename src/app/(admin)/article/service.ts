@@ -42,6 +42,7 @@ export const ArticleService = {
                 target_keyword,
                 meta_description,
                 cta_internal_link,
+                gdrive_draft_content,
                 created_at,
                 section:section_id(id, name),
                 category:category_id(id, name),
@@ -105,7 +106,8 @@ export const ArticleService = {
                     isApproved: item.approval === 'approved',
                     approval: item.approval,
                     status: item.status,
-                    created_at: item.created_at
+                    created_at: item.created_at,
+                    gdrive_draft_content: item.gdrive_draft_content
                 };
             }),
             total: count || 0
@@ -187,6 +189,7 @@ export const ArticleService = {
         meta_description?: string;
         target_keyword?: string;
         cta_internal_link?: string;
+        gdrive_draft_content?: string;
         seo_check?: string;
         index_status?: string;
         internal_notes?: string;
@@ -276,6 +279,7 @@ export const ArticleService = {
         target_keyword?: string;
         meta_description?: string;
         cta_internal_link?: string;
+        gdrive_draft_content?: string;
         approval?: string;
     }) {
         const supabase = createClient();
