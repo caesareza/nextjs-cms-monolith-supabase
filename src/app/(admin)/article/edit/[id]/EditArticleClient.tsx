@@ -164,9 +164,17 @@ export default function EditArticleClient({
                     <div className="bg-white rounded-3xl border border-slate-200 p-10 shadow-xs space-y-6">
 
                         {/* READ-ONLY TITLE ACCORDION ABOVE INPUTS */}
-                        <div className="space-y-1 pb-4 border-b border-slate-100">
-                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block select-none">Target Strategy Brief Topic</span>
-                            <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-snug">{form.title}</h1>
+                        <div className="pb-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div className="space-y-1 flex-1">
+                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block select-none">Target Strategy Brief Topic</span>
+                                <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-snug">{form.title}</h1>
+                            </div>
+                            <div className="flex flex-col items-start md:items-end gap-1 select-all shrink-0">
+                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block select-none">Job Code</span>
+                                <span className="text-xs font-mono font-bold text-slate-700 bg-slate-100 border border-slate-200/85 px-2.5 py-1 rounded-md tracking-wider whitespace-nowrap shadow-xs">
+                                    {initialData.job_code || '—'}
+                                </span>
+                            </div>
                         </div>
 
                         {/* ROW: WRITER SELECT AND STATUS LIFECYCLE DROPDOWNS */}

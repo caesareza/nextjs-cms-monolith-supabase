@@ -33,7 +33,8 @@ export default function ProductionDataGrid({ articles, loading }: ProductionData
             <table className="w-full text-left border-collapse">
                 <thead>
                 <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] font-black uppercase tracking-widest text-slate-400 select-none">
-                    <th className="pl-8 pr-4 py-4.5 w-7/12">Topic / Title Asset</th>
+                    <th className="pl-8 pr-4 py-4.5 w-2/12">Job Code</th>
+                    <th className="px-6 py-4.5 w-5/12">Topic / Title Asset</th>
                     <th className="px-6 py-4.5 w-3/12">Status</th>
                     <th className="pr-8 pl-4 py-4.5 text-right w-2/12">Workspace</th>
                 </tr>
@@ -41,7 +42,7 @@ export default function ProductionDataGrid({ articles, loading }: ProductionData
                 <tbody className="divide-y divide-slate-100/60">
                 {loading ? (
                     <tr>
-                        <td colSpan={3} className="py-24 text-center">
+                        <td colSpan={4} className="py-24 text-center">
                             <div className="flex flex-col items-center justify-center gap-2">
                                 <Loader2 className="animate-spin text-slate-300" size={20} />
                                 <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Loading Assigned Briefs...</span>
@@ -54,8 +55,15 @@ export default function ProductionDataGrid({ articles, loading }: ProductionData
                         return (
                             <tr key={item.id} className="group hover:bg-slate-50/40 transition-colors">
 
-                                {/* 1. TOPIC & AUTHOR BLOCK */}
-                                <td className="pl-8 pr-4 py-5">
+                                {/* 1. JOB CODE */}
+                                <td className="pl-8 pr-4 py-5 whitespace-nowrap align-middle">
+                                    <span className="text-[10px] font-mono font-bold text-slate-700 bg-slate-100 border border-slate-200/80 px-2.5 py-1 rounded-md tracking-wider whitespace-nowrap select-all shadow-xs">
+                                        {item.job_code || '—'}
+                                    </span>
+                                </td>
+
+                                {/* 2. TOPIC & AUTHOR BLOCK */}
+                                <td className="px-6 py-5">
                                     <div className="flex flex-col space-y-1 max-w-xl">
                                         <Link href={`/article/${item.id}`} className="text-sm font-bold text-slate-900 group-hover:text-brand-accent transition-colors leading-snug line-clamp-1 cursor-pointer">
                                             {item.title}
@@ -67,14 +75,14 @@ export default function ProductionDataGrid({ articles, loading }: ProductionData
                                     </div>
                                 </td>
 
-                                {/* 2. SIMPLIFIED WORKFLOW BADGE */}
+                                {/* 3. SIMPLIFIED WORKFLOW BADGE */}
                                 <td className="px-6 py-5">
                                         <span className={`text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md border ${badge.color} select-none`}>
                                             {badge.label}
                                         </span>
                                 </td>
 
-                                {/* 3. WORKSPACE PORTAL */}
+                                {/* 4. WORKSPACE PORTAL */}
                                 <td className="pr-8 pl-4 py-5 text-right">
                                     <Link href={`/article/edit/${item.id}`} className="inline-flex items-center text-[10px] font-black uppercase tracking-wider bg-slate-900 text-white px-3.5 py-2 rounded-xl border border-slate-950 hover:bg-slate-800 transition-all shadow-xs">
                                         Open <ArrowRight size={11} className="ml-1 shrink-0" />
@@ -86,7 +94,7 @@ export default function ProductionDataGrid({ articles, loading }: ProductionData
                     })
                 ) : (
                     <tr>
-                        <td colSpan={3} className="py-20 text-center text-slate-400 font-bold text-xs uppercase tracking-wider italic">
+                        <td colSpan={4} className="py-20 text-center text-slate-400 font-bold text-xs uppercase tracking-wider italic">
                             No assigned production assets found for this cycle.
                         </td>
                     </tr>
