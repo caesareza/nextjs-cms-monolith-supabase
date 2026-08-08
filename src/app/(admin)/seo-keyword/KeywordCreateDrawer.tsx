@@ -122,8 +122,8 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
             <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs" onClick={handleClose} />
 
             {/* Main Form wrapped clean container */}
-            <form 
-                onSubmit={handleSubmitInternal} 
+            <form
+                onSubmit={handleSubmitInternal}
                 className="relative w-full max-w-2xl bg-slate-50 h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 overflow-hidden"
             >
                 {/* DRAW HEADER PANEL */}
@@ -132,9 +132,9 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                         <h2 className="text-lg font-black text-slate-900 tracking-tight">New Strategy Brief</h2>
                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Initialize core focus requirements</p>
                     </div>
-                    <button 
-                        type="button" 
-                        onClick={handleClose} 
+                    <button
+                        type="button"
+                        onClick={handleClose}
                         className="p-2 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 transition-colors"
                     >
                         <X size={18} />
@@ -143,7 +143,7 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
 
                 {/* SCROLLABLE COMPONENT CORE FORM BODY */}
                 <div className="flex-1 overflow-y-auto p-8 space-y-8">
-                    
+
                     {/* AUTO-GENERATED JOB_CODE DISPLAY */}
                     <div className="bg-slate-900 text-white p-5 border border-slate-950 rounded-3xl space-y-2 shadow-md">
                         <div className="flex items-center justify-between">
@@ -175,18 +175,18 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                                 className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:bg-white focus:ring-4 focus:ring-brand-light-blue/20 focus:border-brand-accent/20 transition-all placeholder:text-slate-300"
                                 placeholder="Enter content concept topic header..."
                                 value={form.title}
-                                onChange={(e) => setForm({...form, title: e.target.value})}
+                                onChange={(e) => setForm({ ...form, title: e.target.value })}
                                 required
                             />
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5"><FolderKanban size={11}/> Category Cluster</label>
-                                <select 
-                                    className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer" 
-                                    value={form.category_id} 
-                                    onChange={(e) => setForm({...form, category_id: e.target.value})} 
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5"><FolderKanban size={11} /> Category Cluster</label>
+                                <select
+                                    className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer"
+                                    value={form.category_id}
+                                    onChange={(e) => setForm({ ...form, category_id: e.target.value })}
                                     required
                                 >
                                     <option value="">Select Cluster...</option>
@@ -195,11 +195,11 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5"><FolderKanban size={11}/> Section Taxonomy</label>
-                                <select 
-                                    className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer" 
-                                    value={form.section_id} 
-                                    onChange={(e) => setForm({...form, section_id: e.target.value})} 
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5"><FolderKanban size={11} /> Section Taxonomy</label>
+                                <select
+                                    className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer"
+                                    value={form.section_id}
+                                    onChange={(e) => setForm({ ...form, section_id: e.target.value })}
                                     required
                                 >
                                     <option value="">Select Section...</option>
@@ -209,11 +209,11 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5"><Tag size={11}/> Core Product Tag</label>
-                            <select 
-                                className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer" 
-                                value={form.product_id} 
-                                onChange={(e) => setForm({...form, product_id: e.target.value})} 
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5"><Tag size={11} /> Core Product Tag</label>
+                            <select
+                                className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer"
+                                value={form.product_id}
+                                onChange={(e) => setForm({ ...form, product_id: e.target.value })}
                                 required
                             >
                                 <option value="">Select Related Product Matrix...</option>
@@ -233,11 +233,11 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5"><Sparkles size={11}/> Strategy Theme</label>
-                                <select 
-                                    className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer" 
-                                    value={form.theme_id} 
-                                    onChange={(e) => setForm({...form, theme_id: e.target.value})}
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5"><Sparkles size={11} /> Strategy Theme</label>
+                                <select
+                                    className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer"
+                                    value={form.theme_id}
+                                    onChange={(e) => setForm({ ...form, theme_id: e.target.value })}
                                 >
                                     <option value="">Select Campaign Theme...</option>
                                     {options.themes.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
@@ -245,11 +245,11 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5"><Target size={11}/> Target Persona</label>
-                                <select 
-                                    className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer" 
-                                    value={form.persona_id} 
-                                    onChange={(e) => setForm({...form, persona_id: e.target.value})}
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5"><Target size={11} /> Target Persona</label>
+                                <select
+                                    className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer"
+                                    value={form.persona_id}
+                                    onChange={(e) => setForm({ ...form, persona_id: e.target.value })}
                                 >
                                     <option value="">Select Target Audience...</option>
                                     {options.personas.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -260,10 +260,10 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Strategy Execution Type</label>
-                                <select 
-                                    className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer" 
-                                    value={form.content_type} 
-                                    onChange={(e) => setForm({...form, content_type: e.target.value})} 
+                                <select
+                                    className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer"
+                                    value={form.content_type}
+                                    onChange={(e) => setForm({ ...form, content_type: e.target.value })}
                                     required
                                 >
                                     <option value="new">New Article</option>
@@ -272,23 +272,23 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5"><Calendar size={11}/> Target Month</label>
-                                <input 
-                                    type="date" 
-                                    className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer" 
-                                    value={form.production_month} 
-                                    onChange={(e) => setForm({...form, production_month: e.target.value})} 
-                                    required 
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5"><Calendar size={11} /> Target Month</label>
+                                <input
+                                    type="date"
+                                    className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer"
+                                    value={form.production_month}
+                                    onChange={(e) => setForm({ ...form, production_month: e.target.value })}
+                                    required
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5"><Megaphone size={11}/> Campaign Context</label>
-                            <select 
-                                className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer" 
-                                value={form.campaign_id} 
-                                onChange={(e) => setForm({...form, campaign_id: e.target.value})}
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5"><Megaphone size={11} /> Campaign Context</label>
+                            <select
+                                className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer"
+                                value={form.campaign_id}
+                                onChange={(e) => setForm({ ...form, campaign_id: e.target.value })}
                             >
                                 <option value="">Select Related Campaign Attribution...</option>
                                 {options.campaigns.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -313,7 +313,7 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                             <select
                                 className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer"
                                 value={form.classification}
-                                onChange={(e) => setForm({...form, classification: e.target.value})}
+                                onChange={(e) => setForm({ ...form, classification: e.target.value })}
                                 required
                             >
                                 <option value="Artillery">Artillery</option>
@@ -325,12 +325,12 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                         {/* Search Metrics Tri-Grid Panel */}
                         <div className="grid grid-cols-3 gap-3 bg-slate-50 p-4 border border-slate-200/60 rounded-2xl">
                             <div className="space-y-1">
-                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-wider flex items-center gap-1"><Flame size={10} className="text-orange-500"/> Search Vol</label>
-                                <input type="number" className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-brand-light-blue/30" placeholder="E.g. 1000" value={form.demand} onChange={(e) => setForm({...form, demand: e.target.value})} />
+                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-wider flex items-center gap-1"><Flame size={10} className="text-orange-500" /> Search Vol</label>
+                                <input type="number" className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-brand-light-blue/30" placeholder="E.g. 1000" value={form.demand} onChange={(e) => setForm({ ...form, demand: e.target.value })} />
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Search Intent</label>
-                                <select className="w-full px-2 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer" value={form.intent} onChange={(e) => setForm({...form, intent: e.target.value})}>
+                                <select className="w-full px-2 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer" value={form.intent} onChange={(e) => setForm({ ...form, intent: e.target.value })}>
                                     <option value="Informational">Informational</option>
                                     <option value="Commercial">Commercial</option>
                                     <option value="Transactional">Transactional</option>
@@ -339,7 +339,7 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Lifecycle Type</label>
-                                <select className="w-full px-2 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer" value={form.type} onChange={(e) => setForm({...form, type: e.target.value})}>
+                                <select className="w-full px-2 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
                                     <option value="Evergreen">Evergreen</option>
                                     <option value="Seasonal">Seasonal</option>
                                 </select>
@@ -350,17 +350,17 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                         <div className="space-y-4 pt-2">
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Target Focus Keyword</label>
-                                <textarea rows={2} className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:bg-white resize-none transition-all placeholder:text-slate-300" placeholder="Primary deep intent search phrase..." value={form.target_keyword} onChange={(e) => setForm({...form, target_keyword: e.target.value})} required />
+                                <textarea rows={2} className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:bg-white resize-none transition-all placeholder:text-slate-300" placeholder="Primary deep intent search phrase..." value={form.target_keyword} onChange={(e) => setForm({ ...form, target_keyword: e.target.value })} required />
                             </div>
 
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Meta Description Tag</label>
-                                <textarea rows={2} className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 outline-none focus:bg-white resize-none transition-all placeholder:text-slate-300" placeholder="Google snippet summary parameter descriptions..." value={form.meta_description} onChange={(e) => setForm({...form, meta_description: e.target.value})} required />
+                                <textarea rows={2} className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 outline-none focus:bg-white resize-none transition-all placeholder:text-slate-300" placeholder="Google snippet summary parameter descriptions..." value={form.meta_description} onChange={(e) => setForm({ ...form, meta_description: e.target.value })} required />
                             </div>
 
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">CTA Destination Links</label>
-                                <input type="url" className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:bg-white focus:ring-4 focus:ring-brand-light-blue/20 focus:border-brand-accent/20 transition-all placeholder:text-slate-300" placeholder="https://ocbc.id/..." value={form.cta_internal_link} onChange={(e) => setForm({...form, cta_internal_link: e.target.value})} />
+                                <input type="url" className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:bg-white focus:ring-4 focus:ring-brand-light-blue/20 focus:border-brand-accent/20 transition-all placeholder:text-slate-300" placeholder="https://ocbc.id/..." value={form.cta_internal_link} onChange={(e) => setForm({ ...form, cta_internal_link: e.target.value })} />
                             </div>
                         </div>
                     </div>
@@ -368,9 +368,9 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
 
                 {/* IMMUTABLE FLOATING DRAWER FOOTER SUBMIT ACTIONS */}
                 <div className="bg-white border-t border-slate-200/80 p-5 flex gap-3 shadow-[0_-8px_30px_rgb(0,0,0,0.04)] shrink-0 z-10">
-                    <button 
-                        type="button" 
-                        onClick={handleClose} 
+                    <button
+                        type="button"
+                        onClick={handleClose}
                         className="flex-1 py-3.5 border border-slate-200 hover:bg-slate-50 text-slate-600 font-black text-xs uppercase tracking-wider rounded-xl transition-all"
                     >
                         Discard
