@@ -56,6 +56,10 @@ export default function UnifiedSeoKeywordPage() {
         return () => clearTimeout(handler);
     }, [inputValue]);
 
+    useEffect(() => {
+        document.title = "SEO Keyword Sandbox Matrix | PT CMS";
+    }, []);
+
     const loadOptionsData = useCallback(async () => {
         try {
             const [c, secData, p, t, per, cmp] = await Promise.all([
@@ -188,7 +192,7 @@ export default function UnifiedSeoKeywordPage() {
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab as any)}
-                            className={`px-4 py-2 rounded-lg text-xs font-black transition-all cursor-pointer capitalize ${activeTab === tab ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'
+                            className={`px-4 py-2 rounded-lg text-xs font-black transition-all cursor-pointer capitalize ${activeTab === tab ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-650'
                                 }`}
                         >
                             {tab === 'pending' ? '⏳ Review Queue' : tab === 'rejected' ? '❌ Revisions' : 'All Briefs'}
@@ -211,7 +215,7 @@ export default function UnifiedSeoKeywordPage() {
                     <select
                         value={month}
                         onChange={(e) => setMonth(Number(e.target.value))}
-                        className="bg-slate-50 border border-slate-200/60 text-xs font-black py-2 px-3 rounded-xl outline-none cursor-pointer text-slate-700"
+                        className="bg-slate-50 border border-slate-200/60 text-xs font-black py-2 px-3 rounded-xl outline-none cursor-pointer text-slate-705"
                     >
                         {MONTHS.map((m, i) => <option key={m} value={i + 1}>{m} Production</option>)}
                     </select>
@@ -325,7 +329,7 @@ export default function UnifiedSeoKeywordPage() {
                 </table>
             </div>
 
-            {/* SEPARATED DRAWER VIEW CALLED CLEANLY IN A SINGLE LINE */}
+            {/* SEPARATED DRAWER VIEW */}
             <KeywordCreateDrawer
                 isOpen={showCreateForm}
                 onClose={() => setShowCreateForm(false)}

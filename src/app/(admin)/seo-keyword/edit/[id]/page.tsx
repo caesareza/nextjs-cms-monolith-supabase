@@ -87,6 +87,14 @@ export default function SeoDirectorReviewFormShell() {
         if (id) loadBriefDetails();
     }, [id, loadBriefDetails]);
 
+    useEffect(() => {
+        if (dbSnapshot?.title) {
+            document.title = `${dbSnapshot.title} | Strategy Spec | PT CMS`;
+        } else {
+            document.title = "Loading Strategy Specification... | PT CMS";
+        }
+    }, [dbSnapshot?.title]);
+
     const handleSaveUpdates = async () => {
         setActionLoading(true);
         try {
@@ -118,11 +126,11 @@ export default function SeoDirectorReviewFormShell() {
                     .replace(/[^A-Z0-9]/g, '');
                 if (!keywordCode) keywordCode = '???';
             }
-            const calculatedJobCode = `${prefix}-${yearMonth}-${taxonomyCode}-${typeCode}-${keywordCode}`;
+            const calculatedJobId = `${prefix}-${yearMonth}-${taxonomyCode}-${typeCode}-${keywordCode}`;
 
             await ArticleService.updateArticle(Number(id), {
                 title: form.title,
-                job_code: calculatedJobCode,
+                job_code: calculatedJobId,
                 category_id: Number(form.category_id),
                 section_id: Number(form.section_id),
                 product_id: Number(form.product_id),
@@ -216,7 +224,7 @@ export default function SeoDirectorReviewFormShell() {
                                 onChange={(e) => setInternalNote(e.target.value)}
                             />
                             <div className="flex justify-end gap-2 mt-4">
-                                <button type="button" className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-xl" onClick={() => { setShowRejectModal(false); setInternalNote(''); }}>Cancel</button>
+                                <button type="button" className="px-4 py-2 text-sm text-slate-650 hover:bg-slate-50 rounded-xl" onClick={() => { setShowRejectModal(false); setInternalNote(''); }}>Cancel</button>
                                 <button type="submit" disabled={!internalNote.trim() || isRejecting} className="bg-brand-accent hover:bg-brand-navy text-white px-4 py-2 text-sm font-medium rounded-xl disabled:opacity-40">Confirm Reject</button>
                             </div>
                         </form>
