@@ -27,6 +27,7 @@ export default function SeoDirectorReviewFormShell() {
 
     const [isEditing, setIsEditing] = useState(false);
     const [dbSnapshot, setDbSnapshot] = useState<any>(null);
+    const [logs, setLogs] = useState<any[]>([]);
     const [lookups, setLookups] = useState<LookupOptions>({
         categories: [], sections: [], productTags: [], themes: [], personas: [], campaigns: []
     });
@@ -42,18 +43,20 @@ export default function SeoDirectorReviewFormShell() {
     const loadBriefDetails = useCallback(async () => {
         setLoading(true);
         try {
-            const [data, c, secData, p, t, per, cmp] = await Promise.all([
+            const [data, c, secData, p, t, per, cmp, logsData] = await Promise.all([
                 ArticleService.getArticleById(Number(id)),
                 CategoryService.getCategories(),
                 SectionService.getSections({ page: 1, limit: 100, search: '' }).then(res => res.sections),
                 ProductTagService.getProductTags({ page: 1, limit: 100, search: '' }).then(res => res.productTags),
                 ThemeService.getThemes(),
                 PersonaService.getPersonas(),
-                CampaignService.getCampaigns()
+                CampaignService.getCampaigns(),
+                ArticleService.getWorkflowLogs(String(id))
             ]);
 
             setDbSnapshot(data);
             setLookups({ categories: c, sections: secData, productTags: p, themes: t, personas: per, campaigns: cmp });
+            setLogs(logsData);
 
             setForm({
                 title: data.title || '',
@@ -208,6 +211,7 @@ export default function SeoDirectorReviewFormShell() {
                 actionLoading={actionLoading} dbSnapshot={dbSnapshot} lookups={lookups}
                 onBack={() => router.back()} onSave={handleSaveUpdates} onApprove={handleApprove}
                 onRejectClick={() => setShowRejectModal(true)}
+                logs={logs}
             />
 
             {showRejectModal && (

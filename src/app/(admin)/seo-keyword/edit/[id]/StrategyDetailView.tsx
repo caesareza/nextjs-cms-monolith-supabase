@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { ArticleService } from '@/app/(admin)/article/service';
 import { EditFormState, LookupOptions } from '@/types/article';
+import ArticleHistory from '@/app/(admin)/article/[id]/ArticleHistory';
 import {
     Edit2,
     Save,
@@ -41,11 +42,12 @@ interface StrategyDetailViewProps {
     onSave: () => Promise<void>;
     onApprove: () => Promise<void>;
     onRejectClick: () => void;
+    logs?: any[];
 }
 
 export default function StrategyDetailView({
     form, setForm, isEditing, setIsEditing, isApproved, isActionDisabled, actionLoading,
-    dbSnapshot, lookups, onBack, onSave, onApprove, onRejectClick
+    dbSnapshot, lookups, onBack, onSave, onApprove, onRejectClick, logs = []
 }: StrategyDetailViewProps) {
 
     // Marketing assets states
@@ -254,7 +256,7 @@ export default function StrategyDetailView({
                     {[
                         { id: 'overview', name: 'Overview', count: null },
                         { id: 'assets', name: 'Marketing Assets', count: marketingAssets.length || null },
-                        { id: 'history', name: 'Feedback & History', count: dbSnapshot?.internal_notes ? 1 : null }
+                        { id: 'history', name: 'Feedback & History', count: logs.length || null }
                     ].map((tab) => {
                         const isActive = activeTab === tab.id;
                         return (
@@ -661,7 +663,7 @@ export default function StrategyDetailView({
 
                 {activeTab === 'history' && (
                     <div className="space-y-6 animate-in fade-in duration-200">
-                        {dbSnapshot?.internal_notes && dbSnapshot.internal_notes.trim() !== '' ? (
+                        {dbSnapshot?.internal_notes && dbSnapshot.internal_notes.trim() !== '' && (
                             <div className="bg-white p-8 border border-slate-200/60 rounded-2xl shadow-3xs space-y-3">
                                 <div className="flex items-center gap-2 text-slate-800 border-b border-slate-100 pb-3">
                                     <MessageSquare size={14} className="text-slate-400" />
@@ -671,12 +673,9 @@ export default function StrategyDetailView({
                                     {dbSnapshot.internal_notes}
                                 </div>
                             </div>
-                        ) : (
-                            <div className="bg-white p-8 border border-slate-200/60 rounded-2xl shadow-3xs text-center py-12">
-                                <History size={24} className="text-slate-300 mx-auto mb-2" />
-                                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">No Historic Director Feedback logs.</p>
-                            </div>
                         )}
+
+                        <ArticleHistory logs={logs} />
                     </div>
                 )}
             </div>
