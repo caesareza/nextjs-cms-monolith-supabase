@@ -110,26 +110,26 @@ export default function PendingListClient() {
     }, [articles, selectedSegment, searchTerm]);
 
     return (
-        <div className="bg-white rounded-2xl border border-brand-light-blue/20 shadow-2xl shadow-brand-navy/5 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-2xs overflow-hidden">
 
             {/* HEADER CONTROLS */}
-            <div className="p-10 border-b border-brand-light-blue/20 flex flex-col md:flex-row md:items-center justify-between bg-brand-cream/30 gap-6">
+            <div className="p-10 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between bg-slate-50/30 gap-6">
                 <div className="flex items-center gap-4">
                     <div className={`w-3 h-3 rounded-full bg-brand-accent ${loading ? 'animate-ping' : 'animate-pulse'}`} />
-                    <h3 className="font-black text-brand-navy uppercase text-xs tracking-[0.2em]">
+                    <h3 className="font-bold text-brand-navy uppercase text-xs tracking-wider">
                         Needs Approval
                     </h3>
-                    <span className="text-[10px] bg-brand-accent/10 text-brand-accent border border-brand-accent/20 px-2.5 py-1 rounded-lg font-bold">
+                    <span className="text-[10px] bg-brand-accent/5 text-brand-accent border border-brand-accent/15 px-2.5 py-1 rounded-lg font-bold">
                         {filteredArticles.length} Pending
                     </span>
                 </div>
 
                 <div className="relative w-full md:w-72">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400/80" size={16} />
                     <input
                         type="text"
                         placeholder="Search queue..."
-                        className="w-full pl-12 pr-4 py-3 bg-white border border-brand-light-blue/30 rounded-2xl text-[10px] font-bold uppercase tracking-widest focus:ring-4 focus:ring-brand-light-blue/30 focus:border-brand-steel-blue/40 outline-none transition-all placeholder:text-slate-400"
+                        className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-[10px] font-semibold uppercase tracking-wider focus:ring-4 focus:ring-brand-light-blue/20 focus:border-brand-steel-blue outline-none transition-all placeholder:text-slate-400"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -148,8 +148,8 @@ export default function PendingListClient() {
                                 onClick={() => setSelectedSegment(segment)}
                                 className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all border ${
                                     selectedSegment === segment
-                                        ? 'bg-slate-900 border-slate-900 text-brand-light-blue shadow-3xs'
-                                        : 'bg-white border-slate-200/80 text-slate-650 hover:bg-slate-55 transition-colors'
+                                        ? 'bg-slate-900 border-slate-900 text-white shadow-3xs font-bold'
+                                        : 'bg-white border-slate-200/80 text-slate-650 hover:bg-slate-50 transition-colors'
                                 }`}
                             >
                                 {segment === 'ALL' ? 'All Segments' : segment} ({count})

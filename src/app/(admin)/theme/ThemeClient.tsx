@@ -67,12 +67,12 @@ export default function ThemeClient() {
 
             {/* HEADER METRICS */}
             <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-brand-accent/10 flex items-center justify-center text-brand-accent">
-                    <Palette size={20} />
+                <div className="w-10 h-10 rounded-full bg-brand-accent/10 flex items-center justify-center text-brand-steel-blue shrink-0">
+                    <Palette size={18} />
                 </div>
                 <div>
-                    <h1 className="text-2xl font-black text-slate-900 tracking-tight">Theme Management</h1>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Configure Campaign Themes & Content Topics</p>
+                    <h1 className="text-xl font-extrabold text-slate-900 tracking-tight leading-tight">Theme Management</h1>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Configure Campaign Themes & Content Topics</p>
                 </div>
             </div>
 
