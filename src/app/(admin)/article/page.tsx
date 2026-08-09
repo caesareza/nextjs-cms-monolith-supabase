@@ -8,6 +8,7 @@ import { SectionService } from '../section/service';
 import { LookupOptions, ArticleDisplay } from '@/types/article';
 import ProductionFilterPanel from './ProductionFilterPanel';
 import ProductionDataGrid from './ProductionDataGrid';
+import { Rocket } from 'lucide-react';
 
 export default function ArticleProductionPage() {
     const now = new Date();
@@ -93,11 +94,16 @@ export default function ArticleProductionPage() {
         <div className="space-y-8 animate-in fade-in duration-200">
 
             {/* 1. SECTION TITLE INTRO */}
-            <div>
-                <h1 className="text-2xl font-black tracking-tight text-slate-900">Production Sheet</h1>
-                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mt-0.5">
-                    Corporate Editorial Content Lifecycle
-                </p>
+            <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-brand-accent/10 flex items-center justify-center text-brand-steel-blue shrink-0">
+                    <Rocket size={18} />
+                </div>
+                <div>
+                    <h1 className="text-xl font-extrabold text-slate-900 leading-tight">Production Sheet</h1>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
+                        Corporate Editorial Content Lifecycle
+                    </p>
+                </div>
             </div>
 
             {/* 2. ENCAPSULATED CONTROLS & FILTER BAR */}

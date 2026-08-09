@@ -9,7 +9,7 @@ import { ProductPriorityService } from '../product-priority/service';
 import { ThemeService } from '../theme/service';
 import { PersonaService } from '../persona/service';
 import { CampaignService } from '../campaign/service';
-import { Search, Loader2, Filter, Plus, AlertTriangle } from 'lucide-react';
+import { Search, Loader2, Filter, Plus, AlertTriangle, KeySquare } from 'lucide-react';
 import Link from 'next/link';
 import KeywordCreateDrawer from './KeywordCreateDrawer';
 import { LookupOptions } from '@/types/article';
@@ -176,10 +176,15 @@ export default function UnifiedSeoKeywordPage() {
     return (
         <div className="space-y-8">
             {/* ACTION HEADER */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-5">
-                <div>
-                    <h1 className="text-2xl font-black tracking-tight text-slate-900">Keyword Strategy</h1>
-                    <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mt-0.5">SEO Gatekeeper Sandbox</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-brand-accent/10 flex items-center justify-center text-brand-steel-blue shrink-0">
+                        <KeySquare size={18} />
+                    </div>
+                    <div>
+                        <h1 className="text-xl font-extrabold tracking-tight text-slate-900 leading-tight">Keyword Strategy</h1>
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">SEO Gatekeeper Sandbox</p>
+                    </div>
                 </div>
                 <button
                     onClick={() => setShowCreateForm(true)}

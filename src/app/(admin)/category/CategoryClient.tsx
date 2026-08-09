@@ -78,15 +78,15 @@ export default function CategoryClient() {
             {/* BRAND HEADER */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-brand-accent/10 flex items-center justify-center text-brand-accent">
-                        <Tags size={20} />
+                    <div className="w-10 h-10 rounded-full bg-brand-accent/10 flex items-center justify-center text-brand-steel-blue shrink-0">
+                        <Tags size={18} />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">Category Management</h1>
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Configure Segment Sub-Taxonomies & Channels</p>
+                        <h1 className="text-xl font-extrabold text-slate-900 tracking-tight leading-tight">Category Management</h1>
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Configure Segment Sub-Taxonomies & Channels</p>
                     </div>
                 </div>
-                <div className="bg-slate-100 text-slate-600 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-wider border border-slate-200/40 w-fit">
+                <div className="bg-slate-100 text-slate-650 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider w-fit">
                     Active Sub-categories: {categories.length}
                 </div>
             </div>
