@@ -48,7 +48,8 @@ export default function EditArticleClient({
         classification: initialData.classification || 'Infantry',
         theme_id: initialData.theme_id ? String(initialData.theme_id) : '',
         persona_id: initialData.persona_id ? String(initialData.persona_id) : '',
-        campaign_id: initialData.campaign_id ? String(initialData.campaign_id) : ''
+        campaign_id: initialData.campaign_id ? String(initialData.campaign_id) : '',
+        gdrive_draft_content: initialData.gdrive_draft_content || ''
     });
 
     // Strategy blocker condition assignment check matching system rules
@@ -164,9 +165,17 @@ export default function EditArticleClient({
                     <div className="bg-white rounded-3xl border border-slate-200 p-10 shadow-xs space-y-6">
 
                         {/* READ-ONLY TITLE ACCORDION ABOVE INPUTS */}
-                        <div className="space-y-1 pb-4 border-b border-slate-100">
-                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block select-none">Target Strategy Brief Topic</span>
-                            <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-snug">{form.title}</h1>
+                        <div className="pb-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div className="space-y-1 flex-1">
+                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block select-none">Target Strategy Brief Topic</span>
+                                <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-snug">{form.title}</h1>
+                            </div>
+                            <div className="flex flex-col items-start md:items-end gap-1 select-all shrink-0">
+                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block select-none">Job Code</span>
+                                <span className="text-xs font-mono font-bold text-slate-700 bg-slate-100 border border-slate-200/85 px-2.5 py-1 rounded-md tracking-wider whitespace-nowrap shadow-xs">
+                                    {initialData.job_code || '—'}
+                                </span>
+                            </div>
                         </div>
 
                         {/* ROW: WRITER SELECT AND STATUS LIFECYCLE DROPDOWNS */}
@@ -231,6 +240,20 @@ export default function EditArticleClient({
                                 placeholder="Paste structural target linking parameters..."
                                 value={form.cta_internal_link}
                                 onChange={(e) => setForm({ ...form, cta_internal_link: e.target.value })}
+                            />
+                        </div>
+
+                        {/* Google Drive Draft Content Link Input */}
+                        <div className="flex flex-col gap-2 pt-4 border-t border-slate-100">
+                            <label className="text-[10px] font-black text-slate-400 uppercase flex items-center gap-1">
+                                <Link2 className="text-slate-400" size={12} /> Google Drive Draft Content Link
+                            </label>
+                            <input
+                                type="url"
+                                className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-mono font-bold text-slate-900 outline-none focus:bg-white focus:border-brand-accent/20 focus:ring-4 focus:ring-brand-light-blue/20 transition-all"
+                                placeholder="https://docs.google.com/document/d/..."
+                                value={form.gdrive_draft_content}
+                                onChange={(e) => setForm({ ...form, gdrive_draft_content: e.target.value })}
                             />
                         </div>
 

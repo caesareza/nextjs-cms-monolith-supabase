@@ -31,6 +31,7 @@ export const ArticleService = {
             .select(`
                 id,
                 title,
+                job_code,
                 content,
                 demand,
                 intent,
@@ -41,6 +42,7 @@ export const ArticleService = {
                 target_keyword,
                 meta_description,
                 cta_internal_link,
+                gdrive_draft_content,
                 created_at,
                 section:section_id(id, name),
                 category:category_id(id, name),
@@ -83,9 +85,11 @@ export const ArticleService = {
                 return {
                     id: String(item.id),
                     title: item.title,
+                    job_code: item.job_code,
                     category: categoryObj?.name || 'Uncategorized',
                     writer: writerObj?.name || 'Unknown',
                     section: sectionObj?.name || 'General',
+                    target_keyword: item.target_keyword,
 
                     product: String(productObj?.id || ''),
                     product_name: productObj?.name || 'Umum',
@@ -102,7 +106,8 @@ export const ArticleService = {
                     isApproved: item.approval === 'approved',
                     approval: item.approval,
                     status: item.status,
-                    created_at: item.created_at
+                    created_at: item.created_at,
+                    gdrive_draft_content: item.gdrive_draft_content
                 };
             }),
             total: count || 0
@@ -151,6 +156,7 @@ export const ArticleService = {
             .select(`
                 id, 
                 title, 
+                job_code,
                 created_at, 
                 approval,
                 writer:writer_id(name)
@@ -165,6 +171,7 @@ export const ArticleService = {
 
     async createArticle(payload: {
         title: string;
+        job_code: string;
         content: string;
         category_id: number;
         section_id: number;
@@ -182,18 +189,44 @@ export const ArticleService = {
         meta_description?: string;
         target_keyword?: string;
         cta_internal_link?: string;
+        gdrive_draft_content?: string;
         seo_check?: string;
         index_status?: string;
         internal_notes?: string;
         status: string;
     }) {
         const supabase = createClient();
+        console.log('createArticle payload:', payload);
 
         const { data, error } = await supabase
             .from('article')
             .insert([{
                 ...payload,
             }])
+            .select()
+            .single();
+
+        if (error) throw error;
+        return data;
+    },
+
+    async getMarketingAssets(articleId: number) {
+        const supabase = createClient();
+        const { data, error } = await supabase
+            .from('article_marketing_asset')
+            .select('id, asset_type, asset_value')
+            .eq('article_id', articleId)
+            .order('id', { ascending: true });
+
+        if (error) throw error;
+        return data;
+    },
+
+    async createMarketingAsset(payload: { article_id: number; asset_type: 'product' | 'cta'; asset_value: string }) {
+        const supabase = createClient();
+        const { data, error } = await supabase
+            .from('article_marketing_asset')
+            .insert([payload])
             .select()
             .single();
 
@@ -227,6 +260,7 @@ export const ArticleService = {
 
     async updateArticle(id: number | string, payload: {
         title?: string;
+        job_code?: string;
         content?: string;
         writer_id?: number;
         category_id?: number;
@@ -245,6 +279,7 @@ export const ArticleService = {
         target_keyword?: string;
         meta_description?: string;
         cta_internal_link?: string;
+        gdrive_draft_content?: string;
         approval?: string;
     }) {
         const supabase = createClient();

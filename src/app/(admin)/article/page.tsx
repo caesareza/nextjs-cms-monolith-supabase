@@ -38,11 +38,13 @@ export default function ArticleProductionPage() {
 
     // Handle smooth search text input debounce execution cycles
     useEffect(() => {
-        const handler = setTimeout(() => {
-            setDebouncedSearch(searchTerm);
-        }, 400);
+        const handler = setTimeout(() => setDebouncedSearch(searchTerm), 300);
         return () => clearTimeout(handler);
     }, [searchTerm]);
+
+    useEffect(() => {
+        document.title = "Article Production Dashboard | PT CMS";
+    }, []);
 
     // Gather select dropdown parameters concurrently on mount
     useEffect(() => {

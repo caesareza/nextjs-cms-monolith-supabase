@@ -52,16 +52,24 @@ export default async function Page({params}: {
                 <div className="lg:col-span-2 space-y-6">
                     <div className="bg-white p-10 rounded-3xl border border-slate-200 shadow-sm space-y-8">
                         <div className="space-y-4">
-                            <div className="flex items-center gap-3">
-                                <span
-                                    className="px-3 py-1 bg-brand-accent/10 text-brand-accent font-black text-[9px] uppercase tracking-widest rounded-full border border-brand-accent/20">
-                                  {article.content_type || 'New Content'}
-                                </span>
-                                <span className="text-slate-300">/</span>
-                                <span
-                                    className="text-slate-400 font-bold text-[10px] uppercase tracking-widest italic">
-                                    {article.product?.name || 'No Product Tag'}
-                                </span>
+                            <div className="flex items-center justify-between gap-4 flex-wrap">
+                                <div className="flex items-center gap-3">
+                                    <span
+                                        className="px-3 py-1 bg-brand-accent/10 text-brand-accent font-black text-[9px] uppercase tracking-widest rounded-full border border-brand-accent/20">
+                                      {article.content_type || 'New Content'}
+                                    </span>
+                                    <span className="text-slate-300">/</span>
+                                    <span
+                                        className="text-slate-400 font-bold text-[10px] uppercase tracking-widest italic">
+                                        {article.product?.name || 'No Product Tag'}
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-2 select-all">
+                                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block select-none">Job Code</span>
+                                    <span className="text-[10px] font-mono font-bold text-slate-700 bg-slate-100 border border-slate-200/80 px-2.5 py-1 rounded-md tracking-wider whitespace-nowrap shadow-xs">
+                                        {article.job_code || '—'}
+                                    </span>
+                                </div>
                             </div>
                             <h1 className="text-4xl font-black text-slate-900 leading-tight tracking-tight">
                                 {article.title}
@@ -120,6 +128,7 @@ export default async function Page({params}: {
 
                         <SidebarItem icon={<Link2 size={16}/>} label="Target Keyword" value={article.target_keyword}/>
                         <SidebarItem icon={<ExternalLink size={16}/>} label="URL Published" value={article.url_published} isLink/>
+                        <SidebarItem icon={<ExternalLink size={16}/>} label="Google Drive Draft" value={article.gdrive_draft_content} isLink/>
                         <SidebarItem icon={<BarChart3 size={16}/>} label="Index Status" value={article.index_status}/>
 
                         {/* Internal Links Split System Block */}

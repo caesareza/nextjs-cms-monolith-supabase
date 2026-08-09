@@ -2,6 +2,7 @@
 export interface ArticleDisplay {
     id: string;
     title: string;
+    job_code: string;
     category: string;
     section: string;
     writer: string;
@@ -18,6 +19,7 @@ export interface ArticleDisplay {
     approval: 'approved' | 'rejected' | 'pending' | null | string;
     status: string;
     created_at: string;
+    gdrive_draft_content?: string;
 }
 
 export interface LookupOptions {
@@ -31,6 +33,7 @@ export interface LookupOptions {
 
 export interface EditFormState {
     title: string;
+    job_code: string;
     category_id: number;
     section_id: number;
     product_id: number;
@@ -46,4 +49,5 @@ export interface EditFormState {
     target_keyword: string;
     meta_description: string;
     cta_internal_link: string;
+    gdrive_draft_content?: string;
 }

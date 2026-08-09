@@ -1,5 +1,9 @@
 import PendingListClient from './PendingListClient';
 
+export const metadata = {
+    title: 'Editorial Pipeline Queue | PT CMS',
+};
+
 export default function DashboardPage() {
     return (
         <div className="space-y-12">

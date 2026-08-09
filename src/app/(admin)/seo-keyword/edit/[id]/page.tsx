@@ -27,12 +27,13 @@ export default function SeoDirectorReviewFormShell() {
 
     const [isEditing, setIsEditing] = useState(false);
     const [dbSnapshot, setDbSnapshot] = useState<any>(null);
+    const [logs, setLogs] = useState<any[]>([]);
     const [lookups, setLookups] = useState<LookupOptions>({
         categories: [], sections: [], productTags: [], themes: [], personas: [], campaigns: []
     });
 
     const [form, setForm] = useState<EditFormState>({
-        title: '', category_id: 0, section_id: 0, product_id: 0, content_type: 'new',
+        title: '', job_code: '', category_id: 0, section_id: 0, product_id: 0, content_type: 'new',
         production_month: '', demand: '', intent: 'Informational', type: 'Evergreen', classification: 'Infantry',
         theme_id: '', persona_id: '', campaign_id: '', target_keyword: '', meta_description: '', cta_internal_link: ''
     });
@@ -42,21 +43,24 @@ export default function SeoDirectorReviewFormShell() {
     const loadBriefDetails = useCallback(async () => {
         setLoading(true);
         try {
-            const [data, c, secData, p, t, per, cmp] = await Promise.all([
+            const [data, c, secData, p, t, per, cmp, logsData] = await Promise.all([
                 ArticleService.getArticleById(Number(id)),
                 CategoryService.getCategories(),
                 SectionService.getSections({ page: 1, limit: 100, search: '' }).then(res => res.sections),
                 ProductTagService.getProductTags({ page: 1, limit: 100, search: '' }).then(res => res.productTags),
                 ThemeService.getThemes(),
                 PersonaService.getPersonas(),
-                CampaignService.getCampaigns()
+                CampaignService.getCampaigns(),
+                ArticleService.getWorkflowLogs(String(id))
             ]);
 
             setDbSnapshot(data);
             setLookups({ categories: c, sections: secData, productTags: p, themes: t, personas: per, campaigns: cmp });
+            setLogs(logsData);
 
             setForm({
                 title: data.title || '',
+                job_code: data.job_code || '',
                 category_id: data.category_id || 0,
                 section_id: data.section_id || 0,
                 product_id: data.product_id || 0,
@@ -86,11 +90,50 @@ export default function SeoDirectorReviewFormShell() {
         if (id) loadBriefDetails();
     }, [id, loadBriefDetails]);
 
+    useEffect(() => {
+        if (dbSnapshot?.title) {
+            document.title = `${dbSnapshot.title} | Strategy Spec | PT CMS`;
+        } else {
+            document.title = "Loading Strategy Specification... | PT CMS";
+        }
+    }, [dbSnapshot?.title]);
+
     const handleSaveUpdates = async () => {
         setActionLoading(true);
         try {
+            // Generate updated job_id
+            const prefix = 'OID';
+            let yearMonth = '??????';
+            if (form.production_month) {
+                const parts = form.production_month.split('-');
+                if (parts.length >= 2) {
+                    yearMonth = `${parts[0]}${parts[1]}`;
+                }
+            }
+            let taxonomyCode = '???';
+            if (form.section_id) {
+                const section = lookups.sections.find(s => String(s.id) === String(form.section_id));
+                if (section && section.name) {
+                    taxonomyCode = section.name.trim().substring(0, 3).toUpperCase();
+                }
+            }
+            const typeCode = form.content_type === 'new' ? 'NC' : 'UC';
+            let keywordCode = '???';
+            if (form.target_keyword) {
+                keywordCode = form.target_keyword
+                    .trim()
+                    .split(/\s+/)
+                    .map(word => word.charAt(0))
+                    .join('')
+                    .toUpperCase()
+                    .replace(/[^A-Z0-9]/g, '');
+                if (!keywordCode) keywordCode = '???';
+            }
+            const calculatedJobId = `${prefix}-${yearMonth}-${taxonomyCode}-${typeCode}-${keywordCode}`;
+
             await ArticleService.updateArticle(Number(id), {
                 title: form.title,
+                job_code: calculatedJobId,
                 category_id: Number(form.category_id),
                 section_id: Number(form.section_id),
                 product_id: Number(form.product_id),
@@ -168,6 +211,7 @@ export default function SeoDirectorReviewFormShell() {
                 actionLoading={actionLoading} dbSnapshot={dbSnapshot} lookups={lookups}
                 onBack={() => router.back()} onSave={handleSaveUpdates} onApprove={handleApprove}
                 onRejectClick={() => setShowRejectModal(true)}
+                logs={logs}
             />
 
             {showRejectModal && (
@@ -184,7 +228,7 @@ export default function SeoDirectorReviewFormShell() {
                                 onChange={(e) => setInternalNote(e.target.value)}
                             />
                             <div className="flex justify-end gap-2 mt-4">
-                                <button type="button" className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-xl" onClick={() => { setShowRejectModal(false); setInternalNote(''); }}>Cancel</button>
+                                <button type="button" className="px-4 py-2 text-sm text-slate-650 hover:bg-slate-50 rounded-xl" onClick={() => { setShowRejectModal(false); setInternalNote(''); }}>Cancel</button>
                                 <button type="submit" disabled={!internalNote.trim() || isRejecting} className="bg-brand-accent hover:bg-brand-navy text-white px-4 py-2 text-sm font-medium rounded-xl disabled:opacity-40">Confirm Reject</button>
                             </div>
                         </form>
