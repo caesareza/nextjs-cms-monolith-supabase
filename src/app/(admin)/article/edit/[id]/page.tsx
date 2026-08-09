@@ -3,6 +3,7 @@
 import { ArticleService } from "@/app/(admin)/article/service";
 import { SectionService } from "@/app/(admin)/section/service";
 import { ProductTagService } from "@/app/(admin)/product-tag/service";
+import { ProductPriorityService } from "@/app/(admin)/product-priority/service";
 import { ThemeService } from "@/app/(admin)/theme/service";
 import { PersonaService } from "@/app/(admin)/persona/service";
 import { CampaignService } from "@/app/(admin)/campaign/service";
@@ -28,7 +29,8 @@ export default async function EditArticlePage({
         productTagsResponse,
         themes,
         personas,
-        campaigns
+        campaigns,
+        productPriorities
     ] = await Promise.all([
         ArticleService.getArticleById(Number(id)),
         ArticleService.getWriters(),
@@ -37,7 +39,8 @@ export default async function EditArticlePage({
         ProductTagService.getProductTags({ page: 1, limit: 100, search: '' }),
         ThemeService.getThemes(),
         PersonaService.getPersonas(),
-        CampaignService.getCampaigns()
+        CampaignService.getCampaigns(),
+        ProductPriorityService.getAllActiveProductPriorities()
     ]);
 
     // Safely unwrap paginated service collections
@@ -55,6 +58,7 @@ export default async function EditArticlePage({
                 themes={themes}
                 personas={personas}
                 campaigns={campaigns}
+                productPriorities={productPriorities}
             />
         </div>
     );

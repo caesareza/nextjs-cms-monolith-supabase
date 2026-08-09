@@ -3,7 +3,7 @@ import Link from 'next/link';
 import {
     ChevronLeft, User, Tag, Calendar,
     ExternalLink, CheckCircle2, AlertCircle,
-    Clock, Link2, Info, BarChart3, Flame, Target, Sparkles, FolderKanban
+    Clock, Link2, Info, BarChart3, Flame, Target, Sparkles, FolderKanban, ShieldCheck
 } from 'lucide-react';
 import WorkflowActions from "./WorkflowActions";
 import ArticleHistory from "./ArticleHistory";
@@ -184,6 +184,7 @@ export default async function Page({ params }: {
                         <SidebarItemInverted icon={<User size={16} />} label="Writer" value={article.writer?.name} />
                         <SidebarItemInverted icon={<FolderKanban size={16} />} label="Section" value={article.section?.name} />
                         <SidebarItemInverted icon={<Tag size={16} />} label="Category" value={article.category?.name} />
+                        <SidebarItemInverted icon={<ShieldCheck size={16} />} label="Priority Product" value={article.product_priority?.name} />
                         <SidebarItemInverted icon={<Sparkles size={16} />} label="Theme" value={article.theme?.name} />
                         <SidebarItemInverted icon={<Target size={16} />} label="Target Persona" value={article.persona?.name} />
                         <SidebarItemInverted icon={<Calendar size={16} />} label="Production Month" value={formatProductionMonth(article.production_month)} />

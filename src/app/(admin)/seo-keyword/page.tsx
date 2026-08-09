@@ -5,6 +5,7 @@ import { ArticleService } from '../article/service';
 import { CategoryService } from '../category/service';
 import { SectionService } from '../section/service';
 import { ProductTagService } from '../product-tag/service';
+import { ProductPriorityService } from '../product-priority/service';
 import { ThemeService } from '../theme/service';
 import { PersonaService } from '../persona/service';
 import { CampaignService } from '../campaign/service';
@@ -48,7 +49,7 @@ export default function UnifiedSeoKeywordPage() {
     const [loading, setLoading] = useState(true);
 
     const [options, setOptions] = useState<LookupOptions>({
-        categories: [], sections: [], productTags: [], themes: [], personas: [], campaigns: []
+        categories: [], sections: [], productTags: [], themes: [], personas: [], campaigns: [], productPriorities: []
     });
 
     useEffect(() => {
@@ -62,15 +63,16 @@ export default function UnifiedSeoKeywordPage() {
 
     const loadOptionsData = useCallback(async () => {
         try {
-            const [c, secData, p, t, per, cmp] = await Promise.all([
+            const [c, secData, p, t, per, cmp, pr] = await Promise.all([
                 CategoryService.getCategories(),
                 SectionService.getSections({ page: 1, limit: 100, search: '' }).then(res => res.sections),
                 ProductTagService.getProductTags({ page: 1, limit: 100, search: '' }).then(res => res.productTags),
                 ThemeService.getThemes(),
                 PersonaService.getPersonas(),
-                CampaignService.getCampaigns()
+                CampaignService.getCampaigns(),
+                ProductPriorityService.getAllActiveProductPriorities()
             ]);
-            setOptions({ categories: c, sections: secData, productTags: p, themes: t, personas: per, campaigns: cmp });
+            setOptions({ categories: c, sections: secData, productTags: p, themes: t, personas: per, campaigns: cmp, productPriorities: pr });
         } catch (err) {
             console.error("Failed executing parallel lookup fetches:", err);
         }
@@ -147,6 +149,7 @@ export default function UnifiedSeoKeywordPage() {
                 category_id: Number(formData.category_id),
                 section_id: Number(formData.section_id),
                 product_id: Number(formData.product_id),
+                product_priority_id: formData.product_priority_id ? Number(formData.product_priority_id) : null,
                 status: formData.status,
                 production_month: formData.production_month,
                 content_type: formData.content_type as 'new' | 'adjust',

@@ -6,6 +6,7 @@ import { ArticleService } from "@/app/(admin)/article/service";
 import { CategoryService } from "@/app/(admin)/category/service";
 import { SectionService } from "@/app/(admin)/section/service";
 import { ProductTagService } from "@/app/(admin)/product-tag/service";
+import { ProductPriorityService } from "@/app/(admin)/product-priority/service";
 import { ThemeService } from "@/app/(admin)/theme/service";
 import { PersonaService } from "@/app/(admin)/persona/service";
 import { CampaignService } from "@/app/(admin)/campaign/service";
@@ -29,11 +30,11 @@ export default function SeoDirectorReviewFormShell() {
     const [dbSnapshot, setDbSnapshot] = useState<any>(null);
     const [logs, setLogs] = useState<any[]>([]);
     const [lookups, setLookups] = useState<LookupOptions>({
-        categories: [], sections: [], productTags: [], themes: [], personas: [], campaigns: []
+        categories: [], sections: [], productTags: [], themes: [], personas: [], campaigns: [], productPriorities: []
     });
 
     const [form, setForm] = useState<EditFormState>({
-        title: '', job_code: '', category_id: 0, section_id: 0, product_id: 0, content_type: 'new',
+        title: '', job_code: '', category_id: 0, section_id: 0, product_id: 0, product_priority_id: '', content_type: 'new',
         production_month: '', demand: '', intent: 'Informational', type: 'Evergreen', classification: 'Infantry',
         theme_id: '', persona_id: '', campaign_id: '', target_keyword: '', meta_description: '', cta_internal_link: ''
     });
@@ -43,7 +44,7 @@ export default function SeoDirectorReviewFormShell() {
     const loadBriefDetails = useCallback(async () => {
         setLoading(true);
         try {
-            const [data, c, secData, p, t, per, cmp, logsData] = await Promise.all([
+            const [data, c, secData, p, t, per, cmp, logsData, pr] = await Promise.all([
                 ArticleService.getArticleById(Number(id)),
                 CategoryService.getCategories(),
                 SectionService.getSections({ page: 1, limit: 100, search: '' }).then(res => res.sections),
@@ -51,11 +52,12 @@ export default function SeoDirectorReviewFormShell() {
                 ThemeService.getThemes(),
                 PersonaService.getPersonas(),
                 CampaignService.getCampaigns(),
-                ArticleService.getWorkflowLogs(String(id))
+                ArticleService.getWorkflowLogs(String(id)),
+                ProductPriorityService.getAllActiveProductPriorities()
             ]);
 
             setDbSnapshot(data);
-            setLookups({ categories: c, sections: secData, productTags: p, themes: t, personas: per, campaigns: cmp });
+            setLookups({ categories: c, sections: secData, productTags: p, themes: t, personas: per, campaigns: cmp, productPriorities: pr });
             setLogs(logsData);
 
             setForm({
@@ -64,6 +66,7 @@ export default function SeoDirectorReviewFormShell() {
                 category_id: data.category_id || 0,
                 section_id: data.section_id || 0,
                 product_id: data.product_id || 0,
+                product_priority_id: data.product_priority_id ? String(data.product_priority_id) : '',
                 content_type: data.content_type || 'new',
                 production_month: data.production_month ? data.production_month.split('T')[0] : '',
                 demand: String(data.demand || 0),
@@ -111,10 +114,10 @@ export default function SeoDirectorReviewFormShell() {
                 }
             }
             let taxonomyCode = '???';
-            if (form.section_id) {
-                const section = lookups.sections.find(s => String(s.id) === String(form.section_id));
-                if (section && section.name) {
-                    taxonomyCode = section.name.trim().substring(0, 3).toUpperCase();
+            if (form.product_priority_id) {
+                const priority = (lookups.productPriorities || []).find(p => String(p.id) === String(form.product_priority_id));
+                if (priority && priority.code) {
+                    taxonomyCode = priority.code.trim().toUpperCase();
                 }
             }
             const typeCode = form.content_type === 'new' ? 'NC' : 'UC';
@@ -137,6 +140,7 @@ export default function SeoDirectorReviewFormShell() {
                 category_id: Number(form.category_id),
                 section_id: Number(form.section_id),
                 product_id: Number(form.product_id),
+                product_priority_id: form.product_priority_id ? Number(form.product_priority_id) : null,
                 content_type: form.content_type as any,
                 production_month: form.production_month,
                 demand: parseInt(form.demand, 10) || 0,

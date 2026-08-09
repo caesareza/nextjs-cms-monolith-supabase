@@ -50,7 +50,8 @@ export const ArticleService = {
                 product:product_id(id, name),
                 persona:persona_id(id, name),
                 campaign:campaign_id(id, name),
-                theme:theme_id(id, name)
+                theme:theme_id(id, name),
+                product_priority:product_priority_id(id, name)
             `, { count: 'exact' })
             .gte('production_month', startDate)
             .lt('production_month', endDate)
@@ -81,6 +82,7 @@ export const ArticleService = {
                 const personaObj = Array.isArray(item.persona) ? item.persona[0] : item.persona;
                 const campaignObj = Array.isArray(item.campaign) ? item.campaign[0] : item.campaign;
                 const themeObj = Array.isArray(item.theme) ? item.theme[0] : item.theme;
+                const productPriorityObj = Array.isArray(item.product_priority) ? item.product_priority[0] : item.product_priority;
 
                 return {
                     id: String(item.id),
@@ -93,6 +95,8 @@ export const ArticleService = {
 
                     product: String(productObj?.id || ''),
                     product_name: productObj?.name || 'Umum',
+                    product_priority: productPriorityObj?.name || 'General',
+                    product_priority_id: productPriorityObj?.id || null,
 
                     persona: personaObj?.name || 'All Target Profiles',
                     campaign: campaignObj?.name || 'Organic / None',
@@ -126,7 +130,8 @@ export const ArticleService = {
                 product:product_id(id, name),
                 persona:persona_id(id, name),
                 campaign:campaign_id(id, name),
-                theme:theme_id(id, name)
+                theme:theme_id(id, name),
+                product_priority:product_priority_id(id, name)
             `)
             .eq('id', id)
             .single();
@@ -185,6 +190,7 @@ export const ArticleService = {
         theme_id?: number | null;
         persona_id?: number | null;
         campaign_id?: number | null;
+        product_priority_id?: number | null;
         content_old?: string;
         meta_description?: string;
         target_keyword?: string;
@@ -275,6 +281,7 @@ export const ArticleService = {
         theme_id?: number | null;
         persona_id?: number | null;
         campaign_id?: number | null;
+        product_priority_id?: number | null;
         status?: string;
         target_keyword?: string;
         meta_description?: string;

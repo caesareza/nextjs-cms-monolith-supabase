@@ -15,10 +15,11 @@ interface EditProps {
     themes: any[];
     personas: any[];
     campaigns: any[];
+    productPriorities: any[];
 }
 
 export default function EditArticleClient({
-    initialData, writers, categories, sections, productTags, themes, personas, campaigns
+    initialData, writers, categories, sections, productTags, themes, personas, campaigns, productPriorities
 }: EditProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
@@ -49,7 +50,8 @@ export default function EditArticleClient({
         theme_id: initialData.theme_id ? String(initialData.theme_id) : '',
         persona_id: initialData.persona_id ? String(initialData.persona_id) : '',
         campaign_id: initialData.campaign_id ? String(initialData.campaign_id) : '',
-        gdrive_draft_content: initialData.gdrive_draft_content || ''
+        gdrive_draft_content: initialData.gdrive_draft_content || '',
+        product_priority_id: initialData.product_priority_id ? String(initialData.product_priority_id) : ''
     });
 
     // Strategy blocker condition assignment check matching system rules
@@ -59,6 +61,7 @@ export default function EditArticleClient({
     const currentSection = sections.find(s => s.id === initialData.section_id)?.name || 'General Context';
     const currentCategory = categories.find(c => c.id === initialData.category_id)?.name || 'Uncategorized';
     const currentProduct = productTags.find(t => t.id === initialData.product_id)?.name || 'General Target';
+    const currentPriorityProduct = productPriorities.find(p => p.id === initialData.product_priority_id)?.name || 'General';
     const currentTheme = themes.find(t => t.id === Number(initialData.theme_id))?.name || 'General Theme';
     const currentPersona = personas.find(p => p.id === Number(initialData.persona_id))?.name || 'All Target Profiles';
     const currentCampaign = campaigns.find(c => c.id === Number(initialData.campaign_id))?.name || 'Organic Strategy';
@@ -97,7 +100,8 @@ export default function EditArticleClient({
                 demand: parseInt(form.demand, 10) || 0,
                 theme_id: form.theme_id ? Number(form.theme_id) : null,
                 persona_id: form.persona_id ? Number(form.persona_id) : null,
-                campaign_id: form.campaign_id ? Number(form.campaign_id) : null
+                campaign_id: form.campaign_id ? Number(form.campaign_id) : null,
+                product_priority_id: form.product_priority_id ? Number(form.product_priority_id) : null
             });
             setSuccess(true);
             setTimeout(() => {
@@ -339,6 +343,10 @@ export default function EditArticleClient({
                             <div className="flex items-start gap-3">
                                 <Tag className="text-slate-300 mt-0.5 shrink-0" size={14} />
                                 <div><span className="block text-[9px] font-black text-slate-400 uppercase select-none">Product Association</span><span className="font-bold text-slate-800">{currentProduct}</span></div>
+                            </div>
+                            <div className="flex items-start gap-3">
+                                <ShieldCheck className="text-slate-300 mt-0.5 shrink-0" size={14} />
+                                <div><span className="block text-[9px] font-black text-slate-400 uppercase select-none">Priority Product</span><span className="font-bold text-slate-800">{currentPriorityProduct}</span></div>
                             </div>
                             <div className="flex items-start gap-3">
                                 <Calendar className="text-slate-300 mt-0.5 shrink-0" size={14} />
