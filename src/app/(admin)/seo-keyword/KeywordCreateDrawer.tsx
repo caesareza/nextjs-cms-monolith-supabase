@@ -117,6 +117,11 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
         }
     };
 
+    const titleCharCount = form.title.length;
+    const titleWordCount = form.title.trim() === '' ? 0 : form.title.trim().split(/\s+/).length;
+    const metaCharCount = form.meta_description.length;
+    const metaWordCount = form.meta_description.trim() === '' ? 0 : form.meta_description.trim().split(/\s+/).length;
+
     if (!isOpen) return null;
 
     return (
@@ -160,7 +165,12 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Proposed Headline Title</label>
+                            <div className="flex justify-between items-center">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Proposed Headline Title</label>
+                                <span className={`text-[9px] font-bold ${titleCharCount > 60 ? 'text-amber-600 font-extrabold' : 'text-slate-400'}`}>
+                                    {titleCharCount} chars / {titleWordCount} words {titleCharCount > 60 && '(Over 60 chars)'}
+                                </span>
+                            </div>
                             <input
                                 type="text"
                                 className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:bg-white focus:ring-4 focus:ring-brand-light-blue/20 focus:border-brand-accent/20 transition-all placeholder:text-slate-300"
@@ -363,7 +373,12 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Meta Description Tag</label>
+                                <div className="flex justify-between items-center">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Meta Description Tag</label>
+                                    <span className={`text-[9px] font-bold ${(metaCharCount < 120 || metaCharCount > 160) && metaCharCount > 0 ? 'text-amber-600 font-extrabold' : 'text-slate-400'}`}>
+                                        {metaCharCount} chars / {metaWordCount} words {(metaCharCount > 0 && metaCharCount < 120) && '(Short)'} {metaCharCount > 160 && '(Over 160 chars)'}
+                                    </span>
+                                </div>
                                 <textarea rows={2} className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 outline-none focus:bg-white resize-none transition-all placeholder:text-slate-300" placeholder="Google snippet summary parameter descriptions..." value={form.meta_description} onChange={(e) => setForm({ ...form, meta_description: e.target.value })} required />
                             </div>
 

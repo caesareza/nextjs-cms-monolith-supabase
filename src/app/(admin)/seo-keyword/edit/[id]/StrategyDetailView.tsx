@@ -134,6 +134,10 @@ export default function StrategyDetailView({
     const thm = lookups.themes.find(t => t.id === Number(form.theme_id))?.name || 'General Campaign Theme';
     const per = lookups.personas.find(p => p.id === Number(form.persona_id))?.name || 'All Target Profiles';
     const cmp = lookups.campaigns.find(c => c.id === Number(form.campaign_id))?.name || 'Organic Strategy';
+    const titleCharCount = form.title.length;
+    const titleWordCount = form.title.trim() === '' ? 0 : form.title.trim().split(/\s+/).length;
+    const metaCharCount = form.meta_description.length;
+    const metaWordCount = form.meta_description.trim() === '' ? 0 : form.meta_description.trim().split(/\s+/).length;
 
     return (
         <div className="space-y-8 text-slate-900">
@@ -202,7 +206,14 @@ export default function StrategyDetailView({
             {/* 3. PROPOSED HEADLINE & UNBOXED META ROW */}
             <div className="space-y-4">
                 <div className="space-y-1.5">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Proposed Strategy Headline</span>
+                    <div className="flex justify-between items-center">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Proposed Strategy Headline</span>
+                        {isEditing && (
+                            <span className={`text-[9px] font-bold ${titleCharCount > 60 ? 'text-amber-600 font-extrabold' : 'text-slate-400'}`}>
+                                {titleCharCount} chars / {titleWordCount} words {titleCharCount > 60 && '(Over 60 chars)'}
+                            </span>
+                        )}
+                    </div>
                     {isEditing ? (
                         <div className="space-y-3">
                             <input
@@ -561,9 +572,16 @@ export default function StrategyDetailView({
                                 </div>
 
                                 <div className="space-y-2 md:col-span-1">
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5">
-                                        <FileText size={11} className="text-slate-350" /> Meta Description Tag
-                                    </span>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5">
+                                            <FileText size={11} className="text-slate-350" /> Meta Description Tag
+                                        </span>
+                                        {isEditing && (
+                                            <span className={`text-[9px] font-bold ${(metaCharCount < 120 || metaCharCount > 160) && metaCharCount > 0 ? 'text-amber-600 font-extrabold' : 'text-slate-400'}`}>
+                                                {metaCharCount} chars / {metaWordCount} words {(metaCharCount > 0 && metaCharCount < 120) && '(Short)'} {metaCharCount > 160 && '(Over)'}
+                                            </span>
+                                        )}
+                                    </div>
                                     {isEditing ? (
                                         <textarea rows={3} className="w-full text-xs font-bold text-slate-800 bg-slate-50/50 border border-slate-200 rounded-xl p-3 resize-none outline-none focus:bg-white focus:border-slate-400 transition-all" value={form.meta_description} onChange={(e) => setForm({ ...form, meta_description: e.target.value })} required />
                                     ) : (
