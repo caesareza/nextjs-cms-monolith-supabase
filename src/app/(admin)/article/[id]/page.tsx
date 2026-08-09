@@ -36,7 +36,11 @@ export default async function Page({ params }: {
                     <ChevronLeft size={16} /> Production Roadmap
                 </Link>
                 <div className="flex items-center gap-3">
-                    <ShareConsole articleId={Number(id)} />
+                    <ShareConsole 
+                        articleId={Number(id)} 
+                        initialShareToken={article.share_token || ''}
+                        initialShareActive={article.share_active !== false}
+                    />
 
                     <Link href={`/article/edit/${id}`}
                         className="px-6 py-2.5 bg-brand-accent hover:bg-brand-navy text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-md shadow-brand-accent/15 transition-all">

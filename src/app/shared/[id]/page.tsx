@@ -11,8 +11,7 @@ export default async function PublicSharedArticleView({ params }: PublicViewProp
 
     let article;
     try {
-        // Reuse your central server service layer instead of raw queries!
-        article = await ArticleService.getArticleById(Number(id));
+        article = await ArticleService.getArticleByShareToken(id);
     } catch (err) {
         console.error("Error retrieving share preview record:", err);
         notFound();
@@ -20,6 +19,32 @@ export default async function PublicSharedArticleView({ params }: PublicViewProp
 
     if (!article) {
         notFound();
+    }
+
+    if (!article.share_active) {
+        return (
+            <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 font-sans select-none">
+                <div className="max-w-[440px] w-full text-center bg-white p-10 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+                    <div className="mx-auto w-16 h-16 bg-rose-50 rounded-full flex items-center justify-center border border-rose-100">
+                        <Globe className="w-8 h-8 text-rose-500" />
+                    </div>
+                    <div className="space-y-2">
+                        <h2 className="text-xl font-black text-slate-900 tracking-tight">Shared Preview Paused</h2>
+                        <p className="text-xs text-slate-500 leading-relaxed font-semibold">
+                            The owner of this strategy brief has disabled public external reviews or regenerated the access token.
+                        </p>
+                    </div>
+                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                            Contact Administrator
+                        </p>
+                        <p className="text-xs text-slate-700 font-black mt-1">
+                            Please request a new active preview link.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     const formattedDate = new Date(article.production_month).toLocaleDateString('id-ID', {

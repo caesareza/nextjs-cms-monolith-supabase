@@ -373,4 +373,54 @@ export const ArticleService = {
             notes: logNotes
         });
     },
+
+    async getArticleByShareToken(token: string) {
+        const supabase = createClient();
+
+        const { data, error } = await supabase
+            .from('article')
+            .select(`
+                *,
+                category:category_id(id, name),
+                writer:writer_id(id, name),
+                product:product_id(id, name),
+                persona:persona_id(id, name),
+                campaign:campaign_id(id, name),
+                theme:theme_id(id, name)
+            `)
+            .eq('share_token', token)
+            .maybeSingle();
+
+        if (error) throw error;
+        return data;
+    },
+
+    async regenerateShareToken(id: number | string) {
+        const supabase = createClient();
+        const newToken = Array.from({ length: 32 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+        
+        const { data, error } = await supabase
+            .from('article')
+            .update({ share_token: newToken })
+            .eq('id', Number(id))
+            .select('share_token')
+            .single();
+
+        if (error) throw error;
+        return data.share_token;
+    },
+
+    async toggleShareActive(id: number | string, active: boolean) {
+        const supabase = createClient();
+        
+        const { data, error } = await supabase
+            .from('article')
+            .update({ share_active: active })
+            .eq('id', Number(id))
+            .select('share_active')
+            .single();
+
+        if (error) throw error;
+        return data.share_active;
+    },
 };
