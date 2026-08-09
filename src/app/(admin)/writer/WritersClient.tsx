@@ -60,7 +60,7 @@ export default function WriterClient() {
             </div>
 
             {/* SEARCH CONTROLLER FILTERS BAR */}
-            <div className="bg-white p-5 border border-slate-200 rounded-3xl shadow-sm flex items-center relative max-w-md">
+            <div className="bg-white p-5 border border-slate-200 rounded-2xl shadow-sm flex items-center relative max-w-md">
                 <Search className="absolute left-9 text-slate-400" size={16} />
                 <input
                     type="text"
@@ -72,7 +72,7 @@ export default function WriterClient() {
             </div>
 
             {/* HIGH-DENSITY DATATABLE PRESENTATION */}
-            <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>

@@ -5,6 +5,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { X, Loader2, FolderKanban, Tag, Sparkles, Target, Calendar, Flame, ShieldCheck, Megaphone } from 'lucide-react';
 import { LookupOptions } from '@/types/article';
 
+
 interface KeywordCreateDrawerProps {
     isOpen: boolean;
     onClose: () => void;
@@ -17,6 +18,7 @@ const initialFormState = {
     category_id: '',
     section_id: '',
     product_id: '',
+    product_priority_id: '',
     content_type: 'new',
     production_month: new Date().toISOString().split('T')[0],
     status: 'seo pending',
@@ -28,6 +30,7 @@ const initialFormState = {
     persona_id: '',
     campaign_id: '',
     target_keyword: '',
+    related_keyword: '',
     meta_description: '',
     cta_internal_link: ''
 };
@@ -49,10 +52,10 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
         }
 
         let taxonomyCode = '???';
-        if (form.section_id) {
-            const section = options.sections.find(s => String(s.id) === String(form.section_id));
-            if (section && section.name) {
-                taxonomyCode = section.name.trim().substring(0, 3).toUpperCase();
+        if (form.product_priority_id) {
+            const priority = (options.productPriorities || []).find(p => String(p.id) === String(form.product_priority_id));
+            if (priority && priority.code) {
+                taxonomyCode = priority.code.trim().toUpperCase();
             }
         }
 
@@ -71,7 +74,7 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
         }
 
         return `${prefix}-${yearMonth}-${taxonomyCode}-${typeCode}-${keywordCode}`;
-    }, [form.production_month, form.section_id, form.content_type, form.target_keyword, options.sections]);
+    }, [form.production_month, form.product_priority_id, form.content_type, form.target_keyword]);
 
     const isDirty = useMemo(() => {
         return JSON.stringify(form) !== JSON.stringify(initialFormState);
@@ -131,6 +134,9 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                     <div>
                         <h2 className="text-lg font-black text-slate-900 tracking-tight">New Strategy Brief</h2>
                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Initialize core focus requirements</p>
+                        <div className="mt-1.5 font-mono font-bold text-xs text-brand-light-blue bg-slate-900 px-3 py-1 rounded-lg w-fit shadow-xs select-all">
+                            {jobCode}
+                        </div>
                     </div>
                     <button
                         type="button"
@@ -144,23 +150,8 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                 {/* SCROLLABLE COMPONENT CORE FORM BODY */}
                 <div className="flex-1 overflow-y-auto p-8 space-y-8">
 
-                    {/* AUTO-GENERATED JOB_CODE DISPLAY */}
-                    <div className="bg-slate-900 text-white p-5 border border-slate-950 rounded-3xl space-y-2 shadow-md">
-                        <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
-                                <span className="w-1.5 h-3 bg-brand-accent rounded-xs" /> Generated Job Identifier (JOB_CODE)
-                            </span>
-                            <span className="text-[8px] font-black bg-brand-accent/25 text-brand-light-blue px-2 py-0.5 rounded-full uppercase tracking-wider">
-                                Auto-computed
-                            </span>
-                        </div>
-                        <div className="text-lg font-mono font-bold tracking-wider text-brand-light-blue break-all">
-                            {jobCode}
-                        </div>
-                    </div>
-
                     {/* SECTION 1: IDENTITY SUITE */}
-                    <div className="bg-white p-6 border border-slate-200/70 rounded-3xl space-y-4 shadow-xs">
+                    <div className="bg-white p-6 border border-slate-200/70 rounded-2xl space-y-4 shadow-xs">
                         <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
                             <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-1.5">
                                 <span className="w-1.5 h-3 bg-brand-accent rounded-xs" /> Content Taxonomy Cluster
@@ -178,6 +169,19 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                                 onChange={(e) => setForm({ ...form, title: e.target.value })}
                                 required
                             />
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5"><ShieldCheck size={11} /> Priority Product</label>
+                            <select
+                                className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer"
+                                value={form.product_priority_id}
+                                onChange={(e) => setForm({ ...form, product_priority_id: e.target.value })}
+                                required
+                            >
+                                <option value="">Select Priority Product...</option>
+                                {(options.productPriorities || []).map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                            </select>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
@@ -223,7 +227,7 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                     </div>
 
                     {/* SECTION 2: MARKETING STRATEGY TARGETS */}
-                    <div className="bg-white p-6 border border-slate-200/70 rounded-3xl space-y-4 shadow-xs">
+                    <div className="bg-white p-6 border border-slate-200/70 rounded-2xl space-y-4 shadow-xs">
                         <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
                             <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-1.5">
                                 <span className="w-1.5 h-3 bg-brand-accent rounded-xs" /> Market Alignment Matrix
@@ -297,7 +301,7 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                     </div>
 
                     {/* SECTION 3: SEO SUITE METRICS & DATA CORES */}
-                    <div className="bg-white p-6 border border-slate-200/70 rounded-3xl space-y-5 shadow-xs">
+                    <div className="bg-white p-6 border border-slate-200/70 rounded-2xl space-y-5 shadow-xs">
                         <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
                             <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-1.5">
                                 <span className="w-1.5 h-3 bg-brand-accent rounded-xs" /> Performance Analytics & Suite
@@ -351,6 +355,11 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Target Focus Keyword</label>
                                 <textarea rows={2} className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:bg-white resize-none transition-all placeholder:text-slate-300" placeholder="Primary deep intent search phrase..." value={form.target_keyword} onChange={(e) => setForm({ ...form, target_keyword: e.target.value })} required />
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Related Keywords</label>
+                                <textarea rows={2} className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:bg-white resize-none transition-all placeholder:text-slate-300" placeholder="Separate related terms with commas (e.g. Kupon SR025, Beli SR025)..." value={form.related_keyword} onChange={(e) => setForm({ ...form, related_keyword: e.target.value })} />
                             </div>
 
                             <div className="space-y-1.5">

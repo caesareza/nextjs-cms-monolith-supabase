@@ -68,7 +68,7 @@ function PosthinksLoginPage() {
       </div>
 
       <div className="w-full max-w-[400px] relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-600">
-        <div className="bg-brand-cream rounded-[2.5rem] p-8 shadow-[0_24px_70px_rgba(29,53,87,0.4)] border border-brand-light-blue/20">
+        <div className="bg-brand-cream rounded-2xl p-8 shadow-[0_24px_70px_rgba(29,53,87,0.4)] border border-brand-light-blue/20">
           <div className="mb-8">
             <h2 className="text-2xl font-black text-brand-navy tracking-tight">
               Welcome back
@@ -169,7 +169,7 @@ function PosthinksLoginPage() {
       {/* Loading Overlay Dialog */}
       {isPending && (
         <div className="fixed inset-0 bg-brand-navy/60 backdrop-blur-md z-50 flex items-center justify-center animate-in fade-in duration-300">
-          <div className="bg-brand-cream p-8 rounded-[2.5rem] shadow-[0_24px_70px_rgba(29,53,87,0.5)] border border-brand-light-blue/20 flex flex-col items-center gap-4 max-w-[320px] text-center animate-in zoom-in-95 duration-200">
+          <div className="bg-brand-cream p-8 rounded-2xl shadow-[0_24px_70px_rgba(29,53,87,0.5)] border border-brand-light-blue/20 flex flex-col items-center gap-4 max-w-[320px] text-center animate-in zoom-in-95 duration-200">
             <div className="w-16 h-16 bg-brand-light-blue/10 rounded-2xl flex items-center justify-center border border-brand-light-blue/20">
               <Loader2 className="w-8 h-8 text-brand-red animate-spin" />
             </div>

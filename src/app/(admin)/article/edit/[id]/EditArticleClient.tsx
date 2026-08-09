@@ -15,10 +15,11 @@ interface EditProps {
     themes: any[];
     personas: any[];
     campaigns: any[];
+    productPriorities: any[];
 }
 
 export default function EditArticleClient({
-    initialData, writers, categories, sections, productTags, themes, personas, campaigns
+    initialData, writers, categories, sections, productTags, themes, personas, campaigns, productPriorities
 }: EditProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
@@ -49,7 +50,8 @@ export default function EditArticleClient({
         theme_id: initialData.theme_id ? String(initialData.theme_id) : '',
         persona_id: initialData.persona_id ? String(initialData.persona_id) : '',
         campaign_id: initialData.campaign_id ? String(initialData.campaign_id) : '',
-        gdrive_draft_content: initialData.gdrive_draft_content || ''
+        gdrive_draft_content: initialData.gdrive_draft_content || '',
+        product_priority_id: initialData.product_priority_id ? String(initialData.product_priority_id) : ''
     });
 
     // Strategy blocker condition assignment check matching system rules
@@ -59,6 +61,7 @@ export default function EditArticleClient({
     const currentSection = sections.find(s => s.id === initialData.section_id)?.name || 'General Context';
     const currentCategory = categories.find(c => c.id === initialData.category_id)?.name || 'Uncategorized';
     const currentProduct = productTags.find(t => t.id === initialData.product_id)?.name || 'General Target';
+    const currentPriorityProduct = productPriorities.find(p => p.id === initialData.product_priority_id)?.name || 'General';
     const currentTheme = themes.find(t => t.id === Number(initialData.theme_id))?.name || 'General Theme';
     const currentPersona = personas.find(p => p.id === Number(initialData.persona_id))?.name || 'All Target Profiles';
     const currentCampaign = campaigns.find(c => c.id === Number(initialData.campaign_id))?.name || 'Organic Strategy';
@@ -97,7 +100,8 @@ export default function EditArticleClient({
                 demand: parseInt(form.demand, 10) || 0,
                 theme_id: form.theme_id ? Number(form.theme_id) : null,
                 persona_id: form.persona_id ? Number(form.persona_id) : null,
-                campaign_id: form.campaign_id ? Number(form.campaign_id) : null
+                campaign_id: form.campaign_id ? Number(form.campaign_id) : null,
+                product_priority_id: form.product_priority_id ? Number(form.product_priority_id) : null
             });
             setSuccess(true);
             setTimeout(() => {
@@ -114,7 +118,7 @@ export default function EditArticleClient({
 
     if (success) {
         return (
-            <div className="max-w-xl mx-auto mt-32 p-12 bg-white rounded-3xl text-center shadow-2xl animate-in zoom-in-95">
+            <div className="max-w-xl mx-auto mt-32 p-12 bg-white rounded-2xl text-center shadow-2xl animate-in zoom-in-95">
                 <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <CheckCircle2 size={32} />
                 </div>
@@ -162,7 +166,7 @@ export default function EditArticleClient({
 
                 {/* LEFT CANVAS: INTERACTIVE FORM LAYOUT CANVAS */}
                 <div className="lg:col-span-8 space-y-6">
-                    <div className="bg-white rounded-3xl border border-slate-200 p-10 shadow-xs space-y-6">
+                    <div className="bg-white rounded-2xl border border-slate-200 p-10 shadow-xs space-y-6">
 
                         {/* READ-ONLY TITLE ACCORDION ABOVE INPUTS */}
                         <div className="pb-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -260,7 +264,7 @@ export default function EditArticleClient({
                     </div>
 
                     {/* COMPLIANCE CONTROLS & BACKUPS */}
-                    <div className="bg-white rounded-3xl border border-slate-200 p-10 shadow-xs space-y-6">
+                    <div className="bg-white rounded-2xl border border-slate-200 p-10 shadow-xs space-y-6">
                         <h3 className="text-[10px] font-black text-slate-950 uppercase tracking-[0.2em] border-b border-slate-100 pb-3 select-none">
                             Internal Compliance Systems & Logs
                         </h3>
@@ -301,7 +305,7 @@ export default function EditArticleClient({
                 <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-6">
 
                     {/* CARD 1: HIGH-DENSITY PERFORMANCE HUD CODES */}
-                    <div className="bg-slate-950 text-white p-6 rounded-3xl shadow-md space-y-4 select-none">
+                    <div className="bg-slate-950 text-white p-6 rounded-2xl shadow-md space-y-4 select-none">
                         <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block">Forecast & Core Pillars</span>
                         <div className="space-y-3 text-xs font-medium">
                             <div className="flex justify-between items-center bg-slate-900 p-2.5 rounded-xl border border-slate-800">
@@ -324,7 +328,7 @@ export default function EditArticleClient({
                     </div>
 
                     {/* CARD 2: TAXONOMY HIERARCHY MAP */}
-                    <div className="bg-white p-8 border border-slate-200 rounded-3xl shadow-xs space-y-4 font-medium text-slate-700">
+                    <div className="bg-white p-8 border border-slate-200 rounded-2xl shadow-xs space-y-4 font-medium text-slate-700">
                         <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest block select-none">Taxonomy Hierarchies</h4>
 
                         <div className="space-y-3.5 text-xs pt-1">
@@ -341,6 +345,10 @@ export default function EditArticleClient({
                                 <div><span className="block text-[9px] font-black text-slate-400 uppercase select-none">Product Association</span><span className="font-bold text-slate-800">{currentProduct}</span></div>
                             </div>
                             <div className="flex items-start gap-3">
+                                <ShieldCheck className="text-slate-300 mt-0.5 shrink-0" size={14} />
+                                <div><span className="block text-[9px] font-black text-slate-400 uppercase select-none">Priority Product</span><span className="font-bold text-slate-800">{currentPriorityProduct}</span></div>
+                            </div>
+                            <div className="flex items-start gap-3">
                                 <Calendar className="text-slate-300 mt-0.5 shrink-0" size={14} />
                                 <div><span className="block text-[9px] font-black text-slate-400 uppercase select-none">Production Cycle</span><span className="font-bold text-slate-800 tracking-tight">{formattedMonth}</span></div>
                             </div>
@@ -348,7 +356,7 @@ export default function EditArticleClient({
                     </div>
 
                     {/* CARD 3: CORPORATE MARKETING SUITE CONTEXT */}
-                    <div className="bg-white p-8 border border-slate-200 rounded-3xl shadow-xs space-y-4 font-medium text-slate-600">
+                    <div className="bg-white p-8 border border-slate-200 rounded-2xl shadow-xs space-y-4 font-medium text-slate-600">
                         <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest block select-none">Marketing Matrix Context</h4>
                         <div className="space-y-3 text-xs pt-1">
                             <div className="flex items-start gap-3">
@@ -367,7 +375,7 @@ export default function EditArticleClient({
                     </div>
 
                     {/* CARD 4: PERSISTENT KEYWORD CONSTRAINT CHEAT SHEET */}
-                    <div className="bg-white p-8 border border-slate-200 rounded-3xl shadow-xs space-y-4">
+                    <div className="bg-white p-8 border border-slate-200 rounded-2xl shadow-xs space-y-4">
                         <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest block select-none">Brief Validation Strategy</h4>
                         <div className="space-y-3">
                             <div>

@@ -40,6 +40,7 @@ export const ArticleService = {
                 status,
                 approval,
                 target_keyword,
+                related_keyword,
                 meta_description,
                 cta_internal_link,
                 gdrive_draft_content,
@@ -50,7 +51,8 @@ export const ArticleService = {
                 product:product_id(id, name),
                 persona:persona_id(id, name),
                 campaign:campaign_id(id, name),
-                theme:theme_id(id, name)
+                theme:theme_id(id, name),
+                product_priority:product_priority_id(id, name)
             `, { count: 'exact' })
             .gte('production_month', startDate)
             .lt('production_month', endDate)
@@ -81,6 +83,7 @@ export const ArticleService = {
                 const personaObj = Array.isArray(item.persona) ? item.persona[0] : item.persona;
                 const campaignObj = Array.isArray(item.campaign) ? item.campaign[0] : item.campaign;
                 const themeObj = Array.isArray(item.theme) ? item.theme[0] : item.theme;
+                const productPriorityObj = Array.isArray(item.product_priority) ? item.product_priority[0] : item.product_priority;
 
                 return {
                     id: String(item.id),
@@ -90,9 +93,12 @@ export const ArticleService = {
                     writer: writerObj?.name || 'Unknown',
                     section: sectionObj?.name || 'General',
                     target_keyword: item.target_keyword,
+                    related_keyword: item.related_keyword || '',
 
                     product: String(productObj?.id || ''),
                     product_name: productObj?.name || 'Umum',
+                    product_priority: productPriorityObj?.name || 'General',
+                    product_priority_id: productPriorityObj?.id || null,
 
                     persona: personaObj?.name || 'All Target Profiles',
                     campaign: campaignObj?.name || 'Organic / None',
@@ -126,7 +132,8 @@ export const ArticleService = {
                 product:product_id(id, name),
                 persona:persona_id(id, name),
                 campaign:campaign_id(id, name),
-                theme:theme_id(id, name)
+                theme:theme_id(id, name),
+                product_priority:product_priority_id(id, name)
             `)
             .eq('id', id)
             .single();
@@ -159,7 +166,18 @@ export const ArticleService = {
                 job_code,
                 created_at, 
                 approval,
-                writer:writer_id(name)
+                demand,
+                intent,
+                classification,
+                target_keyword,
+                related_keyword,
+                meta_description,
+                status,
+                category:category_id(id, name),
+                section:section_id(id, name),
+                writer:writer_id(id, name),
+                product:product_id(id, name),
+                product_priority:product_priority_id(id, name, code)
             `)
             .eq('approval', 'pending')
             .order('id', { ascending: true })
@@ -185,9 +203,11 @@ export const ArticleService = {
         theme_id?: number | null;
         persona_id?: number | null;
         campaign_id?: number | null;
+        product_priority_id?: number | null;
         content_old?: string;
         meta_description?: string;
         target_keyword?: string;
+        related_keyword?: string;
         cta_internal_link?: string;
         gdrive_draft_content?: string;
         seo_check?: string;
@@ -275,8 +295,10 @@ export const ArticleService = {
         theme_id?: number | null;
         persona_id?: number | null;
         campaign_id?: number | null;
+        product_priority_id?: number | null;
         status?: string;
         target_keyword?: string;
+        related_keyword?: string;
         meta_description?: string;
         cta_internal_link?: string;
         gdrive_draft_content?: string;
@@ -372,5 +394,55 @@ export const ArticleService = {
             new_approval: approval,
             notes: logNotes
         });
+    },
+
+    async getArticleByShareToken(token: string) {
+        const supabase = createClient();
+
+        const { data, error } = await supabase
+            .from('article')
+            .select(`
+                *,
+                category:category_id(id, name),
+                writer:writer_id(id, name),
+                product:product_id(id, name),
+                persona:persona_id(id, name),
+                campaign:campaign_id(id, name),
+                theme:theme_id(id, name)
+            `)
+            .eq('share_token', token)
+            .maybeSingle();
+
+        if (error) throw error;
+        return data;
+    },
+
+    async regenerateShareToken(id: number | string) {
+        const supabase = createClient();
+        const newToken = Array.from({ length: 32 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+        
+        const { data, error } = await supabase
+            .from('article')
+            .update({ share_token: newToken })
+            .eq('id', Number(id))
+            .select('share_token')
+            .single();
+
+        if (error) throw error;
+        return data.share_token;
+    },
+
+    async toggleShareActive(id: number | string, active: boolean) {
+        const supabase = createClient();
+        
+        const { data, error } = await supabase
+            .from('article')
+            .update({ share_active: active })
+            .eq('id', Number(id))
+            .select('share_active')
+            .single();
+
+        if (error) throw error;
+        return data.share_active;
     },
 };

@@ -31,7 +31,7 @@ export default function ProductionFilterPanel({
     return (
         <div className="space-y-6 shrink-0">
             {/* YEAR & MONTH SELECTOR BAR */}
-            <div className="flex flex-wrap items-center gap-4 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+            <div className="flex flex-wrap items-center gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                 <select
                     value={year}
                     onChange={(e) => setYear(Number(e.target.value))}

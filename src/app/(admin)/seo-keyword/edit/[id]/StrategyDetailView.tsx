@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { ArticleService } from '@/app/(admin)/article/service';
 import { EditFormState, LookupOptions } from '@/types/article';
 import ArticleHistory from '@/app/(admin)/article/[id]/ArticleHistory';
@@ -50,6 +50,38 @@ export default function StrategyDetailView({
     dbSnapshot, lookups, onBack, onSave, onApprove, onRejectClick, logs = []
 }: StrategyDetailViewProps) {
 
+    // Dynamic JOB_CODE computation
+    const computedJobCode = useMemo(() => {
+        const prefix = 'OID';
+        let yearMonth = '??????';
+        if (form.production_month) {
+            const parts = form.production_month.split('-');
+            if (parts.length >= 2) {
+                yearMonth = `${parts[0]}${parts[1]}`;
+            }
+        }
+        let taxonomyCode = '???';
+        if (form.product_priority_id) {
+            const priority = (lookups.productPriorities || []).find(p => String(p.id) === String(form.product_priority_id));
+            if (priority && priority.code) {
+                taxonomyCode = priority.code.trim().toUpperCase();
+            }
+        }
+        const typeCode = form.content_type === 'new' ? 'NC' : 'UC';
+        let keywordCode = '???';
+        if (form.target_keyword) {
+            keywordCode = form.target_keyword
+                .trim()
+                .split(/\s+/)
+                .map(word => word.charAt(0))
+                .join('')
+                .toUpperCase()
+                .replace(/[^A-Z0-9]/g, '');
+            if (!keywordCode) keywordCode = '???';
+        }
+        return `${prefix}-${yearMonth}-${taxonomyCode}-${typeCode}-${keywordCode}`;
+    }, [form.production_month, form.product_priority_id, form.content_type, form.target_keyword, lookups.productPriorities]);
+
     // Marketing assets states
     const [marketingAssets, setMarketingAssets] = useState<any[]>([]);
     const [loadingAssets, setLoadingAssets] = useState(false);
@@ -98,6 +130,7 @@ export default function StrategyDetailView({
     const cat = lookups.categories.find(c => c.id === Number(form.category_id))?.name || 'Unspecified';
     const sec = lookups.sections.find(s => s.id === Number(form.section_id))?.name || 'Unspecified';
     const prod = lookups.productTags.find(t => t.id === Number(form.product_id))?.name || 'Standard Product';
+    const priorityProd = (lookups.productPriorities || []).find(p => p.id === Number(form.product_priority_id))?.name || 'General';
     const thm = lookups.themes.find(t => t.id === Number(form.theme_id))?.name || 'General Campaign Theme';
     const per = lookups.personas.find(p => p.id === Number(form.persona_id))?.name || 'All Target Profiles';
     const cmp = lookups.campaigns.find(c => c.id === Number(form.campaign_id))?.name || 'Organic Strategy';
@@ -171,16 +204,26 @@ export default function StrategyDetailView({
                 <div className="space-y-1.5">
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Proposed Strategy Headline</span>
                     {isEditing ? (
-                        <input
-                            className="w-full text-xl font-bold text-slate-900 border-b-2 border-slate-950 focus:border-brand-accent outline-none pb-1 transition-all bg-slate-50/70 p-3 rounded-xl"
-                            value={form.title}
-                            onChange={(e) => setForm({ ...form, title: e.target.value })}
-                            required
-                        />
+                        <div className="space-y-3">
+                            <input
+                                className="w-full text-xl font-bold text-slate-900 border-b-2 border-slate-950 focus:border-brand-accent outline-none pb-1 transition-all bg-slate-50/70 p-3 rounded-xl"
+                                value={form.title}
+                                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                                required
+                            />
+                            <div className="mt-1 font-mono font-bold text-xs text-brand-light-blue bg-slate-900 px-3 py-1 rounded-lg w-fit shadow-xs select-all">
+                                {computedJobCode}
+                            </div>
+                        </div>
                     ) : (
-                        <h1 className="text-2xl font-black text-slate-900 leading-tight">
-                            {form.title}
-                        </h1>
+                        <div className="flex items-center gap-3 flex-wrap">
+                            <h1 className="text-2xl font-black text-slate-900 leading-tight">
+                                {form.title}
+                            </h1>
+                            <span className="shrink-0 inline-flex items-center gap-1.5 text-[9px] font-black text-brand-accent bg-brand-accent/5 border border-brand-accent/20 px-3 py-1 rounded-full uppercase tracking-wider select-none">
+                                <ShieldCheck size={11} className="text-brand-accent" /> {priorityProd}
+                            </span>
+                        </div>
                     )}
                 </div>
 
@@ -212,36 +255,7 @@ export default function StrategyDetailView({
                         <span className="text-slate-400 font-medium">Job Code:</span>
                         <span className="text-[10px] font-mono font-bold text-slate-750 bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded-md tracking-wider select-all shadow-3xs">
                             {isEditing ? (
-                                (() => {
-                                    const prefix = 'OID';
-                                    let yearMonth = '??????';
-                                    if (form.production_month) {
-                                        const parts = form.production_month.split('-');
-                                        if (parts.length >= 2) {
-                                            yearMonth = `${parts[0]}${parts[1]}`;
-                                        }
-                                    }
-                                    let taxonomyCode = '???';
-                                    if (form.section_id) {
-                                        const section = lookups.sections.find(s => String(s.id) === String(form.section_id));
-                                        if (section && section.name) {
-                                            taxonomyCode = section.name.trim().substring(0, 3).toUpperCase();
-                                        }
-                                    }
-                                    const typeCode = form.content_type === 'new' ? 'NC' : 'UC';
-                                    let keywordCode = '???';
-                                    if (form.target_keyword) {
-                                        keywordCode = form.target_keyword
-                                            .trim()
-                                            .split(/\s+/)
-                                            .map(word => word.charAt(0))
-                                            .join('')
-                                            .toUpperCase()
-                                            .replace(/[^A-Z0-9]/g, '');
-                                        if (!keywordCode) keywordCode = '???';
-                                    }
-                                    return `${prefix}-${yearMonth}-${taxonomyCode}-${typeCode}-${keywordCode}`;
-                                })()
+                                computedJobCode
                             ) : (
                                 dbSnapshot?.job_code || '—'
                             )}
@@ -333,6 +347,22 @@ export default function StrategyDetailView({
                                         <p className="text-sm font-bold text-slate-800 mt-1 pl-[17px]">{prod}</p>
                                     )}
                                 </div>
+
+                                {/* Priority Product */}
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5">
+                                        <ShieldCheck size={11} className="text-slate-350" /> Priority Product
+                                    </label>
+                                    {isEditing ? (
+                                        <select className="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer focus:bg-white focus:border-slate-450 transition-all mt-1" value={form.product_priority_id} onChange={(e) => setForm({ ...form, product_priority_id: e.target.value })}>
+                                            <option value="">Select Priority Product...</option>
+                                            {(lookups.productPriorities || []).map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                                        </select>
+                                    ) : (
+                                        <p className="text-sm font-bold text-slate-800 mt-1 pl-[17px]">{priorityProd}</p>
+                                    )}
+                                </div>
+
 
                                 {/* Content Theme */}
                                 <div className="space-y-1">
@@ -517,7 +547,20 @@ export default function StrategyDetailView({
                                     )}
                                 </div>
 
-                                <div className="space-y-2 md:grid-cols-2">
+                                <div className="space-y-2 md:col-span-1">
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5">
+                                        <FileText size={11} className="text-slate-350" /> Related Keywords
+                                    </span>
+                                    {isEditing ? (
+                                        <textarea rows={3} className="w-full text-xs font-bold text-slate-800 bg-slate-50/50 border border-slate-200 rounded-xl p-3 resize-none outline-none focus:bg-white focus:border-slate-400 transition-all placeholder:text-slate-300" placeholder="Separate keywords with commas..." value={form.related_keyword} onChange={(e) => setForm({ ...form, related_keyword: e.target.value })} />
+                                    ) : (
+                                        <div className="w-full text-xs font-semibold text-slate-700 bg-slate-50/70 border border-slate-200/60 rounded-xl p-4 min-h-20 leading-relaxed select-all">
+                                            {form.related_keyword || '—'}
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2 md:col-span-1">
                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5">
                                         <FileText size={11} className="text-slate-350" /> Meta Description Tag
                                     </span>
@@ -612,7 +655,7 @@ export default function StrategyDetailView({
 
                             {/* INTERACTIVE ASSET APPEND BAR */}
                             <div className="border-t border-slate-100/80 pt-6">
-                                <form onSubmit={handleAddAsset} className="bg-slate-50 border border-slate-200/80 rounded-2.5xl p-5 space-y-4 shadow-3xs">
+                                <form onSubmit={handleAddAsset} className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 space-y-4 shadow-3xs">
                                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/50 pb-4">
                                         <div>
                                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">Add Strategy Asset</span>

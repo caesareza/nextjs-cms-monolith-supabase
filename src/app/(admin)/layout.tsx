@@ -13,6 +13,7 @@ import {
   Search,
   Tags,
   UserPen,
+  BookmarkCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -29,6 +30,7 @@ const NAVIGATION_ITEMS = [
   { label: "Category", icon: Tags, href: "/category" },
   { label: "Writer", icon: UserPen, href: "/writer" },
   { label: "Product Tag", icon: Package, href: "/product-tag" },
+  { label: "Priority Product", icon: BookmarkCheck, href: "/product-priority" },
   { label: "Theme", icon: Palette, href: "/theme" },
   { label: "Persona", icon: PersonStanding, href: "/persona" },
   { label: "Campaign", icon: Megaphone, href: "/campaign" },

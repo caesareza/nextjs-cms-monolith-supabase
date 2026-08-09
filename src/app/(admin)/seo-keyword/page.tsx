@@ -5,10 +5,11 @@ import { ArticleService } from '../article/service';
 import { CategoryService } from '../category/service';
 import { SectionService } from '../section/service';
 import { ProductTagService } from '../product-tag/service';
+import { ProductPriorityService } from '../product-priority/service';
 import { ThemeService } from '../theme/service';
 import { PersonaService } from '../persona/service';
 import { CampaignService } from '../campaign/service';
-import { Search, Loader2, Filter, Plus } from 'lucide-react';
+import { Search, Loader2, Filter, Plus, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import KeywordCreateDrawer from './KeywordCreateDrawer';
 import { LookupOptions } from '@/types/article';
@@ -48,7 +49,7 @@ export default function UnifiedSeoKeywordPage() {
     const [loading, setLoading] = useState(true);
 
     const [options, setOptions] = useState<LookupOptions>({
-        categories: [], sections: [], productTags: [], themes: [], personas: [], campaigns: []
+        categories: [], sections: [], productTags: [], themes: [], personas: [], campaigns: [], productPriorities: []
     });
 
     useEffect(() => {
@@ -62,15 +63,16 @@ export default function UnifiedSeoKeywordPage() {
 
     const loadOptionsData = useCallback(async () => {
         try {
-            const [c, secData, p, t, per, cmp] = await Promise.all([
+            const [c, secData, p, t, per, cmp, pr] = await Promise.all([
                 CategoryService.getCategories(),
                 SectionService.getSections({ page: 1, limit: 100, search: '' }).then(res => res.sections),
                 ProductTagService.getProductTags({ page: 1, limit: 100, search: '' }).then(res => res.productTags),
                 ThemeService.getThemes(),
                 PersonaService.getPersonas(),
-                CampaignService.getCampaigns()
+                CampaignService.getCampaigns(),
+                ProductPriorityService.getAllActiveProductPriorities()
             ]);
-            setOptions({ categories: c, sections: secData, productTags: p, themes: t, personas: per, campaigns: cmp });
+            setOptions({ categories: c, sections: secData, productTags: p, themes: t, personas: per, campaigns: cmp, productPriorities: pr });
         } catch (err) {
             console.error("Failed executing parallel lookup fetches:", err);
         }
@@ -147,6 +149,7 @@ export default function UnifiedSeoKeywordPage() {
                 category_id: Number(formData.category_id),
                 section_id: Number(formData.section_id),
                 product_id: Number(formData.product_id),
+                product_priority_id: formData.product_priority_id ? Number(formData.product_priority_id) : null,
                 status: formData.status,
                 production_month: formData.production_month,
                 content_type: formData.content_type as 'new' | 'adjust',
@@ -158,6 +161,7 @@ export default function UnifiedSeoKeywordPage() {
                 persona_id: formData.persona_id ? Number(formData.persona_id) : null,
                 campaign_id: formData.campaign_id ? Number(formData.campaign_id) : null,
                 target_keyword: formData.target_keyword,
+                related_keyword: formData.related_keyword,
                 meta_description: formData.meta_description,
                 cta_internal_link: formData.cta_internal_link
             });
@@ -251,7 +255,7 @@ export default function UnifiedSeoKeywordPage() {
             )}
 
             {/* DATATABLE LIST BOARD */}
-            <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] font-black uppercase tracking-widest text-slate-400 select-none">
@@ -275,8 +279,16 @@ export default function UnifiedSeoKeywordPage() {
                         ) : articles.length > 0 ? (
                             articles.map((item) => {
                                 const badge = getStrategyApprovalBadge(item.approval || 'pending');
+
+                                // Calculate days pending to highlight overdue review items
+                                const createdDate = new Date(item.created_at);
+                                const now = new Date();
+                                const diffTime = Math.abs(now.getTime() - createdDate.getTime());
+                                const daysPending = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                                const isOverdue = daysPending >= 3 && item.approval === 'pending';
+
                                 return (
-                                    <tr key={item.id} className="group hover:bg-slate-50/40 transition-colors">
+                                    <tr key={item.id} className={`group transition-colors ${isOverdue ? 'bg-rose-50/20 hover:bg-rose-50/30' : 'hover:bg-slate-50/40'}`}>
                                         <td className="px-6 py-5 whitespace-nowrap align-middle">
                                             <Link href={`/seo-keyword/edit/${item.id}`} className="inline-block">
                                                 <span className="text-[10px] font-mono font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200/80 hover:border-brand-accent/40 hover:text-brand-accent px-2.5 py-1 rounded-md tracking-wider whitespace-nowrap select-all shadow-xs transition-all cursor-pointer">
@@ -286,7 +298,14 @@ export default function UnifiedSeoKeywordPage() {
                                         </td>
                                         <td className="px-6 py-5 align-middle">
                                             <div className="flex flex-col min-w-[200px]">
-                                                <span className="text-sm font-bold text-slate-900 group-hover:text-brand-accent transition-colors line-clamp-1">{item.title}</span>
+                                                <div className="flex items-center gap-2 flex-wrap">
+                                                    <span className="text-sm font-bold text-slate-900 group-hover:text-brand-accent transition-colors line-clamp-1">{item.title}</span>
+                                                    {isOverdue && (
+                                                        <span className="shrink-0 inline-flex items-center gap-1 text-[8px] font-black text-rose-650 bg-rose-50 border border-rose-200/80 px-2 py-0.5 rounded-md tracking-wider uppercase animate-pulse">
+                                                            <AlertTriangle size={10} className="text-rose-500" /> Overdue ({daysPending}d)
+                                                        </span>
+                                                    )}
+                                                </div>
                                                 <span className="text-[9px] text-slate-400 font-black mt-1.5 uppercase tracking-wider block">
                                                     {item.section || item.category} • 🛠️ {item.contentType === 'new' ? 'NEW' : 'ADJUST'}
                                                 </span>

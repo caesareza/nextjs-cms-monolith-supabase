@@ -20,6 +20,9 @@ export interface ArticleDisplay {
     status: string;
     created_at: string;
     gdrive_draft_content?: string;
+    product_priority?: string;
+    product_priority_id?: number | null;
+    related_keyword?: string;
 }
 
 export interface LookupOptions {
@@ -29,6 +32,7 @@ export interface LookupOptions {
     themes: { id: number; name: string }[];
     personas: { id: number; name: string }[];
     campaigns: { id: number; name: string }[];
+    productPriorities?: { id: number; name: string; code?: string | null }[];
 }
 
 export interface EditFormState {
@@ -37,6 +41,7 @@ export interface EditFormState {
     category_id: number;
     section_id: number;
     product_id: number;
+    product_priority_id: string;
     content_type: string;
     production_month: string;
     demand: string;
@@ -47,6 +52,7 @@ export interface EditFormState {
     persona_id: string;
     campaign_id: string;
     target_keyword: string;
+    related_keyword: string;
     meta_description: string;
     cta_internal_link: string;
     gdrive_draft_content?: string;

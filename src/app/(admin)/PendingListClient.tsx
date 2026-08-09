@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Clock, User, ChevronDown, ChevronUp, Search, CheckCircle, Loader2, AlertTriangle, Flame, ShieldCheck, HelpCircle } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Clock, User, ChevronDown, ChevronUp, Search, CheckCircle, Loader2, AlertTriangle, Flame, ShieldCheck, HelpCircle, Link2 } from 'lucide-react';
 import { ArticleService } from "@/app/(admin)/article/service";
 import { formatAuditTimestamp } from '@/utils/date';
 
@@ -9,6 +9,7 @@ export default function PendingListClient() {
     const [articles, setArticles] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedSegment, setSelectedSegment] = useState('ALL');
 
     // --- Inline Expansion & Workflow Tracking States ---
     const [expandedArticleId, setExpandedArticleId] = useState<number | null>(null);
@@ -20,7 +21,7 @@ export default function PendingListClient() {
         setLoading(true);
         try {
             // Pull prioritised queue (Oldest First)
-            const data = await ArticleService.getTopPending(10);
+            const data = await ArticleService.getTopPending(20);
             setArticles(data || []);
         } catch (err) {
             console.error("Failed to fetch dashboard queue:", err);
@@ -89,13 +90,27 @@ export default function PendingListClient() {
         setExpandedArticleId(expandedArticleId === id ? null : id);
     };
 
-    const filteredArticles = articles.filter(a =>
-        a.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        a.writer?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Extract segments dynamically based on active pending queue items
+    const segments = useMemo(() => {
+        const priorityNames = articles
+            .map(a => a.product_priority?.name)
+            .filter(Boolean);
+        return ['ALL', ...Array.from(new Set(priorityNames))];
+    }, [articles]);
+
+    const filteredArticles = useMemo(() => {
+        return articles.filter(a => {
+            const matchesSegment = selectedSegment === 'ALL' || a.product_priority?.name === selectedSegment;
+            const writerName = a.writer?.name || '';
+            const matchesSearch = a.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                writerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                a.job_code?.toLowerCase().includes(searchTerm.toLowerCase());
+            return matchesSegment && matchesSearch;
+        });
+    }, [articles, selectedSegment, searchTerm]);
 
     return (
-        <div className="bg-white rounded-3xl border border-brand-light-blue/20 shadow-2xl shadow-brand-navy/5 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-brand-light-blue/20 shadow-2xl shadow-brand-navy/5 overflow-hidden">
 
             {/* HEADER CONTROLS */}
             <div className="p-10 border-b border-brand-light-blue/20 flex flex-col md:flex-row md:items-center justify-between bg-brand-cream/30 gap-6">
@@ -121,10 +136,33 @@ export default function PendingListClient() {
                 </div>
             </div>
 
+            {/* SEGMENT FILTER TABS */}
+            {!loading && segments.length > 1 && (
+                <div className="px-10 py-4 bg-slate-50/50 border-b border-slate-100 flex flex-wrap gap-2 items-center">
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider mr-2 select-none">Segments:</span>
+                    {segments.map((segment) => {
+                        const count = articles.filter(a => segment === 'ALL' || a.product_priority?.name === segment).length;
+                        return (
+                            <button
+                                key={segment}
+                                onClick={() => setSelectedSegment(segment)}
+                                className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all border ${
+                                    selectedSegment === segment
+                                        ? 'bg-slate-900 border-slate-900 text-brand-light-blue shadow-3xs'
+                                        : 'bg-white border-slate-200/80 text-slate-650 hover:bg-slate-55 transition-colors'
+                                }`}
+                            >
+                                {segment === 'ALL' ? 'All Segments' : segment} ({count})
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
+
             {/* INTERACTIVE DATA REVIEWS */}
             {loading ? (
                 <div className="p-24 flex flex-col items-center justify-center gap-4">
-                    <Loader2 className="animate-spin text-slate-200" size={32} />
+                    <Loader2 className="animate-spin text-slate-250" size={32} />
                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Fetching latest queue...</span>
                 </div>
             ) : (
@@ -133,40 +171,107 @@ export default function PendingListClient() {
                         const isExpanded = expandedArticleId === article.id;
                         const isActionBusy = actionLoadingId === article.id;
 
+                        // Calculate days pending to flag overdue strategy briefs (stale queue warning)
+                        const createdDate = new Date(article.created_at);
+                        const now = new Date();
+                        const diffTime = Math.abs(now.getTime() - createdDate.getTime());
+                        const daysPending = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                        const isOverdue = daysPending >= 3;
+
+                        const writerName = article.writer?.name || 'Unassigned Writer';
+                        const categoryName = article.category?.name || 'Uncategorized';
+                        const priorityName = article.product_priority?.name;
+
                         return (
                             <div key={article.id} className="flex flex-col transition-all">
 
                                 {/* MASTER LINE ROW */}
                                 <div
                                     onClick={() => toggleExpandTray(article.id)}
-                                    className={`group flex items-center gap-8 px-10 py-7 transition-all cursor-pointer select-none ${isExpanded ? 'bg-slate-50/50' : 'hover:bg-slate-50/80'}`}
+                                    className={`group flex items-center gap-8 px-10 py-6 transition-all cursor-pointer select-none border-l-4 ${
+                                        isOverdue 
+                                            ? 'border-l-rose-500 bg-rose-50/10 hover:bg-rose-50/20' 
+                                            : 'border-l-transparent ' + (isExpanded ? 'bg-slate-50/50' : 'hover:bg-slate-55/70')
+                                    }`}
                                 >
                                     {/* Title Segment */}
-                                    <div className="flex-1">
-                                        <h4 className="text-sm font-bold text-brand-navy group-hover:text-brand-accent transition-colors leading-relaxed line-clamp-1">
-                                            {article.title}
-                                        </h4>
-                                        <span className="text-[10px] font-mono font-bold text-slate-400 block mt-0.5">
-                                            {article.job_code || '—'}
-                                        </span>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-3 flex-wrap">
+                                            <h4 className="text-sm font-bold text-brand-navy group-hover:text-brand-accent transition-colors leading-relaxed line-clamp-1">
+                                                {article.title}
+                                            </h4>
+                                            {isOverdue && (
+                                                <span className="shrink-0 inline-flex items-center gap-1 text-[8px] font-black text-rose-650 bg-rose-50 border border-rose-200/85 px-2 py-0.5 rounded-md tracking-wider uppercase animate-pulse">
+                                                    <AlertTriangle size={10} className="text-rose-500" /> Stale Queue ({daysPending}d)
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="flex items-center gap-2 mt-2 flex-wrap">
+                                            <span className="text-[9px] font-mono font-bold text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md tracking-wider">
+                                                {article.job_code || '—'}
+                                            </span>
+                                            {priorityName && (
+                                                <span className="shrink-0 inline-flex items-center gap-1 text-[8px] font-black text-brand-accent bg-brand-accent/5 border border-brand-accent/15 px-2.5 py-0.5 rounded-full uppercase tracking-wider select-none">
+                                                    <ShieldCheck size={9} /> {priorityName}
+                                                </span>
+                                            )}
+                                            {article.demand !== undefined && (
+                                                <span className="shrink-0 inline-flex items-center gap-1 text-[8px] font-bold text-amber-700 bg-amber-50 border border-amber-250/70 px-2 py-0.5 rounded-md">
+                                                     <Flame size={9} className="text-amber-500" /> {(article.demand || 0).toLocaleString('id-ID')} Vol
+                                                </span>
+                                            )}
+                                            {categoryName && (
+                                                <span className="shrink-0 text-[8px] font-black text-slate-500 bg-slate-50 border border-slate-200/60 px-2 py-0.5 rounded-md uppercase tracking-wider">
+                                                    📂 {categoryName}
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
 
                                     {/* Writer Track */}
-                                    <div className="hidden md:flex items-center gap-3 w-48 shrink-0">
+                                    <div className="hidden md:flex items-center gap-3 w-44 shrink-0">
                                         <div className="w-8 h-8 bg-brand-cream/60 rounded-full flex items-center justify-center text-brand-steel-blue/60 group-hover:bg-brand-accent/10 group-hover:text-brand-accent transition-colors">
                                             <User size={14} />
                                         </div>
                                         <span className="text-[10px] font-black text-slate-500 uppercase truncate">
-                                            {article.writer?.name || 'Unassigned Writer'}
+                                            {writerName}
                                         </span>
                                     </div>
 
                                     {/* Timestamp Track */}
-                                    <div className="hidden lg:flex items-center gap-2 w-48 shrink-0">
+                                    <div className="hidden lg:flex items-center gap-2 w-40 shrink-0">
                                         <Clock size={12} className="text-slate-300" />
                                         <span className="text-[10px] font-bold text-slate-400 uppercase">
                                             {formatAuditTimestamp(article.created_at)}
                                         </span>
+                                    </div>
+
+                                    {/* Quick Action Controls (Visible on Hover / Inactive State) */}
+                                    <div 
+                                        className="opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-155 hidden md:flex items-center gap-2 shrink-0"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <button
+                                            disabled={isActionBusy}
+                                            onClick={() => setShowRejectModalId(article.id)}
+                                            className="h-9 px-3 border border-brand-accent/25 bg-white hover:bg-brand-accent/10 text-brand-accent rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-1 disabled:opacity-40"
+                                            title="Request Revision"
+                                        >
+                                            <AlertTriangle size={11} /> Revision
+                                        </button>
+                                        <button
+                                            disabled={isActionBusy}
+                                            onClick={() => handleInlineApprove(article)}
+                                            className="h-9 px-3 bg-brand-accent hover:bg-brand-navy text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer flex items-center gap-1 disabled:opacity-40"
+                                            title="Approve Strategy"
+                                        >
+                                            {isActionBusy && actionLoadingId === article.id ? (
+                                                <Loader2 size={11} className="animate-spin" />
+                                            ) : (
+                                                <CheckCircle size={11} />
+                                            )}
+                                            Approve
+                                        </button>
                                     </div>
 
                                     {/* Toggle Action Control Icon */}
@@ -220,30 +325,39 @@ export default function PendingListClient() {
                                         </div>
 
                                         {/* Row 3: Live Decision Trigger Toolbar */}
-                                        <div className="flex items-center justify-end gap-3 pt-2 border-t border-brand-light-blue/15">
-                                            <button
-                                                disabled={isActionBusy}
-                                                onClick={() => setShowRejectModalId(article.id)}
-                                                className="px-5 py-2.5 border border-brand-accent/20 bg-white hover:bg-brand-accent/10 text-brand-accent rounded-xl text-xs font-black uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-40"
+                                        <div className="flex items-center justify-between gap-3 pt-2 border-t border-brand-light-blue/15">
+                                            <a
+                                                href={`/seo-keyword/edit/${article.id}`}
+                                                className="text-[10px] font-black text-brand-navy/60 hover:text-brand-accent uppercase tracking-wider transition-colors flex items-center gap-1.5"
                                             >
-                                                <AlertTriangle size={14} /> Request Revision
-                                            </button>
+                                                <Link2 size={12} /> View Full Specification
+                                            </a>
 
-                                            <button
-                                                disabled={isActionBusy}
-                                                onClick={() => handleInlineApprove(article)}
-                                                className="px-6 py-2.5 bg-brand-accent hover:bg-brand-navy text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer flex items-center gap-1.5 disabled:opacity-40"
-                                            >
-                                                {isActionBusy ? (
-                                                    <>
-                                                        <Loader2 size={14} className="animate-spin" /> Authorizing...
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <CheckCircle size={14} /> Approve Strategy
-                                                    </>
-                                                )}
-                                            </button>
+                                            <div className="flex items-center gap-3">
+                                                <button
+                                                    disabled={isActionBusy}
+                                                    onClick={() => setShowRejectModalId(article.id)}
+                                                    className="px-5 py-2.5 border border-brand-accent/20 bg-white hover:bg-brand-accent/10 text-brand-accent rounded-xl text-xs font-black uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-40"
+                                                >
+                                                    <AlertTriangle size={14} /> Request Revision
+                                                </button>
+
+                                                <button
+                                                    disabled={isActionBusy}
+                                                    onClick={() => handleInlineApprove(article)}
+                                                    className="px-6 py-2.5 bg-brand-accent hover:bg-brand-navy text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer flex items-center gap-1.5 disabled:opacity-40"
+                                                >
+                                                    {isActionBusy && actionLoadingId === article.id ? (
+                                                        <>
+                                                            <Loader2 size={14} className="animate-spin" /> Authorizing...
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <CheckCircle size={14} /> Approve Strategy
+                                                        </>
+                                                    )}
+                                                </button>
+                                            </div>
                                         </div>
 
                                     </div>
