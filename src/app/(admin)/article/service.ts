@@ -166,7 +166,18 @@ export const ArticleService = {
                 job_code,
                 created_at, 
                 approval,
-                writer:writer_id(name)
+                demand,
+                intent,
+                classification,
+                target_keyword,
+                related_keyword,
+                meta_description,
+                status,
+                category:category_id(id, name),
+                section:section_id(id, name),
+                writer:writer_id(id, name),
+                product:product_id(id, name),
+                product_priority:product_priority_id(id, name, code)
             `)
             .eq('approval', 'pending')
             .order('id', { ascending: true })
