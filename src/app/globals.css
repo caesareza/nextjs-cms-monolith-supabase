@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -9,7 +9,7 @@
   --color-brand-navy: #1D3557;
   --color-brand-accent: #457B9D;
 
-  --font-sans: 'Plus Jakarta Sans', sans-serif;
+  --font-sans: 'Satoshi', sans-serif;
 
   --animate-float-slow: float-slow 15s ease-in-out infinite;
   --animate-float-slower: float-slower 20s ease-in-out infinite;
@@ -58,4 +58,27 @@ body {
   float: left;
   height: 0;
   pointer-events: none;
+}
+
+/* Premium universal input and focus overrides */
+input:focus, select:focus, textarea:focus {
+  outline: none !important;
+  border-color: #1d3557 !important; /* Brand Navy */
+  box-shadow: 0 0 0 3px rgba(69, 123, 157, 0.15) !important; /* Brand Light Accent glow */
+}
+
+/* Scrollbar visual refinement */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
