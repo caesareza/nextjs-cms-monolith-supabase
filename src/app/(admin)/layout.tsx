@@ -40,8 +40,8 @@ const SidebarItem = ({ icon: Icon, label, href, active }: any) => (
   <Link
     href={href}
     className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 group ${active
-      ? "bg-white text-brand-navy border border-slate-200/50 shadow-2xs font-bold"
-      : "text-slate-500 hover:bg-slate-100/60 hover:text-brand-navy border border-transparent"
+      ? "bg-white text-slate-900 border border-slate-200/50 shadow-2xs font-bold"
+      : "text-slate-500 hover:bg-slate-100/60 hover:text-slate-900 border border-transparent"
       }`}
   >
     <Icon
@@ -49,7 +49,7 @@ const SidebarItem = ({ icon: Icon, label, href, active }: any) => (
       strokeWidth={active ? 2.2 : 1.8}
       className={
         active
-          ? "text-brand-accent"
+          ? "text-brand-red"
           : "group-hover:scale-105 transition-transform text-slate-400 group-hover:text-brand-steel-blue"
       }
     />
@@ -85,7 +85,7 @@ export default function RootLayout({
   return (
     <div className="flex h-screen  text-slate-900 font-sans transition-colors duration-300">
       {/* Sidebar */}
-      <aside className="w-64 border-r border-brand-light-blue/20 flex flex-col p-4 gap-6 bg-brand-cream/30">
+      <aside className="w-64 border-r border-slate-200/60 flex flex-col p-4 gap-6 bg-slate-50">
         <div className="flex items-center gap-2.5 px-2 py-4">
           <div className="w-8 h-8 bg-brand-red rounded-lg flex items-center justify-center shadow-lg shadow-brand-red/20">
             <svg
@@ -122,7 +122,7 @@ export default function RootLayout({
 
         {/* Navigation */}
         <nav className="flex flex-col gap-1">
-          <p className="text-[10px] font-bold uppercase text-slate-400 dark:text-slate-500 px-3 mb-2 tracking-widest">
+          <p className="text-[10px] font-bold uppercase text-slate-400 px-3 mb-2 tracking-widest">
             Navigation
           </p>
 
@@ -137,17 +137,17 @@ export default function RootLayout({
         </nav>
 
         {/* User Profile at Bottom */}
-        <div className="mt-auto pt-4 border-t border-brand-light-blue/15 flex flex-col gap-2">
+        <div className="mt-auto pt-4 border-t border-slate-200/80 flex flex-col gap-2">
           <div className="flex items-center gap-3 px-2 py-2 rounded-lg transition-colors">
-            <div className="w-8 h-8 rounded-full bg-brand-light-blue/20 overflow-hidden border border-brand-light-blue/30">
+            <div className="w-8 h-8 rounded-full bg-slate-200/50 overflow-hidden border border-slate-200/50 shrink-0">
               <img
                 src="https://api.dicebear.com/7.x/avataaars/svg"
                 alt="User"
               />
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-xs font-bold truncate">{user?.email}</span>
-              <span className="text-[10px] text-slate-500 truncate">
+              <span className="text-xs font-bold text-slate-800 truncate">{user?.email}</span>
+              <span className="text-[10px] text-slate-400 truncate">
                 {user?.id}
               </span>
             </div>
@@ -157,14 +157,14 @@ export default function RootLayout({
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden bg-white">
         {/* Header */}
-        <header className="border-b border-slate-200 flex items-center justify-between px-8 bg-white backdrop-blur-md z-10">
+        <header className="border-b border-slate-200 flex items-center justify-between px-8 bg-white/40 backdrop-blur-md z-10">
 
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-y-auto p-8">{children}</main>
+        <main className="flex-1 overflow-y-auto p-8 bg-white">{children}</main>
       </div>
     </div>
   );
