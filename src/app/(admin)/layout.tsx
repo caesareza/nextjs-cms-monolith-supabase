@@ -157,14 +157,9 @@ export default function RootLayout({
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col overflow-hidden bg-white">
-        {/* Header */}
-        <header className="border-b border-slate-200 flex items-center justify-between px-8 bg-white/40 backdrop-blur-md z-10">
-
-        </header>
-
+      <div className="flex-1 flex flex-col overflow-hidden bg-slate-50/40">
         {/* Content */}
-        <main className="flex-1 overflow-y-auto p-8 bg-white">{children}</main>
+        <main className="flex-1 overflow-y-auto p-8 bg-slate-50/40">{children}</main>
       </div>
     </div>
   );
