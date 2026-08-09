@@ -22,6 +22,7 @@ export interface ArticleDisplay {
     gdrive_draft_content?: string;
     product_priority?: string;
     product_priority_id?: number | null;
+    related_keyword?: string;
 }
 
 export interface LookupOptions {
@@ -51,6 +52,7 @@ export interface EditFormState {
     persona_id: string;
     campaign_id: string;
     target_keyword: string;
+    related_keyword: string;
     meta_description: string;
     cta_internal_link: string;
     gdrive_draft_content?: string;

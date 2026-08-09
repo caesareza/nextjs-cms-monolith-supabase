@@ -161,6 +161,7 @@ export default function UnifiedSeoKeywordPage() {
                 persona_id: formData.persona_id ? Number(formData.persona_id) : null,
                 campaign_id: formData.campaign_id ? Number(formData.campaign_id) : null,
                 target_keyword: formData.target_keyword,
+                related_keyword: formData.related_keyword,
                 meta_description: formData.meta_description,
                 cta_internal_link: formData.cta_internal_link
             });

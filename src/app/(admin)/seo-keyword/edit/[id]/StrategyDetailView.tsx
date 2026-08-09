@@ -547,7 +547,20 @@ export default function StrategyDetailView({
                                     )}
                                 </div>
 
-                                <div className="space-y-2 md:grid-cols-2">
+                                <div className="space-y-2 md:col-span-1">
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5">
+                                        <FileText size={11} className="text-slate-350" /> Related Keywords
+                                    </span>
+                                    {isEditing ? (
+                                        <textarea rows={3} className="w-full text-xs font-bold text-slate-800 bg-slate-50/50 border border-slate-200 rounded-xl p-3 resize-none outline-none focus:bg-white focus:border-slate-400 transition-all placeholder:text-slate-300" placeholder="Separate keywords with commas..." value={form.related_keyword} onChange={(e) => setForm({ ...form, related_keyword: e.target.value })} />
+                                    ) : (
+                                        <div className="w-full text-xs font-semibold text-slate-700 bg-slate-50/70 border border-slate-200/60 rounded-xl p-4 min-h-20 leading-relaxed select-all">
+                                            {form.related_keyword || '—'}
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2 md:col-span-1">
                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block flex items-center gap-1.5">
                                         <FileText size={11} className="text-slate-350" /> Meta Description Tag
                                     </span>

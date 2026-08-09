@@ -30,6 +30,7 @@ const initialFormState = {
     persona_id: '',
     campaign_id: '',
     target_keyword: '',
+    related_keyword: '',
     meta_description: '',
     cta_internal_link: ''
 };
@@ -354,6 +355,11 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Target Focus Keyword</label>
                                 <textarea rows={2} className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:bg-white resize-none transition-all placeholder:text-slate-300" placeholder="Primary deep intent search phrase..." value={form.target_keyword} onChange={(e) => setForm({ ...form, target_keyword: e.target.value })} required />
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Related Keywords</label>
+                                <textarea rows={2} className="w-full px-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:bg-white resize-none transition-all placeholder:text-slate-300" placeholder="Separate related terms with commas (e.g. Kupon SR025, Beli SR025)..." value={form.related_keyword} onChange={(e) => setForm({ ...form, related_keyword: e.target.value })} />
                             </div>
 
                             <div className="space-y-1.5">

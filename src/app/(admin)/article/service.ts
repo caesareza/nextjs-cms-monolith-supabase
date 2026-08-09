@@ -40,6 +40,7 @@ export const ArticleService = {
                 status,
                 approval,
                 target_keyword,
+                related_keyword,
                 meta_description,
                 cta_internal_link,
                 gdrive_draft_content,
@@ -92,6 +93,7 @@ export const ArticleService = {
                     writer: writerObj?.name || 'Unknown',
                     section: sectionObj?.name || 'General',
                     target_keyword: item.target_keyword,
+                    related_keyword: item.related_keyword || '',
 
                     product: String(productObj?.id || ''),
                     product_name: productObj?.name || 'Umum',
@@ -194,6 +196,7 @@ export const ArticleService = {
         content_old?: string;
         meta_description?: string;
         target_keyword?: string;
+        related_keyword?: string;
         cta_internal_link?: string;
         gdrive_draft_content?: string;
         seo_check?: string;
@@ -284,6 +287,7 @@ export const ArticleService = {
         product_priority_id?: number | null;
         status?: string;
         target_keyword?: string;
+        related_keyword?: string;
         meta_description?: string;
         cta_internal_link?: string;
         gdrive_draft_content?: string;

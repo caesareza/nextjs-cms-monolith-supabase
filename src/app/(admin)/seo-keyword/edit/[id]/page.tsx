@@ -36,7 +36,7 @@ export default function SeoDirectorReviewFormShell() {
     const [form, setForm] = useState<EditFormState>({
         title: '', job_code: '', category_id: 0, section_id: 0, product_id: 0, product_priority_id: '', content_type: 'new',
         production_month: '', demand: '', intent: 'Informational', type: 'Evergreen', classification: 'Infantry',
-        theme_id: '', persona_id: '', campaign_id: '', target_keyword: '', meta_description: '', cta_internal_link: ''
+        theme_id: '', persona_id: '', campaign_id: '', target_keyword: '', related_keyword: '', meta_description: '', cta_internal_link: ''
     });
 
     const [articleMeta, setArticleMeta] = useState({ status: '', approval: '' });
@@ -77,6 +77,7 @@ export default function SeoDirectorReviewFormShell() {
                 persona_id: data.persona_id ? String(data.persona_id) : '',
                 campaign_id: data.campaign_id ? String(data.campaign_id) : '',
                 target_keyword: data.target_keyword || '',
+                related_keyword: data.related_keyword || '',
                 meta_description: data.meta_description || '',
                 cta_internal_link: data.cta_internal_link || ''
             });
@@ -151,6 +152,7 @@ export default function SeoDirectorReviewFormShell() {
                 persona_id: form.persona_id ? Number(form.persona_id) : null,
                 campaign_id: form.campaign_id ? Number(form.campaign_id) : null,
                 target_keyword: form.target_keyword,
+                related_keyword: form.related_keyword,
                 meta_description: form.meta_description,
                 cta_internal_link: form.cta_internal_link,
                 content: '', status: 'seo pending', approval: 'pending'
