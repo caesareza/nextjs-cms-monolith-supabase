@@ -133,19 +133,37 @@ export default function PendingListClient() {
                         const isExpanded = expandedArticleId === article.id;
                         const isActionBusy = actionLoadingId === article.id;
 
+                        // Calculate days pending to flag overdue strategy briefs (stale queue warning)
+                        const createdDate = new Date(article.created_at);
+                        const now = new Date();
+                        const diffTime = Math.abs(now.getTime() - createdDate.getTime());
+                        const daysPending = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                        const isOverdue = daysPending >= 3;
+
                         return (
                             <div key={article.id} className="flex flex-col transition-all">
 
                                 {/* MASTER LINE ROW */}
                                 <div
                                     onClick={() => toggleExpandTray(article.id)}
-                                    className={`group flex items-center gap-8 px-10 py-7 transition-all cursor-pointer select-none ${isExpanded ? 'bg-slate-50/50' : 'hover:bg-slate-50/80'}`}
+                                    className={`group flex items-center gap-8 px-10 py-7 transition-all cursor-pointer select-none border-l-4 ${
+                                        isOverdue 
+                                            ? 'border-l-rose-500 bg-rose-50/10 hover:bg-rose-50/20' 
+                                            : 'border-l-transparent ' + (isExpanded ? 'bg-slate-50/50' : 'hover:bg-slate-50/80')
+                                    }`}
                                 >
                                     {/* Title Segment */}
                                     <div className="flex-1">
-                                        <h4 className="text-sm font-bold text-brand-navy group-hover:text-brand-accent transition-colors leading-relaxed line-clamp-1">
-                                            {article.title}
-                                        </h4>
+                                        <div className="flex items-center gap-3 flex-wrap">
+                                            <h4 className="text-sm font-bold text-brand-navy group-hover:text-brand-accent transition-colors leading-relaxed line-clamp-1">
+                                                {article.title}
+                                            </h4>
+                                            {isOverdue && (
+                                                <span className="shrink-0 inline-flex items-center gap-1 text-[8px] font-black text-rose-650 bg-rose-50 border border-rose-200/80 px-2 py-0.5 rounded-md tracking-wider uppercase animate-pulse">
+                                                    <AlertTriangle size={10} className="text-rose-500" /> Awaiting Review ({daysPending}d)
+                                                </span>
+                                            )}
+                                        </div>
                                         <span className="text-[10px] font-mono font-bold text-slate-400 block mt-0.5">
                                             {article.job_code || '—'}
                                         </span>

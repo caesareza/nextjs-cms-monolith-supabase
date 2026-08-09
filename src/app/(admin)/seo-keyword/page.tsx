@@ -8,7 +8,7 @@ import { ProductTagService } from '../product-tag/service';
 import { ThemeService } from '../theme/service';
 import { PersonaService } from '../persona/service';
 import { CampaignService } from '../campaign/service';
-import { Search, Loader2, Filter, Plus } from 'lucide-react';
+import { Search, Loader2, Filter, Plus, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import KeywordCreateDrawer from './KeywordCreateDrawer';
 import { LookupOptions } from '@/types/article';
@@ -275,8 +275,16 @@ export default function UnifiedSeoKeywordPage() {
                         ) : articles.length > 0 ? (
                             articles.map((item) => {
                                 const badge = getStrategyApprovalBadge(item.approval || 'pending');
+
+                                // Calculate days pending to highlight overdue review items
+                                const createdDate = new Date(item.created_at);
+                                const now = new Date();
+                                const diffTime = Math.abs(now.getTime() - createdDate.getTime());
+                                const daysPending = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                                const isOverdue = daysPending >= 3 && item.approval === 'pending';
+
                                 return (
-                                    <tr key={item.id} className="group hover:bg-slate-50/40 transition-colors">
+                                    <tr key={item.id} className={`group transition-colors ${isOverdue ? 'bg-rose-50/20 hover:bg-rose-50/30' : 'hover:bg-slate-50/40'}`}>
                                         <td className="px-6 py-5 whitespace-nowrap align-middle">
                                             <Link href={`/seo-keyword/edit/${item.id}`} className="inline-block">
                                                 <span className="text-[10px] font-mono font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200/80 hover:border-brand-accent/40 hover:text-brand-accent px-2.5 py-1 rounded-md tracking-wider whitespace-nowrap select-all shadow-xs transition-all cursor-pointer">
@@ -286,7 +294,14 @@ export default function UnifiedSeoKeywordPage() {
                                         </td>
                                         <td className="px-6 py-5 align-middle">
                                             <div className="flex flex-col min-w-[200px]">
-                                                <span className="text-sm font-bold text-slate-900 group-hover:text-brand-accent transition-colors line-clamp-1">{item.title}</span>
+                                                <div className="flex items-center gap-2 flex-wrap">
+                                                    <span className="text-sm font-bold text-slate-900 group-hover:text-brand-accent transition-colors line-clamp-1">{item.title}</span>
+                                                    {isOverdue && (
+                                                        <span className="shrink-0 inline-flex items-center gap-1 text-[8px] font-black text-rose-650 bg-rose-50 border border-rose-200/80 px-2 py-0.5 rounded-md tracking-wider uppercase animate-pulse">
+                                                            <AlertTriangle size={10} className="text-rose-500" /> Overdue ({daysPending}d)
+                                                        </span>
+                                                    )}
+                                                </div>
                                                 <span className="text-[9px] text-slate-400 font-black mt-1.5 uppercase tracking-wider block">
                                                     {item.section || item.category} • 🛠️ {item.contentType === 'new' ? 'NEW' : 'ADJUST'}
                                                 </span>
