@@ -145,7 +145,7 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                 <div className="flex-1 overflow-y-auto p-8 space-y-8">
 
                     {/* AUTO-GENERATED JOB_CODE DISPLAY */}
-                    <div className="bg-slate-900 text-white p-5 border border-slate-950 rounded-3xl space-y-2 shadow-md">
+                    <div className="bg-slate-900 text-white p-5 border border-slate-950 rounded-2xl space-y-2 shadow-md">
                         <div className="flex items-center justify-between">
                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
                                 <span className="w-1.5 h-3 bg-brand-accent rounded-xs" /> Generated Job Identifier (JOB_CODE)
@@ -160,7 +160,7 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                     </div>
 
                     {/* SECTION 1: IDENTITY SUITE */}
-                    <div className="bg-white p-6 border border-slate-200/70 rounded-3xl space-y-4 shadow-xs">
+                    <div className="bg-white p-6 border border-slate-200/70 rounded-2xl space-y-4 shadow-xs">
                         <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
                             <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-1.5">
                                 <span className="w-1.5 h-3 bg-brand-accent rounded-xs" /> Content Taxonomy Cluster
@@ -223,7 +223,7 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                     </div>
 
                     {/* SECTION 2: MARKETING STRATEGY TARGETS */}
-                    <div className="bg-white p-6 border border-slate-200/70 rounded-3xl space-y-4 shadow-xs">
+                    <div className="bg-white p-6 border border-slate-200/70 rounded-2xl space-y-4 shadow-xs">
                         <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
                             <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-1.5">
                                 <span className="w-1.5 h-3 bg-brand-accent rounded-xs" /> Market Alignment Matrix
@@ -297,7 +297,7 @@ export default function KeywordCreateDrawer({ isOpen, onClose, onSubmit, options
                     </div>
 
                     {/* SECTION 3: SEO SUITE METRICS & DATA CORES */}
-                    <div className="bg-white p-6 border border-slate-200/70 rounded-3xl space-y-5 shadow-xs">
+                    <div className="bg-white p-6 border border-slate-200/70 rounded-2xl space-y-5 shadow-xs">
                         <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
                             <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest flex items-center gap-1.5">
                                 <span className="w-1.5 h-3 bg-brand-accent rounded-xs" /> Performance Analytics & Suite

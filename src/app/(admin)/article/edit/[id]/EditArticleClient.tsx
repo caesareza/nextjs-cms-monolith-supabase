@@ -114,7 +114,7 @@ export default function EditArticleClient({
 
     if (success) {
         return (
-            <div className="max-w-xl mx-auto mt-32 p-12 bg-white rounded-3xl text-center shadow-2xl animate-in zoom-in-95">
+            <div className="max-w-xl mx-auto mt-32 p-12 bg-white rounded-2xl text-center shadow-2xl animate-in zoom-in-95">
                 <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <CheckCircle2 size={32} />
                 </div>
@@ -162,7 +162,7 @@ export default function EditArticleClient({
 
                 {/* LEFT CANVAS: INTERACTIVE FORM LAYOUT CANVAS */}
                 <div className="lg:col-span-8 space-y-6">
-                    <div className="bg-white rounded-3xl border border-slate-200 p-10 shadow-xs space-y-6">
+                    <div className="bg-white rounded-2xl border border-slate-200 p-10 shadow-xs space-y-6">
 
                         {/* READ-ONLY TITLE ACCORDION ABOVE INPUTS */}
                         <div className="pb-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -260,7 +260,7 @@ export default function EditArticleClient({
                     </div>
 
                     {/* COMPLIANCE CONTROLS & BACKUPS */}
-                    <div className="bg-white rounded-3xl border border-slate-200 p-10 shadow-xs space-y-6">
+                    <div className="bg-white rounded-2xl border border-slate-200 p-10 shadow-xs space-y-6">
                         <h3 className="text-[10px] font-black text-slate-950 uppercase tracking-[0.2em] border-b border-slate-100 pb-3 select-none">
                             Internal Compliance Systems & Logs
                         </h3>
@@ -301,7 +301,7 @@ export default function EditArticleClient({
                 <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-6">
 
                     {/* CARD 1: HIGH-DENSITY PERFORMANCE HUD CODES */}
-                    <div className="bg-slate-950 text-white p-6 rounded-3xl shadow-md space-y-4 select-none">
+                    <div className="bg-slate-950 text-white p-6 rounded-2xl shadow-md space-y-4 select-none">
                         <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block">Forecast & Core Pillars</span>
                         <div className="space-y-3 text-xs font-medium">
                             <div className="flex justify-between items-center bg-slate-900 p-2.5 rounded-xl border border-slate-800">
@@ -324,7 +324,7 @@ export default function EditArticleClient({
                     </div>
 
                     {/* CARD 2: TAXONOMY HIERARCHY MAP */}
-                    <div className="bg-white p-8 border border-slate-200 rounded-3xl shadow-xs space-y-4 font-medium text-slate-700">
+                    <div className="bg-white p-8 border border-slate-200 rounded-2xl shadow-xs space-y-4 font-medium text-slate-700">
                         <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest block select-none">Taxonomy Hierarchies</h4>
 
                         <div className="space-y-3.5 text-xs pt-1">
@@ -348,7 +348,7 @@ export default function EditArticleClient({
                     </div>
 
                     {/* CARD 3: CORPORATE MARKETING SUITE CONTEXT */}
-                    <div className="bg-white p-8 border border-slate-200 rounded-3xl shadow-xs space-y-4 font-medium text-slate-600">
+                    <div className="bg-white p-8 border border-slate-200 rounded-2xl shadow-xs space-y-4 font-medium text-slate-600">
                         <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest block select-none">Marketing Matrix Context</h4>
                         <div className="space-y-3 text-xs pt-1">
                             <div className="flex items-start gap-3">
@@ -367,7 +367,7 @@ export default function EditArticleClient({
                     </div>
 
                     {/* CARD 4: PERSISTENT KEYWORD CONSTRAINT CHEAT SHEET */}
-                    <div className="bg-white p-8 border border-slate-200 rounded-3xl shadow-xs space-y-4">
+                    <div className="bg-white p-8 border border-slate-200 rounded-2xl shadow-xs space-y-4">
                         <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest block select-none">Brief Validation Strategy</h4>
                         <div className="space-y-3">
                             <div>

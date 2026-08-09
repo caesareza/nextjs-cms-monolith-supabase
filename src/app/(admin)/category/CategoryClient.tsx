@@ -92,7 +92,7 @@ export default function CategoryClient() {
             </div>
 
             {/* CREATION WRAPPER BAR */}
-            <form onSubmit={handleCreate} className="bg-white p-6 border border-slate-200 rounded-3xl shadow-sm flex gap-3 items-center">
+            <form onSubmit={handleCreate} className="bg-white p-6 border border-slate-200 rounded-2xl shadow-sm flex gap-3 items-center">
                 <input
                     type="text"
                     placeholder="Use standard format labels, e.g., [K] Layanan or OCBC Mobile..."
@@ -106,7 +106,7 @@ export default function CategoryClient() {
             </form>
 
             {/* HIGH DENSITY TABULAR PRESENTATION DISPLAY */}
-            <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>

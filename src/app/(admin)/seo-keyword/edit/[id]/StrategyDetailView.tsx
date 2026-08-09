@@ -612,7 +612,7 @@ export default function StrategyDetailView({
 
                             {/* INTERACTIVE ASSET APPEND BAR */}
                             <div className="border-t border-slate-100/80 pt-6">
-                                <form onSubmit={handleAddAsset} className="bg-slate-50 border border-slate-200/80 rounded-2.5xl p-5 space-y-4 shadow-3xs">
+                                <form onSubmit={handleAddAsset} className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 space-y-4 shadow-3xs">
                                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/50 pb-4">
                                         <div>
                                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">Add Strategy Asset</span>

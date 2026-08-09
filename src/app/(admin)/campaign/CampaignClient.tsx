@@ -82,7 +82,7 @@ export default function CampaignClient() {
             </div>
 
             {/* CREATION INPUT BAR */}
-            <form onSubmit={handleCreate} className="bg-white p-6 border border-slate-200 rounded-3xl shadow-sm flex gap-3 items-center">
+            <form onSubmit={handleCreate} className="bg-white p-6 border border-slate-200 rounded-2xl shadow-sm flex gap-3 items-center">
                 <input
                     type="text"
                     placeholder="E.g., Promo Pemilu, NyalaFest, #KartuWajibLiburan..."
@@ -96,7 +96,7 @@ export default function CampaignClient() {
             </form>
 
             {/* DATATABLE PRESENTATION FRAME */}
-            <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>

@@ -9,10 +9,10 @@ import WorkflowActions from "./WorkflowActions";
 import ArticleHistory from "./ArticleHistory";
 import ShareConsole from "./ShareConsole";
 
-export default async function Page({params}: {
+export default async function Page({ params }: {
     params: Promise<{ id: string }>
 }) {
-    const {id} = await params;
+    const { id } = await params;
 
     // Fetch clean consolidated strategy dataset and timeline tracking arrays
     const article = await ArticleService.getArticleById(Number(id));
@@ -28,35 +28,35 @@ export default async function Page({params}: {
     };
 
     return (
-        <div className="max-w-7xl space-y-8">
+        <div className="max-w-7xl space-y-5">
             {/* 1. Header & Navigation */}
             <div className="flex items-center justify-between">
                 <Link href="/article"
-                      className="flex items-center gap-2 text-slate-400 hover:text-brand-accent font-black uppercase text-[10px] tracking-widest transition-all">
-                    <ChevronLeft size={16}/> Production Roadmap
+                    className="flex items-center gap-2 text-slate-400 hover:text-brand-accent font-black uppercase text-[10px] tracking-widest transition-all">
+                    <ChevronLeft size={16} /> Production Roadmap
                 </Link>
                 <div className="flex items-center gap-3">
                     <ShareConsole articleId={Number(id)} />
 
                     <Link href={`/article/edit/${id}`}
-                          className="px-6 py-2.5 bg-brand-accent hover:bg-brand-navy text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-md shadow-brand-accent/15 transition-all">
+                        className="px-6 py-2.5 bg-brand-accent hover:bg-brand-navy text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-md shadow-brand-accent/15 transition-all">
                         Edit Article
                     </Link>
                     <WorkflowActions article={article} />
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
                 {/* LEFT COLUMN: PRIMARY CONTENT FOCUS CANVAS */}
-                <div className="lg:col-span-2 space-y-6">
-                    <div className="bg-white p-10 rounded-3xl border border-slate-200 shadow-sm space-y-8">
-                        <div className="space-y-4">
+                <div className="lg:col-span-2 space-y-5">
+                    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+                        <div className="space-y-3">
                             <div className="flex items-center justify-between gap-4 flex-wrap">
                                 <div className="flex items-center gap-3">
                                     <span
                                         className="px-3 py-1 bg-brand-accent/10 text-brand-accent font-black text-[9px] uppercase tracking-widest rounded-full border border-brand-accent/20">
-                                      {article.content_type || 'New Content'}
+                                        {article.content_type || 'New Content'}
                                     </span>
                                     <span className="text-slate-300">/</span>
                                     <span
@@ -86,7 +86,7 @@ export default async function Page({params}: {
                         {article.content_old && (
                             <div className="mt-8 p-6 bg-amber-50/50 rounded-2xl border border-amber-100">
                                 <h4 className="flex items-center gap-2 text-[10px] font-black text-amber-600 uppercase tracking-widest mb-3">
-                                    <Clock size={14}/> Reference: Old Content
+                                    <Clock size={14} /> Reference: Old Content
                                 </h4>
 
                                 {article.content_old.startsWith('http') ? (
@@ -117,26 +117,26 @@ export default async function Page({params}: {
                 </div>
 
                 {/* RIGHT COLUMN: METADATA, SEO METRICS & SIDEBAR PANELS */}
-                <div className="space-y-6">
+                <div className="space-y-5">
                     {/* NEW UPGRADE: SEOStats pulls new global enums and demand figures */}
-                    <SEOStats article={article}/>
+                    <SEOStats article={article} />
 
-                    <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
-                        <h3 className="font-black text-slate-900 uppercase text-[10px] tracking-widest border-b border-slate-50 pb-4">
+                    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                        <h3 className="font-black text-slate-900 uppercase text-[10px] tracking-widest border-b border-slate-50 pb-3">
                             SEO & Publication
                         </h3>
 
-                        <SidebarItem icon={<Link2 size={16}/>} label="Target Keyword" value={article.target_keyword}/>
-                        <SidebarItem icon={<ExternalLink size={16}/>} label="URL Published" value={article.url_published} isLink/>
-                        <SidebarItem icon={<ExternalLink size={16}/>} label="Google Drive Draft" value={article.gdrive_draft_content} isLink/>
-                        <SidebarItem icon={<BarChart3 size={16}/>} label="Index Status" value={article.index_status}/>
+                        <SidebarItem icon={<Link2 size={16} />} label="Target Keyword" value={article.target_keyword} />
+                        <SidebarItem icon={<ExternalLink size={16} />} label="URL Published" value={article.url_published} isLink />
+                        <SidebarItem icon={<ExternalLink size={16} />} label="Google Drive Draft" value={article.gdrive_draft_content} isLink />
+                        <SidebarItem icon={<BarChart3 size={16} />} label="Index Status" value={article.index_status} />
 
                         {/* Internal Links Split System Block */}
                         <div className="space-y-3">
                             <div className="flex items-center gap-2">
                                 <Link2 size={14} className="text-slate-400" />
                                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                  CTA Internal Links
+                                    CTA Internal Links
                                 </span>
                             </div>
 
@@ -155,12 +155,12 @@ export default async function Page({params}: {
                                                 className="group flex flex-col p-3 bg-slate-50 border border-slate-100 rounded-xl hover:border-brand-accent/30 hover:bg-brand-accent/5 transition-all"
                                             >
                                                 <span className="text-[9px] font-black text-brand-accent uppercase tracking-tighter mb-1 opacity-70 group-hover:opacity-100">
-                                                  Link {index + 1} • {label}
+                                                    Link {index + 1} • {label}
                                                 </span>
                                                 <div className="flex items-center justify-between gap-2">
-                                                  <span className="text-[11px] font-medium text-slate-500 truncate group-hover:text-slate-900 transition-colors">
-                                                    {cleanUrl}
-                                                  </span>
+                                                    <span className="text-[11px] font-medium text-slate-500 truncate group-hover:text-slate-900 transition-colors">
+                                                        {cleanUrl}
+                                                    </span>
                                                     <ExternalLink size={12} className="text-slate-300 group-hover:text-brand-accent shrink-0" />
                                                 </div>
                                             </a>
@@ -174,17 +174,17 @@ export default async function Page({params}: {
                     </div>
 
                     {/* NEW UPGRADE: Corporate Ownership strip includes section taxonomy, target personas and theme maps */}
-                    <div className="bg-slate-900 p-8 rounded-3xl text-white space-y-6 shadow-xl shadow-slate-200">
+                    <div className="bg-slate-900 p-6 rounded-2xl text-white space-y-4 shadow-xl shadow-slate-200">
                         <h3 className="font-black text-slate-400 uppercase text-[10px] tracking-widest">Corporate Ownership</h3>
 
-                        <SidebarItemInverted icon={<User size={16}/>} label="Writer" value={article.writer?.name}/>
-                        <SidebarItemInverted icon={<FolderKanban size={16}/>} label="Section" value={article.section?.name}/>
-                        <SidebarItemInverted icon={<Tag size={16}/>} label="Category" value={article.category?.name}/>
-                        <SidebarItemInverted icon={<Sparkles size={16}/>} label="Theme" value={article.theme?.name}/>
-                        <SidebarItemInverted icon={<Target size={16}/>} label="Target Persona" value={article.persona?.name}/>
-                        <SidebarItemInverted icon={<Calendar size={16}/>} label="Production Month" value={formatProductionMonth(article.production_month)} />
+                        <SidebarItemInverted icon={<User size={16} />} label="Writer" value={article.writer?.name} />
+                        <SidebarItemInverted icon={<FolderKanban size={16} />} label="Section" value={article.section?.name} />
+                        <SidebarItemInverted icon={<Tag size={16} />} label="Category" value={article.category?.name} />
+                        <SidebarItemInverted icon={<Sparkles size={16} />} label="Theme" value={article.theme?.name} />
+                        <SidebarItemInverted icon={<Target size={16} />} label="Target Persona" value={article.persona?.name} />
+                        <SidebarItemInverted icon={<Calendar size={16} />} label="Production Month" value={formatProductionMonth(article.production_month)} />
 
-                        <hr className="border-slate-800"/>
+                        <hr className="border-slate-800" />
 
                         <div className="space-y-4">
                             <div className="flex items-center justify-between">
@@ -198,9 +198,9 @@ export default async function Page({params}: {
                                 <span className="text-[10px] font-black text-slate-500 uppercase">Approval</span>
                                 <span className="flex items-center gap-2 text-xs font-bold">
                                     {article.approval === 'approved' || article.approval === 'Approved' ? (
-                                        <CheckCircle2 size={14} className="text-emerald-400"/>
+                                        <CheckCircle2 size={14} className="text-emerald-400" />
                                     ) : (
-                                        <AlertCircle size={14} className="text-amber-400"/>
+                                        <AlertCircle size={14} className="text-amber-400" />
                                     )}
                                     <span className="capitalize">{article.approval || 'pending'}</span>
                                 </span>
@@ -209,9 +209,9 @@ export default async function Page({params}: {
                     </div>
 
                     {/* Internal Notes / Rejection context mapping panel */}
-                    <div className="bg-amber-50 p-6 rounded-4xl border border-amber-100">
-                        <h4 className="text-[10px] font-black text-amber-700 uppercase tracking-widest mb-3 flex items-center gap-2">
-                            <Info size={14}/> Internal Notes
+                    <div className="bg-amber-50 p-5 rounded-2xl border border-amber-100">
+                        <h4 className="text-[10px] font-black text-amber-700 uppercase tracking-widest mb-2 flex items-center gap-2">
+                            <Info size={14} /> Internal Notes
                         </h4>
                         <p className="text-xs text-amber-800/70 font-medium leading-relaxed italic">
                             {article.internal_notes || "No special instructions for this piece."}
@@ -225,7 +225,7 @@ export default async function Page({params}: {
 }
 
 // Global Core Presentational Item Shell Formats
-function SidebarItem({icon, label, value, isLink}: any) {
+function SidebarItem({ icon, label, value, isLink }: any) {
     return (
         <div className="space-y-1">
             <span className="block text-[9px] font-black text-slate-400 uppercase tracking-tighter">{label}</span>
@@ -233,7 +233,7 @@ function SidebarItem({icon, label, value, isLink}: any) {
                 <div className="text-slate-300">{icon}</div>
                 {isLink && value ? (
                     <a href={value} target="_blank" rel="noopener noreferrer"
-                       className="text-xs font-bold text-brand-accent hover:text-brand-navy hover:underline truncate">{value}</a>
+                        className="text-xs font-bold text-brand-accent hover:text-brand-navy hover:underline truncate">{value}</a>
                 ) : (
                     <span className="text-xs font-bold text-slate-700">{value || '-'}</span>
                 )}
@@ -251,7 +251,7 @@ function SidebarItemInverted({ icon, label, value, rawValue }: any) {
             <div>
                 <span className="block text-[9px] font-black text-slate-500 uppercase">{label}</span>
                 <span className="text-xs font-bold text-white transition-colors" title={rawValue}>
-                  {value || 'General Context / Unassigned'}
+                    {value || 'General Context / Unassigned'}
                 </span>
             </div>
         </div>
@@ -259,14 +259,14 @@ function SidebarItemInverted({ icon, label, value, rawValue }: any) {
 }
 
 // Extended Meta Information Dashboard MonitorHUD
-function SEOStats({article}: { article: any }) {
+function SEOStats({ article }: { article: any }) {
     const titleLength = article.title?.length || 0;
     const descLength = article.meta_description?.length || 0;
     const wordCount = article.content?.trim().split(/\s+/).filter(Boolean).length || 0;
 
     return (
-        <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm space-y-8">
-            <div className="flex items-center justify-between border-b border-slate-50 pb-4">
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-5">
+            <div className="flex items-center justify-between border-b border-slate-50 pb-3">
                 <h3 className="font-black text-slate-900 uppercase text-xs tracking-[0.2em]">Meta Strategy Specs</h3>
                 <span className="text-[10px] font-bold text-slate-400">LIVE METRICS</span>
             </div>
@@ -293,7 +293,7 @@ function SEOStats({article}: { article: any }) {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-6">
+            <div className="grid grid-cols-1 gap-4">
                 <MetricRow
                     label="Title Length Mapping"
                     value={titleLength}
@@ -327,7 +327,7 @@ function SEOStats({article}: { article: any }) {
     );
 }
 
-function MetricRow({label, value, limit, unit, isError}: any) {
+function MetricRow({ label, value, limit, unit, isError }: any) {
     return (
         <div className="space-y-2">
             <div className="flex justify-between items-end select-none">
@@ -339,7 +339,7 @@ function MetricRow({label, value, limit, unit, isError}: any) {
             <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                 <div
                     className={`h-full transition-all duration-500 ${isError ? 'bg-orange-500' : 'bg-emerald-500'}`}
-                    style={{width: `${Math.min((value / limit) * 100, 100)}%`}}
+                    style={{ width: `${Math.min((value / limit) * 100, 100)}%` }}
                 />
             </div>
         </div>

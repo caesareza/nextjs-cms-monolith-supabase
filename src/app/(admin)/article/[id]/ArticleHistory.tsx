@@ -34,12 +34,12 @@ export default function ArticleHistory({ logs = [] }: { logs: any[] }) {
     // If no logs yet, show a clean empty state
     if (logs.length === 0) {
         return (
-            <div className="bg-white rounded-[2.5rem] border border-slate-200 p-10 shadow-sm">
-                <div className="flex items-center gap-3 border-b border-slate-50 pb-6 mb-6">
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                <div className="flex items-center gap-3 border-b border-slate-50 pb-4 mb-4">
                     <Clock className="text-brand-accent" size={20} />
                     <h3 className="font-black text-slate-900 uppercase text-xs tracking-[0.2em]">Audit Trail & History</h3>
                 </div>
-                <div className="flex flex-col items-center justify-center py-10 text-slate-300">
+                <div className="flex flex-col items-center justify-center py-6 text-slate-300">
                     <Minus size={24} />
                     <p className="text-[10px] font-bold uppercase tracking-widest mt-2">No activity recorded yet</p>
                 </div>
@@ -48,8 +48,8 @@ export default function ArticleHistory({ logs = [] }: { logs: any[] }) {
     }
 
     return (
-        <div className="bg-white rounded-[2.5rem] border border-slate-200 p-10 shadow-sm space-y-8">
-            <div className="flex items-center justify-between border-b border-slate-50 pb-6">
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-6">
+            <div className="flex items-center justify-between border-b border-slate-50 pb-4">
                 <div className="flex items-center gap-3">
                     <Clock className="text-brand-accent" size={20} />
                     <h3 className="font-black text-slate-900 uppercase text-xs tracking-[0.2em]">Audit Trail & History</h3>
@@ -74,7 +74,7 @@ export default function ArticleHistory({ logs = [] }: { logs: any[] }) {
                 )}
             </div>
 
-            <div className="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-linear-to-b before:from-slate-200 before:via-slate-100 before:to-transparent">
+            <div className="relative space-y-6 before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-linear-to-b before:from-slate-200 before:via-slate-100 before:to-transparent">
                 {logs.map((log) => (
                     <div key={log.id} className="relative flex items-start gap-6 group">
                         {/* Timeline Dot */}

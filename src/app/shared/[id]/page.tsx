@@ -107,7 +107,7 @@ export default async function PublicSharedArticleView({ params }: PublicViewProp
                     </div>
 
                     <div className="lg:col-span-7">
-                        <div className="w-full h-64 md:h-96 rounded-3xl overflow-hidden bg-gradient-to-br from-amber-100 via-red-50 to-red-100 relative shadow-inner border border-slate-100">
+                        <div className="w-full h-64 md:h-96 rounded-2xl overflow-hidden bg-gradient-to-br from-amber-100 via-red-50 to-red-100 relative shadow-inner border border-slate-100">
                             <div className="absolute right-12 bottom-0 top-0 w-1/2 bg-contain bg-center bg-no-repeat opacity-90" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1598550476439-6847785fce6e?w=600&auto=format&fit=crop&q=60')` }} />
                             <div className="absolute left-6 bottom-6 bg-black/5 backdrop-blur-md px-4 py-2 rounded-xl text-[10px] font-black text-slate-700 uppercase tracking-widest border border-white/20">
                                 🏮 2026 Financial Forecast Frame
