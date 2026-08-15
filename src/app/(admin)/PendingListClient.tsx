@@ -23,6 +23,7 @@ export default function PendingListClient() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSegment, setSelectedSegment] = useState("ALL");
+  const [showOverdueOnly, setShowOverdueOnly] = useState(false);
 
   // --- Inline Expansion & Workflow Tracking States ---
   const [expandedArticleId, setExpandedArticleId] = useState<number | null>(
@@ -115,19 +116,35 @@ export default function PendingListClient() {
     return ["ALL", ...Array.from(new Set(priorityNames))];
   }, [articles]);
 
+  // Helper to compute days brief has been pending Strategy approval
+  const getDaysPending = (createdAt: string) => {
+    const createdDate = new Date(createdAt);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - createdDate.getTime());
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  };
+
+  const overdueCount = useMemo(() => {
+    return articles.filter((a) => getDaysPending(a.created_at) >= 3).length;
+  }, [articles]);
+
   const filteredArticles = useMemo(() => {
     return articles.filter((a) => {
       const matchesSegment =
         selectedSegment === "ALL" ||
         a.product_priority?.name === selectedSegment;
+
+      const daysPending = getDaysPending(a.created_at);
+      const matchesOverdue = !showOverdueOnly || daysPending >= 3;
+
       const writerName = a.writer?.name || "";
       const matchesSearch =
         a.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         writerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         a.job_code?.toLowerCase().includes(searchTerm.toLowerCase());
-      return matchesSegment && matchesSearch;
+      return matchesSegment && matchesOverdue && matchesSearch;
     });
-  }, [articles, selectedSegment, searchTerm]);
+  }, [articles, selectedSegment, searchTerm, showOverdueOnly]);
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200/60 shadow-2xs overflow-hidden">
@@ -161,29 +178,54 @@ export default function PendingListClient() {
       </div>
 
       {/* SEGMENT FILTER TABS */}
-      {!loading && segments.length > 1 && (
-        <div className="px-10 py-4 bg-slate-50/50 border-b border-slate-100 flex flex-wrap gap-2 items-center">
-          <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider mr-2 select-none">
-            Segments:
-          </span>
-          {segments.map((segment) => {
-            const count = articles.filter(
-              (a) => segment === "ALL" || a.product_priority?.name === segment,
-            ).length;
-            return (
-              <button
-                key={segment}
-                onClick={() => setSelectedSegment(segment)}
-                className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all border ${
-                  selectedSegment === segment
-                    ? "bg-slate-900 border-slate-900 text-white shadow-3xs font-bold"
-                    : "bg-white border-slate-200/80 text-slate-650 hover:bg-slate-50 transition-colors"
-                }`}
-              >
-                {segment === "ALL" ? "All Segments" : segment} ({count})
-              </button>
-            );
-          })}
+      {!loading && (
+        <div className="px-10 py-4 bg-slate-50/50 border-b border-slate-100 flex flex-wrap gap-3 items-center justify-between">
+          <div className="flex flex-wrap gap-2 items-center">
+            {segments.length > 1 && (
+              <>
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider mr-2 select-none">
+                  Segments:
+                </span>
+                {segments.map((segment) => {
+                  const count = articles.filter(
+                    (a) =>
+                      segment === "ALL" || a.product_priority?.name === segment,
+                  ).length;
+                  return (
+                    <button
+                      type="button"
+                      key={segment}
+                      onClick={() => setSelectedSegment(segment)}
+                      className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all border ${
+                        selectedSegment === segment
+                          ? "bg-slate-900 border-slate-900 text-white shadow-3xs font-bold"
+                          : "bg-white border-slate-200/80 text-slate-650 hover:bg-slate-50 transition-colors"
+                      }`}
+                    >
+                      {segment === "ALL" ? "All Segments" : segment} ({count})
+                    </button>
+                  );
+                })}
+              </>
+            )}
+          </div>
+
+          {/* Overdue Switcher */}
+          <button
+            type="button"
+            onClick={() => setShowOverdueOnly(!showOverdueOnly)}
+            className={`px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border flex items-center gap-1.5 cursor-pointer ml-auto ${
+              showOverdueOnly
+                ? "bg-rose-600 border-rose-600 text-white shadow-3xs font-bold animate-pulse"
+                : "bg-white border-slate-200 text-slate-655 hover:bg-slate-50 hover:text-slate-800"
+            }`}
+          >
+            <AlertTriangle
+              size={11}
+              className={showOverdueOnly ? "text-white" : "text-rose-500"}
+            />
+            Overdue ASAP ({overdueCount})
+          </button>
         </div>
       )}
 
