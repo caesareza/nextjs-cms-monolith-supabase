@@ -144,6 +144,8 @@ export const ArticleService = {
           status: item.status,
           created_at: item.created_at,
           gdrive_draft_content: item.gdrive_draft_content,
+          meta_description: item.meta_description,
+          cta_internal_link: item.cta_internal_link,
         };
       }),
       total: count || 0,

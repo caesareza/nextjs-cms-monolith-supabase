@@ -156,19 +156,19 @@ export async function sendStaleKeywordsEmail(params: {
           </div>
 
           ${articles
-      .map((art) => {
-        const priority = art.product_priority?.name || "General";
-        const volume = art.demand
-          ? `${art.demand.toLocaleString("id-ID")} Vol`
-          : "0 Vol";
-        const createdDate = new Date(art.created_at);
-        const diffTime = Math.abs(
-          new Date().getTime() - createdDate.getTime(),
-        );
-        const daysPending = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        const editUrl = `http://localhost:3000/seo-keyword/edit/${art.id}`;
+            .map((art) => {
+              const priority = art.product_priority?.name || "General";
+              const volume = art.demand
+                ? `${art.demand.toLocaleString("id-ID")} Vol`
+                : "0 Vol";
+              const createdDate = new Date(art.created_at);
+              const diffTime = Math.abs(
+                new Date().getTime() - createdDate.getTime(),
+              );
+              const daysPending = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+              const editUrl = `http://localhost:3000/seo-keyword/edit/${art.id}`;
 
-        return `
+              return `
                 <div class="card">
                   <h4 class="card-title">${art.title || "Untitled Strategy Brief"}</h4>
                   <div class="meta-row">
@@ -180,8 +180,8 @@ export async function sendStaleKeywordsEmail(params: {
                   <a href="${editUrl}" class="btn-action">Open Sandbox Brief</a>
                 </div>
               `;
-      })
-      .join("")}
+            })
+            .join("")}
             
           <div class="footer">
             This is an automated notification from the Posthinks CMS Portal.<br>
@@ -202,6 +202,9 @@ export async function sendStaleKeywordsEmail(params: {
     });
 
     const destination = ["dreas@posthinks.com", "dreasnisa@gmail.com"];
+    if (process.env.NODE_ENV === "production") {
+      destination.push("seo@ocbc.id", "campaign.martech@ocbc.id");
+    }
 
     await transporter.sendMail({
       from: `"Posthinks Alerts" <${smtpUser}>`,

@@ -1,8 +1,9 @@
 "use client";
 
-import { Rocket } from "lucide-react";
+import { Download, Rocket } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import type { ArticleDisplay, LookupOptions } from "@/types/article";
+import { exportArticlesToExcel } from "@/utils/export";
 import { CategoryService } from "../category/service";
 import { ProductPriorityService } from "../product-priority/service";
 import { SectionService } from "../section/service";
@@ -108,21 +109,39 @@ export default function ArticleProductionPage() {
     loadProductionData();
   }, [loadProductionData]);
 
+  const handleExportExcel = useCallback(async () => {
+    try {
+      await exportArticlesToExcel(articles, year, month);
+    } catch (err) {
+      console.error("Failed to export articles to Excel:", err);
+    }
+  }, [articles, year, month]);
+
   return (
     <div className="space-y-8 animate-in fade-in duration-200">
       {/* 1. SECTION TITLE INTRO */}
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-brand-accent/10 flex items-center justify-center text-brand-steel-blue shrink-0">
-          <Rocket size={18} />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-brand-accent/10 flex items-center justify-center text-brand-steel-blue shrink-0">
+            <Rocket size={18} />
+          </div>
+          <div>
+            <h1 className="text-xl font-extrabold text-slate-900 leading-tight">
+              Production Sheet
+            </h1>
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
+              Corporate Editorial Content Lifecycle
+            </p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-xl font-extrabold text-slate-900 leading-tight">
-            Production Sheet
-          </h1>
-          <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
-            Corporate Editorial Content Lifecycle
-          </p>
-        </div>
+
+        <button
+          type="button"
+          onClick={handleExportExcel}
+          className="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-600/10 cursor-pointer flex items-center gap-1.5 transition-all self-start sm:self-center"
+        >
+          <Download size={12} /> Export Excel
+        </button>
       </div>
 
       {/* 2. ENCAPSULATED CONTROLS & FILTER BAR */}

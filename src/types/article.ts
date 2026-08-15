@@ -28,6 +28,9 @@ export interface ArticleDisplay {
   product_priority?: string;
   product_priority_id?: number | null;
   related_keyword?: string;
+  target_keyword?: string;
+  meta_description?: string;
+  cta_internal_link?: string;
 }
 
 export interface LookupOptions {
