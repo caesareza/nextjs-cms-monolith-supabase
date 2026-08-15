@@ -10,12 +10,15 @@ import {
   HelpCircle,
   Link2,
   Loader2,
+  Mail,
   Search,
   ShieldCheck,
   User,
+  X,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { ArticleService } from "@/app/(admin)/article/service";
+import { sendStaleKeywordsEmail } from "@/app/actions/email";
 import { formatAuditTimestamp } from "@/utils/date";
 
 export default function PendingListClient() {
@@ -34,6 +37,78 @@ export default function PendingListClient() {
     null,
   );
   const [internalNote, setInternalNote] = useState("");
+
+  // --- Email Alerts Workflow States ---
+  const [isEmailSending, setIsEmailSending] = useState(false);
+  const [lastSentDate, setLastSentDate] = useState<string | null>(null);
+  const [emailAlertStatus, setEmailAlertStatus] = useState<{
+    type: "success" | "error" | null;
+    message: string;
+  }>({ type: null, message: "" });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("posthinks_last_email_sent_date");
+      if (stored) setLastSentDate(stored);
+    }
+  }, []);
+
+  const isEmailSentToday = useMemo(() => {
+    if (!lastSentDate) return false;
+    try {
+      const lastDate = new Date(lastSentDate);
+      const today = new Date();
+      return lastDate.toDateString() === today.toDateString();
+    } catch {
+      return false;
+    }
+  }, [lastSentDate]);
+
+  const handleEmailStaleAlerts = async () => {
+    const staleArticles = articles.filter(
+      (a) => getDaysPending(a.created_at) >= 3,
+    );
+    if (staleArticles.length === 0) return;
+
+    setIsEmailSending(true);
+    setEmailAlertStatus({ type: null, message: "" });
+    try {
+      const res = await sendStaleKeywordsEmail({
+        articles: staleArticles,
+      });
+      if (res.success) {
+        const now = new Date().toISOString();
+        if (typeof window !== "undefined") {
+          localStorage.setItem("posthinks_last_email_sent_date", now);
+        }
+        setLastSentDate(now);
+        setEmailAlertStatus({
+          type: "success",
+          message:
+            "Editorial revision alerts sent successfully to dreas@posthinks.com!",
+        });
+        setTimeout(
+          () => setEmailAlertStatus({ type: null, message: "" }),
+          6000,
+        );
+      } else {
+        setEmailAlertStatus({
+          type: "error",
+          message: `Failed to send alerts: ${res.message}`,
+        });
+      }
+    } catch (err: any) {
+      console.error(err);
+      setEmailAlertStatus({
+        type: "error",
+        message:
+          err.message ||
+          "An unexpected error occurred while dispatching emails.",
+      });
+    } finally {
+      setIsEmailSending(false);
+    }
+  };
 
   const fetchPending = async () => {
     setLoading(true);
@@ -210,21 +285,67 @@ export default function PendingListClient() {
             )}
           </div>
 
-          {/* Overdue Switcher */}
+          {/* Overdue Switcher & Email Action */}
+          <div className="flex items-center gap-2 ml-auto">
+            <button
+              type="button"
+              onClick={() => setShowOverdueOnly(!showOverdueOnly)}
+              className={`px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border flex items-center gap-1.5 cursor-pointer ${
+                showOverdueOnly
+                  ? "bg-rose-600 border-rose-600 text-white shadow-3xs font-bold animate-pulse"
+                  : "bg-white border-slate-200 text-slate-655 hover:bg-slate-50 hover:text-slate-800"
+              }`}
+            >
+              <AlertTriangle
+                size={11}
+                className={showOverdueOnly ? "text-white" : "text-rose-500"}
+              />
+              Overdue ASAP ({overdueCount})
+            </button>
+
+            {overdueCount > 0 && (
+              <button
+                type="button"
+                disabled={isEmailSending || isEmailSentToday}
+                onClick={handleEmailStaleAlerts}
+                className="px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider bg-slate-900 border border-slate-950 text-white hover:bg-slate-800 transition-all flex items-center gap-1.5 cursor-pointer disabled:bg-slate-100 disabled:text-slate-400 disabled:border-slate-200 disabled:cursor-not-allowed"
+                title={
+                  isEmailSentToday
+                    ? "Revision email alert can only be sent once a day."
+                    : "Email Stale Alerts"
+                }
+              >
+                {isEmailSending ? (
+                  <Loader2 size={11} className="animate-spin text-white" />
+                ) : (
+                  <Mail
+                    size={11}
+                    className={
+                      isEmailSentToday ? "text-slate-400" : "text-white"
+                    }
+                  />
+                )}
+                {isEmailSending
+                  ? "Sending alerts..."
+                  : isEmailSentToday
+                    ? "Alerts Sent Today"
+                    : "Email Stale Alerts"}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Email Status Banner */}
+      {emailAlertStatus.type && (
+        <div
+          className={`px-10 py-3 text-[10px] font-bold uppercase tracking-wider border-b flex items-center justify-between ${emailAlertStatus.type === "success" ? "bg-emerald-50 text-emerald-800 border-emerald-100" : "bg-rose-50 text-rose-800 border-rose-100"}`}
+        >
+          <span>{emailAlertStatus.message}</span>
           <button
-            type="button"
-            onClick={() => setShowOverdueOnly(!showOverdueOnly)}
-            className={`px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border flex items-center gap-1.5 cursor-pointer ml-auto ${
-              showOverdueOnly
-                ? "bg-rose-600 border-rose-600 text-white shadow-3xs font-bold animate-pulse"
-                : "bg-white border-slate-200 text-slate-655 hover:bg-slate-50 hover:text-slate-800"
-            }`}
+            onClick={() => setEmailAlertStatus({ type: null, message: "" })}
           >
-            <AlertTriangle
-              size={11}
-              className={showOverdueOnly ? "text-white" : "text-rose-500"}
-            />
-            Overdue ASAP ({overdueCount})
+            <X size={12} />
           </button>
         </div>
       )}
