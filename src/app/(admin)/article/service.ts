@@ -8,7 +8,8 @@ export const ArticleService = {
     month: number;
     page: number;
     writerId?: string | null;
-    categoryId: string | null;
+    categoryId?: string | null;
+    productPriorityId?: string | null;
     contentType: string | null;
     searchQuery: string | null;
     status?: string;
@@ -20,6 +21,7 @@ export const ArticleService = {
       page = 1,
       writerId,
       categoryId,
+      productPriorityId,
       contentType,
       searchQuery,
       status,
@@ -74,6 +76,7 @@ export const ArticleService = {
     // Dynamic Filters
     if (writerId) query = query.eq("writer_id", writerId);
     if (categoryId) query = query.eq("category_id", categoryId);
+    if (productPriorityId) query = query.eq("product_priority_id", productPriorityId);
     if (contentType) query = query.eq("content_type", contentType);
     if (status) query = query.eq("status", status);
     if (approval) query = query.eq("approval", approval);

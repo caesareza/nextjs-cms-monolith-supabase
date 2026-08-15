@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { ArticleService } from "./service";
-import { WriterService } from "../writer/service";
-import { CategoryService } from "../category/service";
-import { SectionService } from "../section/service";
-import { LookupOptions, ArticleDisplay } from "@/types/article";
-import ProductionFilterPanel from "./ProductionFilterPanel";
-import ProductionDataGrid from "./ProductionDataGrid";
 import { Rocket } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import type { ArticleDisplay, LookupOptions } from "@/types/article";
+import { CategoryService } from "../category/service";
+import { ProductPriorityService } from "../product-priority/service";
+import { SectionService } from "../section/service";
+import { WriterService } from "../writer/service";
+import ProductionDataGrid from "./ProductionDataGrid";
+import ProductionFilterPanel from "./ProductionFilterPanel";
+import { ArticleService } from "./service";
 
 export default function ArticleProductionPage() {
   const now = new Date();
@@ -17,7 +18,7 @@ export default function ArticleProductionPage() {
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [writerId, setWriterId] = useState<string>("");
-  const [categoryId, setCategoryId] = useState<string>("");
+  const [productPriorityId, setProductPriorityId] = useState<string>("");
   const [contentType, setContentType] = useState<string>("");
   const [page] = useState(1);
 
@@ -51,15 +52,21 @@ export default function ArticleProductionPage() {
   useEffect(() => {
     async function loadLookupOptions() {
       try {
-        const [w, c, secData] = await Promise.all([
+        const [w, c, secData, pr] = await Promise.all([
           WriterService.getWriters(),
           CategoryService.getCategories(),
           SectionService.getSections({ page: 1, limit: 100, search: "" }).then(
             (res) => res.sections,
           ),
+          ProductPriorityService.getAllActiveProductPriorities(),
         ]);
         setWriters(w);
-        setOptions((prev) => ({ ...prev, categories: c, sections: secData }));
+        setOptions((prev) => ({
+          ...prev,
+          categories: c,
+          sections: secData,
+          productPriorities: pr,
+        }));
       } catch (err) {
         console.error("Failed to collect filter lookup arrays:", err);
       }
@@ -76,7 +83,8 @@ export default function ArticleProductionPage() {
         month,
         page,
         writerId: writerId || null,
-        categoryId: categoryId || null,
+        productPriorityId: productPriorityId || null,
+        categoryId: null,
         contentType: contentType || null,
         searchQuery: debouncedSearch || null,
       });
@@ -86,7 +94,15 @@ export default function ArticleProductionPage() {
     } finally {
       setLoading(false);
     }
-  }, [year, month, page, writerId, categoryId, contentType, debouncedSearch]);
+  }, [
+    year,
+    month,
+    page,
+    writerId,
+    productPriorityId,
+    contentType,
+    debouncedSearch,
+  ]);
 
   useEffect(() => {
     loadProductionData();
@@ -119,8 +135,8 @@ export default function ArticleProductionPage() {
         setSearchTerm={setSearchTerm}
         writerId={writerId}
         setWriterId={setWriterId}
-        categoryId={categoryId}
-        setCategoryId={setCategoryId}
+        productPriorityId={productPriorityId}
+        setProductPriorityId={setProductPriorityId}
         contentType={contentType}
         setContentType={setContentType}
         writers={writers}

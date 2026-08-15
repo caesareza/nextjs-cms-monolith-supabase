@@ -28,8 +28,8 @@ interface ProductionFilterPanelProps {
   setSearchTerm: (s: string) => void;
   writerId: string;
   setWriterId: (id: string) => void;
-  categoryId: string;
-  setCategoryId: (id: string) => void;
+  productPriorityId: string;
+  setProductPriorityId: (id: string) => void;
   contentType: string;
   setContentType: (type: string) => void;
   writers: any[];
@@ -45,8 +45,8 @@ export default function ProductionFilterPanel({
   setSearchTerm,
   writerId,
   setWriterId,
-  categoryId,
-  setCategoryId,
+  productPriorityId,
+  setProductPriorityId,
   contentType,
   setContentType,
   writers,
@@ -115,16 +115,16 @@ export default function ProductionFilterPanel({
           ))}
         </select>
 
-        {/* Centralized Category Selection Dropdown */}
+        {/* Centralized Product Priority Selection Dropdown */}
         <select
-          value={categoryId}
-          onChange={(e) => setCategoryId(e.target.value)}
-          className="w-full sm:w-auto bg-white border border-slate-200 text-xs font-bold px-4 py-2.5 rounded-xl outline-none cursor-pointer text-slate-700 transition-all"
+          value={productPriorityId}
+          onChange={(e) => setProductPriorityId(e.target.value)}
+          className="w-full sm:w-auto bg-white border border-slate-200 text-xs font-bold px-4 py-2.5 rounded-xl outline-none cursor-pointer text-slate-705 transition-all"
         >
-          <option value="">All Categories</option>
-          {options.categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
+          <option value="">All Priorities</option>
+          {(options.productPriorities || []).map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.name}
             </option>
           ))}
         </select>
