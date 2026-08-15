@@ -1,7 +1,7 @@
 "use client";
 
 import { Search } from "lucide-react";
-import { LookupOptions } from "@/types/article";
+import type { LookupOptions } from "@/types/article";
 
 const YEARS = [2025, 2026, 2027];
 const MONTHS = [
@@ -86,8 +86,8 @@ export default function ProductionFilterPanel({
       </div>
 
       {/* FILTERS RIBBON */}
-      <div className="flex flex-wrap items-center gap-3 bg-slate-50/50 p-3 rounded-2xl border border-slate-200/60">
-        <div className="relative flex-1 min-w-75">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-slate-50/50 p-3 rounded-2xl border border-slate-200/60">
+        <div className="relative w-full sm:flex-1 sm:min-w-[240px]">
           <Search
             className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
             size={16}
@@ -105,7 +105,7 @@ export default function ProductionFilterPanel({
         <select
           value={writerId}
           onChange={(e) => setWriterId(e.target.value)}
-          className="bg-white border border-slate-200 text-xs font-bold px-4 py-2 rounded-xl outline-none cursor-pointer text-slate-700"
+          className="w-full sm:w-auto bg-white border border-slate-200 text-xs font-bold px-4 py-2.5 rounded-xl outline-none cursor-pointer text-slate-700 transition-all"
         >
           <option value="">All Writers</option>
           {writers.map((w) => (
@@ -119,7 +119,7 @@ export default function ProductionFilterPanel({
         <select
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
-          className="bg-white border border-slate-200 text-xs font-bold px-4 py-2 rounded-xl outline-none cursor-pointer text-slate-700"
+          className="w-full sm:w-auto bg-white border border-slate-200 text-xs font-bold px-4 py-2.5 rounded-xl outline-none cursor-pointer text-slate-700 transition-all"
         >
           <option value="">All Categories</option>
           {options.categories.map((c) => (
@@ -133,7 +133,7 @@ export default function ProductionFilterPanel({
         <select
           value={contentType}
           onChange={(e) => setContentType(e.target.value)}
-          className="bg-white border border-slate-200 text-xs font-bold px-4 py-2 rounded-xl outline-none cursor-pointer text-slate-700"
+          className="w-full sm:w-auto bg-white border border-slate-200 text-xs font-bold px-4 py-2.5 rounded-xl outline-none cursor-pointer text-slate-700 transition-all"
         >
           <option value="">All Types</option>
           <option value="new">New Article</option>

@@ -1,25 +1,25 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { ArticleService } from "../article/service";
-import { CategoryService } from "../category/service";
-import { SectionService } from "../section/service";
-import { ProductTagService } from "../product-tag/service";
-import { ProductPriorityService } from "../product-priority/service";
-import { ThemeService } from "../theme/service";
-import { PersonaService } from "../persona/service";
-import { CampaignService } from "../campaign/service";
 import {
-  Search,
-  Loader2,
-  Filter,
-  Plus,
   AlertTriangle,
+  Filter,
   KeySquare,
+  Loader2,
+  Plus,
+  Search,
 } from "lucide-react";
 import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+import type { LookupOptions } from "@/types/article";
+import { ArticleService } from "../article/service";
+import { CampaignService } from "../campaign/service";
+import { CategoryService } from "../category/service";
+import { PersonaService } from "../persona/service";
+import { ProductPriorityService } from "../product-priority/service";
+import { ProductTagService } from "../product-tag/service";
+import { SectionService } from "../section/service";
+import { ThemeService } from "../theme/service";
 import KeywordCreateDrawer from "./KeywordCreateDrawer";
-import { LookupOptions } from "@/types/article";
 
 const MONTHS = [
   "Jan",
@@ -282,8 +282,8 @@ export default function UnifiedSeoKeywordPage() {
           ))}
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="relative">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+          <div className="relative w-full sm:w-48">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
               size={13}
@@ -293,14 +293,14 @@ export default function UnifiedSeoKeywordPage() {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Quick search keywords..."
-              className="pl-8 pr-3 py-2 bg-slate-50 border border-slate-200/60 rounded-xl text-xs font-semibold outline-none focus:bg-white focus:border-slate-300 w-48 transition-all"
+              className="w-full pl-8 pr-3 py-2.5 bg-slate-50 border border-slate-200/60 rounded-xl text-xs font-semibold outline-none focus:bg-white focus:border-slate-300 transition-all"
             />
           </div>
 
           <select
             value={month}
             onChange={(e) => setMonth(Number(e.target.value))}
-            className="bg-slate-50 border border-slate-200/60 text-xs font-black py-2 px-3 rounded-xl outline-none cursor-pointer text-slate-705"
+            className="w-full sm:w-auto bg-slate-50 border border-slate-200/60 text-xs font-black py-2.5 px-3 rounded-xl outline-none cursor-pointer text-slate-705 transition-all"
           >
             {MONTHS.map((m, i) => (
               <option key={m} value={i + 1}>
@@ -311,7 +311,7 @@ export default function UnifiedSeoKeywordPage() {
 
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`p-2 rounded-xl border text-slate-500 transition-colors cursor-pointer ${showFilters ? "bg-slate-900 text-white border-slate-900" : "bg-white border-slate-200 hover:bg-slate-50"}`}
+            className={`p-2.5 rounded-xl border text-slate-500 transition-colors cursor-pointer w-full sm:w-auto flex justify-center items-center ${showFilters ? "bg-slate-900 text-white border-slate-900" : "bg-white border-slate-200 hover:bg-slate-50"}`}
           >
             <Filter size={14} />
           </button>
@@ -320,7 +320,7 @@ export default function UnifiedSeoKeywordPage() {
 
       {/* COLLAPSIBLE ANCHOR PANEL */}
       {showFilters && (
-        <div className="grid grid-cols-2 gap-4 bg-slate-50/50 p-4 rounded-2xl border border-slate-200/60 animate-in slide-in-from-top-2 duration-150">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50/50 p-4 rounded-2xl border border-slate-200/60 animate-in slide-in-from-top-2 duration-150">
           <div className="space-y-1">
             <label className="text-[9px] font-black uppercase text-slate-400 tracking-wider">
               Category Cluster
@@ -356,8 +356,8 @@ export default function UnifiedSeoKeywordPage() {
       )}
 
       {/* DATATABLE LIST BOARD */}
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-        <table className="w-full text-left border-collapse">
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-x-auto">
+        <table className="w-full min-w-[800px] text-left border-collapse">
           <thead>
             <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] font-black uppercase tracking-widest text-slate-400 select-none">
               <th className="px-6 py-4.5">JOB_CODE</th>

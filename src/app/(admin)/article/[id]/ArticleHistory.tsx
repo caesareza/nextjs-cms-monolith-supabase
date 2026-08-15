@@ -1,5 +1,5 @@
 // ArticleHistory.tsx
-import { Clock, User, ArrowRight, Minus } from "lucide-react";
+import { ArrowRight, Clock, Minus, User } from "lucide-react";
 import { formatDuration } from "@/utils/date";
 
 export default function ArticleHistory({ logs = [] }: { logs: any[] }) {
@@ -107,7 +107,7 @@ export default function ArticleHistory({ logs = [] }: { logs: any[] }) {
             </div>
 
             <div className="pl-14 space-y-3 flex-1">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                   {new Date(log.created_at).toLocaleString("en-GB", {
                     day: "2-digit",

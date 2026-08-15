@@ -1,7 +1,7 @@
 "use client";
 
+import { ArrowRight, ExternalLink, Loader2, User } from "lucide-react";
 import Link from "next/link";
-import { Loader2, User, ArrowRight, ExternalLink } from "lucide-react";
 import type { ArticleDisplay } from "@/types/article";
 
 interface ProductionDataGridProps {
@@ -48,8 +48,8 @@ export default function ProductionDataGrid({
   loading,
 }: ProductionDataGridProps) {
   return (
-    <div className="bg-white border border-slate-200/60 rounded-2xl shadow-xs overflow-hidden">
-      <table className="w-full text-left border-collapse">
+    <div className="bg-white border border-slate-200/60 rounded-2xl shadow-xs overflow-x-auto">
+      <table className="w-full min-w-[750px] text-left border-collapse">
         <thead>
           <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] font-black uppercase tracking-widest text-slate-400 select-none">
             <th className="pl-8 pr-4 py-4.5 w-2/12">Job Code</th>
@@ -83,9 +83,14 @@ export default function ProductionDataGrid({
                 >
                   {/* 1. JOB CODE */}
                   <td className="pl-8 pr-4 py-5 whitespace-nowrap align-middle">
-                    <span className="text-[10px] font-mono font-bold text-slate-700 bg-slate-100 border border-slate-200/80 px-2.5 py-1 rounded-md tracking-wider whitespace-nowrap select-all shadow-xs">
-                      {item.job_code || "—"}
-                    </span>
+                    <Link
+                      href={`/article/edit/${item.id}`}
+                      className="text-sm font-bold text-slate-900 group-hover:text-brand-accent transition-colors leading-snug line-clamp-1 cursor-pointer"
+                    >
+                      <span className="text-[10px] font-mono font-bold text-slate-700 bg-slate-100 border border-slate-200/80 px-2.5 py-1 rounded-md tracking-wider whitespace-nowrap select-all shadow-xs">
+                        {item.job_code || "—"}
+                      </span>
+                    </Link>
                   </td>
 
                   {/* 2. TOPIC & AUTHOR BLOCK */}
@@ -132,7 +137,7 @@ export default function ProductionDataGrid({
                       href={`/article/edit/${item.id}`}
                       className="inline-flex items-center text-[10px] font-black uppercase tracking-wider bg-slate-900 text-white px-3.5 py-2 rounded-xl border border-slate-950 hover:bg-slate-800 transition-all shadow-xs"
                     >
-                      Open <ArrowRight size={11} className="ml-1 shrink-0" />
+                      Edit <ArrowRight size={11} className="ml-1 shrink-0" />
                     </Link>
                   </td>
                 </tr>

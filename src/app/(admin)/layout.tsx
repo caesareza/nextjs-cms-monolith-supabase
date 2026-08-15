@@ -3,17 +3,18 @@
 import "../globals.css";
 import {
   Axe,
+  BookmarkCheck,
   KeySquare,
   LayoutGrid,
   Megaphone,
+  Menu,
   Package,
   Palette,
   PersonStanding,
   Rocket,
-  Search,
   Tags,
   UserPen,
-  BookmarkCheck,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -66,6 +67,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const pathname = usePathname();
 
   const [user, setUser] = useState<any>(null);
@@ -83,42 +85,72 @@ export default function RootLayout({
     getUser();
   }, [supabase]);
 
+  // Auto-close drawer when route path changes
+  // biome-ignore lint/correctness/useExhaustiveDependencies: close drawer on navigation
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [pathname]);
+
   return (
-    <div className="flex h-screen  text-slate-900 font-sans transition-colors duration-300">
-      {/* Sidebar */}
-      <aside className="w-64 border-r border-slate-200/60 flex flex-col p-4 gap-6 bg-slate-50">
-        <div className="flex items-center gap-2.5 px-2 py-4">
-          <div className="w-8 h-8 bg-brand-red rounded-lg flex items-center justify-center shadow-lg shadow-brand-red/20">
-            <svg
-              className="w-5 h-5 text-brand-cream"
-              viewBox="0 0 100 100"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              role="img"
-              aria-label="Posthinks Logo"
-            >
-              <rect
-                x="15"
-                y="15"
-                width="70"
-                height="70"
-                rx="20"
-                fill="currentColor"
-              />
-              <rect
-                x="30"
-                y="30"
-                width="40"
-                height="30"
-                rx="8"
-                fill="#1D3557"
-              />
-              <path d="M35 55L32 63L43 59" fill="#1D3557" />
-            </svg>
+    <div className="flex h-screen text-slate-900 font-sans transition-colors duration-300 relative overflow-hidden">
+      {/* Backdrop overlay for mobile screens when drawer is active */}
+      {isSidebarOpen && (
+        // biome-ignore lint/a11y/useKeyWithClickEvents: backdrop click handles click-out
+        // biome-ignore lint/a11y/noStaticElementInteractions: backdrop clicks close drawer
+        <div
+          className="fixed inset-0 bg-slate-950/20 backdrop-blur-xs z-40 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar Drawer */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 border-r border-slate-200/60 flex flex-col p-4 gap-6 bg-slate-50 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
+          isSidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex items-center justify-between px-2 py-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 bg-brand-red rounded-lg flex items-center justify-center shadow-lg shadow-brand-red/20">
+              <svg
+                className="w-5 h-5 text-brand-cream"
+                viewBox="0 0 100 100"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                role="img"
+                aria-label="Posthinks Logo"
+              >
+                <rect
+                  x="15"
+                  y="15"
+                  width="70"
+                  height="70"
+                  rx="20"
+                  fill="currentColor"
+                />
+                <rect
+                  x="30"
+                  y="30"
+                  width="40"
+                  height="30"
+                  rx="8"
+                  fill="#1D3557"
+                />
+                <path d="M35 55L32 63L43 59" fill="#1D3557" />
+              </svg>
+            </div>
+            <span className="font-extrabold tracking-tight text-xl text-brand-navy">
+              Post<span className="text-brand-red font-light">hinks</span>
+            </span>
           </div>
-          <span className="font-extrabold tracking-tight text-xl text-brand-navy">
-            Post<span className="text-brand-red font-light">hinks</span>
-          </span>
+          <button
+            type="button"
+            onClick={() => setIsSidebarOpen(false)}
+            className="lg:hidden p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg cursor-pointer transition-colors"
+            title="Close navigation"
+          >
+            <X size={18} />
+          </button>
         </div>
 
         {/* Navigation */}
@@ -160,9 +192,54 @@ export default function RootLayout({
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col overflow-hidden bg-slate-50/40">
+      <div className="flex-1 flex flex-col overflow-hidden bg-slate-50/40 w-full">
+        {/* Mobile Top Header */}
+        <header className="lg:hidden flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 bg-brand-red rounded-lg flex items-center justify-center shadow-lg shadow-brand-red/20">
+              <svg
+                className="w-5 h-5 text-brand-cream"
+                viewBox="0 0 100 100"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                role="img"
+                aria-label="Posthinks Logo"
+              >
+                <rect
+                  x="15"
+                  y="15"
+                  width="70"
+                  height="70"
+                  rx="20"
+                  fill="currentColor"
+                />
+                <rect
+                  x="30"
+                  y="30"
+                  width="40"
+                  height="30"
+                  rx="8"
+                  fill="#1D3557"
+                />
+                <path d="M35 55L32 63L43 59" fill="#1D3557" />
+              </svg>
+            </div>
+            <span className="font-extrabold tracking-tight text-xl text-brand-navy">
+              Post<span className="text-brand-red font-light">hinks</span>
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsSidebarOpen(true)}
+            className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-xl cursor-pointer transition-colors"
+            title="Open navigation menu"
+          >
+            <Menu size={20} />
+          </button>
+        </header>
+
         {/* Content */}
-        <main className="flex-1 overflow-y-auto p-8 bg-slate-50/40">
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-slate-50/40">
           {children}
         </main>
       </div>

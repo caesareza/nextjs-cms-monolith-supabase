@@ -1,32 +1,32 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { ArticleService } from "@/app/(admin)/article/service";
-import { EditFormState, LookupOptions } from "@/types/article";
-import ArticleHistory from "@/app/(admin)/article/[id]/ArticleHistory";
 import {
-  Edit2,
-  Save,
-  X,
-  ArrowLeft,
-  CheckCircle,
   AlertTriangle,
-  MessageSquare,
-  FolderKanban,
-  Tag,
-  Sparkles,
-  Target,
+  ArrowLeft,
   Calendar,
-  Flame,
-  ShieldCheck,
-  Megaphone,
-  Loader2,
-  Link2,
-  Package,
-  User,
+  CheckCircle,
+  Edit2,
   FileText,
+  Flame,
+  FolderKanban,
   History,
+  Link2,
+  Loader2,
+  Megaphone,
+  MessageSquare,
+  Package,
+  Save,
+  ShieldCheck,
+  Sparkles,
+  Tag,
+  Target,
+  User,
+  X,
 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import ArticleHistory from "@/app/(admin)/article/[id]/ArticleHistory";
+import { ArticleService } from "@/app/(admin)/article/service";
+import type { EditFormState, LookupOptions } from "@/types/article";
 
 interface StrategyDetailViewProps {
   form: EditFormState;
@@ -184,20 +184,20 @@ export default function StrategyDetailView({
   return (
     <div className="space-y-8 text-slate-900">
       {/* 1. TOP BAR CONTROL ACTIONS */}
-      <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
         <button
           onClick={onBack}
-          className="text-xs font-bold text-slate-500 hover:text-slate-900 flex items-center gap-1 transition-colors cursor-pointer"
+          className="text-xs font-bold text-slate-500 hover:text-slate-900 flex items-center gap-1 transition-colors cursor-pointer w-fit"
         >
           <ArrowLeft size={14} /> Back to Sandbox Matrix
         </button>
 
         {!isEditing ? (
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
             <button
               onClick={() => setIsEditing(true)}
               disabled={isActionDisabled}
-              className="text-slate-600 hover:bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-semibold transition cursor-pointer disabled:opacity-50"
+              className="text-slate-600 hover:bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-semibold transition cursor-pointer disabled:opacity-50 w-full sm:w-auto justify-center"
             >
               <Edit2 size={15} /> Edit Brief
             </button>
@@ -207,14 +207,14 @@ export default function StrategyDetailView({
                 <button
                   disabled={isActionDisabled}
                   onClick={onRejectClick}
-                  className="border border-brand-accent/20 bg-brand-accent/5 text-brand-accent hover:bg-brand-accent/15 px-5 py-2 rounded-xl flex items-center gap-2 text-sm font-bold transition cursor-pointer disabled:bg-slate-50 disabled:text-slate-400 disabled:border-slate-200 disabled:cursor-not-allowed"
+                  className="border border-brand-accent/20 bg-brand-accent/5 text-brand-accent hover:bg-brand-accent/15 px-5 py-2 rounded-xl flex items-center gap-2 text-sm font-bold transition cursor-pointer disabled:bg-slate-50 disabled:text-slate-400 disabled:border-slate-200 disabled:cursor-not-allowed w-full sm:w-auto justify-center"
                 >
                   <AlertTriangle size={15} /> Reject
                 </button>
                 <button
                   disabled={isActionDisabled}
                   onClick={onApprove}
-                  className="bg-brand-accent hover:bg-brand-navy text-white px-6 py-2 rounded-xl flex items-center gap-2 text-sm font-bold transition shadow-sm cursor-pointer disabled:bg-slate-105 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed"
+                  className="bg-brand-accent hover:bg-brand-navy text-white px-6 py-2 rounded-xl flex items-center gap-2 text-sm font-bold transition shadow-sm cursor-pointer disabled:bg-slate-105 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed w-full sm:w-auto justify-center"
                 >
                   <CheckCircle size={15} /> Approve Strategy
                 </button>
@@ -222,17 +222,17 @@ export default function StrategyDetailView({
             )}
           </div>
         ) : (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
             <button
               onClick={() => setIsEditing(false)}
-              className="px-4 py-2 border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all cursor-pointer flex items-center gap-1"
+              className="px-4 py-2 border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all cursor-pointer flex items-center gap-1 w-full sm:w-auto justify-center"
             >
               <X size={13} /> Cancel
             </button>
             <button
               disabled={actionLoading}
               onClick={onSave}
-              className="px-5 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-all shadow-sm cursor-pointer flex items-center gap-1.5"
+              className="px-5 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-all shadow-sm cursor-pointer flex items-center gap-1.5 w-full sm:w-auto justify-center"
             >
               {actionLoading ? (
                 <Loader2 size={13} className="animate-spin" />
@@ -328,7 +328,7 @@ export default function StrategyDetailView({
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 ml-auto">
+          <div>
             <span className="text-slate-400 font-medium">Job Code:</span>
             <span className="text-[10px] font-mono font-bold text-slate-750 bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded-md tracking-wider select-all shadow-3xs">
               {isEditing ? computedJobCode : dbSnapshot?.job_code || "—"}
@@ -339,7 +339,7 @@ export default function StrategyDetailView({
 
       {/* 4. CRM TAB NAVIGATION BAR */}
       <div className="border-b border-slate-200 pt-4">
-        <div className="flex gap-6 -mb-px">
+        <div className="flex gap-6 -mb-px overflow-x-auto no-scrollbar">
           {[
             { id: "overview", name: "Overview", count: null },
             {
@@ -359,20 +359,18 @@ export default function StrategyDetailView({
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`pb-4 text-xs font-black uppercase tracking-wider border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
-                  isActive
-                    ? "border-brand-accent text-brand-accent"
-                    : "border-transparent text-slate-400 hover:text-slate-650"
-                }`}
+                className={`pb-4 text-xs font-black uppercase tracking-wider border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${isActive
+                  ? "border-brand-accent text-brand-accent"
+                  : "border-transparent text-slate-400 hover:text-slate-650"
+                  }`}
               >
                 {tab.name}
                 {tab.count !== null && (
                   <span
-                    className={`text-[8px] font-black px-1.5 py-0.5 rounded-full ${
-                      isActive
-                        ? "bg-brand-accent/10 text-brand-accent"
-                        : "bg-slate-100 text-slate-400"
-                    }`}
+                    className={`text-[8px] font-black px-1.5 py-0.5 rounded-full ${isActive
+                      ? "bg-brand-accent/10 text-brand-accent"
+                      : "bg-slate-100 text-slate-400"
+                      }`}
                   >
                     {tab.count}
                   </span>
@@ -584,9 +582,9 @@ export default function StrategyDetailView({
                     <p className="text-sm font-bold text-slate-800 mt-1 pl-[17px]">
                       {form.production_month
                         ? new Date(form.production_month).toLocaleDateString(
-                            "id-ID",
-                            { month: "long", year: "numeric" },
-                          )
+                          "id-ID",
+                          { month: "long", year: "numeric" },
+                        )
                         : "—"}
                     </p>
                   )}
@@ -896,7 +894,7 @@ export default function StrategyDetailView({
                         </span>
                       </div>
                     ) : marketingAssets.filter((a) => a.asset_type === "cta")
-                        .length > 0 ? (
+                      .length > 0 ? (
                       marketingAssets
                         .filter((a) => a.asset_type === "cta")
                         .map((a, i) => (
@@ -940,8 +938,8 @@ export default function StrategyDetailView({
                         </span>
                       </div>
                     ) : marketingAssets.filter(
-                        (a) => a.asset_type === "product",
-                      ).length > 0 ? (
+                      (a) => a.asset_type === "product",
+                    ).length > 0 ? (
                       marketingAssets
                         .filter((a) => a.asset_type === "product")
                         .map((a, i) => (
