@@ -1,26 +1,26 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
-  Save,
-  Loader2,
-  ChevronLeft,
-  CheckCircle2,
-  Lock,
-  FolderKanban,
-  Tag,
-  Sparkles,
-  Target,
-  Flame,
-  ShieldCheck,
-  Megaphone,
-  User,
-  Calendar,
-  Link2,
-  Info,
   Activity,
+  Calendar,
+  CheckCircle2,
+  ChevronLeft,
+  Flame,
+  FolderKanban,
+  Info,
+  Link2,
+  Loader2,
+  Lock,
+  Megaphone,
+  Save,
+  ShieldCheck,
+  Sparkles,
+  Tag,
+  Target,
+  User,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { ArticleService } from "@/app/(admin)/article/service";
 import HtmlEditor from "@/components/editor/HtmlEditor";
 
@@ -71,6 +71,7 @@ export default function EditArticleClient({
       : "",
     meta_description: initialData.meta_description || "",
     target_keyword: initialData.target_keyword || "",
+    related_keyword: initialData.related_keyword || "",
     demand: String(initialData.demand || 0),
     intent: initialData.intent || "Informational",
     type: initialData.type || "Evergreen",
@@ -641,6 +642,14 @@ export default function EditArticleClient({
                 </span>
                 <p className="text-[11px] font-medium text-slate-600 leading-relaxed mt-1 bg-slate-50 border border-slate-100 p-3 rounded-xl">
                   {form.meta_description || "No tag summaries provided."}
+                </p>
+              </div>
+              <div>
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-tighter block">
+                  Related Keywords
+                </span>
+                <p className="text-[11px] font-medium text-slate-600 leading-relaxed mt-1 bg-slate-50 border border-slate-100 p-3 rounded-xl whitespace-pre-line">
+                  {form.related_keyword || "No related keywords specified."}
                 </p>
               </div>
             </div>
