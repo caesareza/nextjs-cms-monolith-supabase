@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useState, useEffect, useCallback } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { ArticleService } from "@/app/(admin)/article/service";
 import { CategoryService } from "@/app/(admin)/category/service";
 import { SectionService } from "@/app/(admin)/section/service";
@@ -10,237 +10,327 @@ import { ProductPriorityService } from "@/app/(admin)/product-priority/service";
 import { ThemeService } from "@/app/(admin)/theme/service";
 import { PersonaService } from "@/app/(admin)/persona/service";
 import { CampaignService } from "@/app/(admin)/campaign/service";
-import { Loader2 } from 'lucide-react';
-import StrategyDetailView from './StrategyDetailView';
-import { EditFormState, LookupOptions } from '@/types/article';
+import { Loader2 } from "lucide-react";
+import StrategyDetailView from "./StrategyDetailView";
+import { EditFormState, LookupOptions } from "@/types/article";
 
 export default function SeoDirectorReviewFormShell() {
-    const router = useRouter();
-    const { id } = useParams();
+  const router = useRouter();
+  const { id } = useParams();
 
-    const [loading, setLoading] = useState(true);
-    const [actionLoading, setActionLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
 
-    const [isApproving, setIsApproving] = useState(false);
-    const [isRejecting, setIsRejecting] = useState(false);
-    const [showRejectModal, setShowRejectModal] = useState(false);
-    const [internalNote, setInternalNote] = useState('');
+  const [isApproving, setIsApproving] = useState(false);
+  const [isRejecting, setIsRejecting] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [internalNote, setInternalNote] = useState("");
 
-    const [isEditing, setIsEditing] = useState(false);
-    const [dbSnapshot, setDbSnapshot] = useState<any>(null);
-    const [logs, setLogs] = useState<any[]>([]);
-    const [lookups, setLookups] = useState<LookupOptions>({
-        categories: [], sections: [], productTags: [], themes: [], personas: [], campaigns: [], productPriorities: []
-    });
+  const [isEditing, setIsEditing] = useState(false);
+  const [dbSnapshot, setDbSnapshot] = useState<any>(null);
+  const [logs, setLogs] = useState<any[]>([]);
+  const [lookups, setLookups] = useState<LookupOptions>({
+    categories: [],
+    sections: [],
+    productTags: [],
+    themes: [],
+    personas: [],
+    campaigns: [],
+    productPriorities: [],
+  });
 
-    const [form, setForm] = useState<EditFormState>({
-        title: '', job_code: '', category_id: 0, section_id: 0, product_id: 0, product_priority_id: '', content_type: 'new',
-        production_month: '', demand: '', intent: 'Informational', type: 'Evergreen', classification: 'Infantry',
-        theme_id: '', persona_id: '', campaign_id: '', target_keyword: '', related_keyword: '', meta_description: '', cta_internal_link: ''
-    });
+  const [form, setForm] = useState<EditFormState>({
+    title: "",
+    job_code: "",
+    category_id: 0,
+    section_id: 0,
+    product_id: 0,
+    product_priority_id: "",
+    content_type: "new",
+    production_month: "",
+    demand: "",
+    intent: "Informational",
+    type: "Evergreen",
+    classification: "Infantry",
+    theme_id: "",
+    persona_id: "",
+    campaign_id: "",
+    target_keyword: "",
+    related_keyword: "",
+    meta_description: "",
+    cta_internal_link: "",
+  });
 
-    const [articleMeta, setArticleMeta] = useState({ status: '', approval: '' });
+  const [articleMeta, setArticleMeta] = useState({ status: "", approval: "" });
 
-    const loadBriefDetails = useCallback(async () => {
-        setLoading(true);
-        try {
-            const [data, c, secData, p, t, per, cmp, logsData, pr] = await Promise.all([
-                ArticleService.getArticleById(Number(id)),
-                CategoryService.getCategories(),
-                SectionService.getSections({ page: 1, limit: 100, search: '' }).then(res => res.sections),
-                ProductTagService.getProductTags({ page: 1, limit: 100, search: '' }).then(res => res.productTags),
-                ThemeService.getThemes(),
-                PersonaService.getPersonas(),
-                CampaignService.getCampaigns(),
-                ArticleService.getWorkflowLogs(String(id)),
-                ProductPriorityService.getAllActiveProductPriorities()
-            ]);
+  const loadBriefDetails = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [data, c, secData, p, t, per, cmp, logsData, pr] =
+        await Promise.all([
+          ArticleService.getArticleById(Number(id)),
+          CategoryService.getCategories(),
+          SectionService.getSections({ page: 1, limit: 100, search: "" }).then(
+            (res) => res.sections,
+          ),
+          ProductTagService.getProductTags({
+            page: 1,
+            limit: 100,
+            search: "",
+          }).then((res) => res.productTags),
+          ThemeService.getThemes(),
+          PersonaService.getPersonas(),
+          CampaignService.getCampaigns(),
+          ArticleService.getWorkflowLogs(String(id)),
+          ProductPriorityService.getAllActiveProductPriorities(),
+        ]);
 
-            setDbSnapshot(data);
-            setLookups({ categories: c, sections: secData, productTags: p, themes: t, personas: per, campaigns: cmp, productPriorities: pr });
-            setLogs(logsData);
+      setDbSnapshot(data);
+      setLookups({
+        categories: c,
+        sections: secData,
+        productTags: p,
+        themes: t,
+        personas: per,
+        campaigns: cmp,
+        productPriorities: pr,
+      });
+      setLogs(logsData);
 
-            setForm({
-                title: data.title || '',
-                job_code: data.job_code || '',
-                category_id: data.category_id || 0,
-                section_id: data.section_id || 0,
-                product_id: data.product_id || 0,
-                product_priority_id: data.product_priority_id ? String(data.product_priority_id) : '',
-                content_type: data.content_type || 'new',
-                production_month: data.production_month ? data.production_month.split('T')[0] : '',
-                demand: String(data.demand || 0),
-                intent: data.intent || 'Informational',
-                type: data.type || 'Evergreen',
-                classification: data.classification || 'Infantry',
-                theme_id: data.theme_id ? String(data.theme_id) : '',
-                persona_id: data.persona_id ? String(data.persona_id) : '',
-                campaign_id: data.campaign_id ? String(data.campaign_id) : '',
-                target_keyword: data.target_keyword || '',
-                related_keyword: data.related_keyword || '',
-                meta_description: data.meta_description || '',
-                cta_internal_link: data.cta_internal_link || ''
-            });
+      setForm({
+        title: data.title || "",
+        job_code: data.job_code || "",
+        category_id: data.category_id || 0,
+        section_id: data.section_id || 0,
+        product_id: data.product_id || 0,
+        product_priority_id: data.product_priority_id
+          ? String(data.product_priority_id)
+          : "",
+        content_type: data.content_type || "new",
+        production_month: data.production_month
+          ? data.production_month.split("T")[0]
+          : "",
+        demand: String(data.demand || 0),
+        intent: data.intent || "Informational",
+        type: data.type || "Evergreen",
+        classification: data.classification || "Infantry",
+        theme_id: data.theme_id ? String(data.theme_id) : "",
+        persona_id: data.persona_id ? String(data.persona_id) : "",
+        campaign_id: data.campaign_id ? String(data.campaign_id) : "",
+        target_keyword: data.target_keyword || "",
+        related_keyword: data.related_keyword || "",
+        meta_description: data.meta_description || "",
+        cta_internal_link: data.cta_internal_link || "",
+      });
 
-            setArticleMeta({ status: data.status || '', approval: data.approval || '' });
-        } catch (err) {
-            alert('Failed to query strategy specifications.');
-        } finally {
-            setLoading(false);
-        }
-    }, [id]);
-
-    useEffect(() => {
-        if (id) loadBriefDetails();
-    }, [id, loadBriefDetails]);
-
-    useEffect(() => {
-        if (dbSnapshot?.title) {
-            document.title = `${dbSnapshot.title} | Strategy Spec | PT CMS`;
-        } else {
-            document.title = "Loading Strategy Specification... | PT CMS";
-        }
-    }, [dbSnapshot?.title]);
-
-    const handleSaveUpdates = async () => {
-        setActionLoading(true);
-        try {
-            // Generate updated job_id
-            const prefix = 'OID';
-            let yearMonth = '??????';
-            if (form.production_month) {
-                const parts = form.production_month.split('-');
-                if (parts.length >= 2) {
-                    yearMonth = `${parts[0]}${parts[1]}`;
-                }
-            }
-            let taxonomyCode = '???';
-            if (form.product_priority_id) {
-                const priority = (lookups.productPriorities || []).find(p => String(p.id) === String(form.product_priority_id));
-                if (priority && priority.code) {
-                    taxonomyCode = priority.code.trim().toUpperCase();
-                }
-            }
-            const typeCode = form.content_type === 'new' ? 'NC' : 'UC';
-            let keywordCode = '???';
-            if (form.target_keyword) {
-                keywordCode = form.target_keyword
-                    .trim()
-                    .split(/\s+/)
-                    .map(word => word.charAt(0))
-                    .join('')
-                    .toUpperCase()
-                    .replace(/[^A-Z0-9]/g, '');
-                if (!keywordCode) keywordCode = '???';
-            }
-            const calculatedJobId = `${prefix}-${yearMonth}-${taxonomyCode}-${typeCode}-${keywordCode}`;
-
-            await ArticleService.updateArticle(Number(id), {
-                title: form.title,
-                job_code: calculatedJobId,
-                category_id: Number(form.category_id),
-                section_id: Number(form.section_id),
-                product_id: Number(form.product_id),
-                product_priority_id: form.product_priority_id ? Number(form.product_priority_id) : null,
-                content_type: form.content_type as any,
-                production_month: form.production_month,
-                demand: parseInt(form.demand, 10) || 0,
-                intent: form.intent,
-                type: form.type,
-                classification: form.classification,
-                theme_id: form.theme_id ? Number(form.theme_id) : null,
-                persona_id: form.persona_id ? Number(form.persona_id) : null,
-                campaign_id: form.campaign_id ? Number(form.campaign_id) : null,
-                target_keyword: form.target_keyword,
-                related_keyword: form.related_keyword,
-                meta_description: form.meta_description,
-                cta_internal_link: form.cta_internal_link,
-                content: '', status: 'seo pending', approval: 'pending'
-            });
-            setIsEditing(false);
-            await loadBriefDetails();
-        } catch (err) {
-            alert('Failed to save updates.');
-        } finally {
-            setActionLoading(false);
-        }
-    };
-
-    const handleApprove = async () => {
-        setIsApproving(true);
-        try {
-            await ArticleService.updateWorkflow({
-                id: String(id), status: 'writing', approval: 'approved',
-                oldStatus: articleMeta.status, oldApproval: articleMeta.approval
-            });
-            router.push('/seo-keyword');
-        } catch (err) {
-            alert('Approval pipeline transaction fault.');
-        } finally {
-            setIsApproving(false);
-        }
-    };
-
-    const handleRejectSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsRejecting(true);
-        setShowRejectModal(false);
-        try {
-            await ArticleService.updateWorkflow({
-                id: String(id), status: 'seo pending', approval: 'rejected',
-                oldStatus: articleMeta.status, oldApproval: articleMeta.approval, internal_notes: internalNote
-            });
-            router.push('/seo-keyword');
-        } catch (err) {
-            alert('Rejection pipeline transaction fault.');
-        } finally {
-            setIsRejecting(false);
-            setInternalNote('');
-        }
-    };
-
-    if (loading) {
-        return (
-            <div className="w-full h-96 flex flex-col items-center justify-center gap-3">
-                <Loader2 className="animate-spin text-brand-accent" size={28} />
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Compiling Strategy Metrics...</p>
-            </div>
-        );
+      setArticleMeta({
+        status: data.status || "",
+        approval: data.approval || "",
+      });
+    } catch (err) {
+      alert("Failed to query strategy specifications.");
+    } finally {
+      setLoading(false);
     }
+  }, [id]);
 
+  useEffect(() => {
+    if (id) loadBriefDetails();
+  }, [id, loadBriefDetails]);
+
+  useEffect(() => {
+    if (dbSnapshot?.title) {
+      document.title = `${dbSnapshot.title} | Strategy Spec | PT CMS`;
+    } else {
+      document.title = "Loading Strategy Specification... | PT CMS";
+    }
+  }, [dbSnapshot?.title]);
+
+  const handleSaveUpdates = async () => {
+    setActionLoading(true);
+    try {
+      // Generate updated job_id
+      const prefix = "OID";
+      let yearMonth = "??????";
+      if (form.production_month) {
+        const parts = form.production_month.split("-");
+        if (parts.length >= 2) {
+          yearMonth = `${parts[0]}${parts[1]}`;
+        }
+      }
+      let taxonomyCode = "???";
+      if (form.product_priority_id) {
+        const priority = (lookups.productPriorities || []).find(
+          (p) => String(p.id) === String(form.product_priority_id),
+        );
+        if (priority && priority.code) {
+          taxonomyCode = priority.code.trim().toUpperCase();
+        }
+      }
+      const typeCode = form.content_type === "new" ? "NC" : "UC";
+      let keywordCode = "???";
+      if (form.target_keyword) {
+        keywordCode = form.target_keyword
+          .trim()
+          .split(/\s+/)
+          .map((word) => word.charAt(0))
+          .join("")
+          .toUpperCase()
+          .replace(/[^A-Z0-9]/g, "");
+        if (!keywordCode) keywordCode = "???";
+      }
+      const calculatedJobId = `${prefix}-${yearMonth}-${taxonomyCode}-${typeCode}-${keywordCode}`;
+
+      await ArticleService.updateArticle(Number(id), {
+        title: form.title,
+        job_code: calculatedJobId,
+        category_id: Number(form.category_id),
+        section_id: Number(form.section_id),
+        product_id: Number(form.product_id),
+        product_priority_id: form.product_priority_id
+          ? Number(form.product_priority_id)
+          : null,
+        content_type: form.content_type as any,
+        production_month: form.production_month,
+        demand: parseInt(form.demand, 10) || 0,
+        intent: form.intent,
+        type: form.type,
+        classification: form.classification,
+        theme_id: form.theme_id ? Number(form.theme_id) : null,
+        persona_id: form.persona_id ? Number(form.persona_id) : null,
+        campaign_id: form.campaign_id ? Number(form.campaign_id) : null,
+        target_keyword: form.target_keyword,
+        related_keyword: form.related_keyword,
+        meta_description: form.meta_description,
+        cta_internal_link: form.cta_internal_link,
+        content: "",
+        status: "seo pending",
+        approval: "pending",
+      });
+      setIsEditing(false);
+      await loadBriefDetails();
+    } catch (err) {
+      alert("Failed to save updates.");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleApprove = async () => {
+    setIsApproving(true);
+    try {
+      await ArticleService.updateWorkflow({
+        id: String(id),
+        status: "writing",
+        approval: "approved",
+        oldStatus: articleMeta.status,
+        oldApproval: articleMeta.approval,
+      });
+      router.push("/seo-keyword");
+    } catch (err) {
+      alert("Approval pipeline transaction fault.");
+    } finally {
+      setIsApproving(false);
+    }
+  };
+
+  const handleRejectSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsRejecting(true);
+    setShowRejectModal(false);
+    try {
+      await ArticleService.updateWorkflow({
+        id: String(id),
+        status: "seo pending",
+        approval: "rejected",
+        oldStatus: articleMeta.status,
+        oldApproval: articleMeta.approval,
+        internal_notes: internalNote,
+      });
+      router.push("/seo-keyword");
+    } catch (err) {
+      alert("Rejection pipeline transaction fault.");
+    } finally {
+      setIsRejecting(false);
+      setInternalNote("");
+    }
+  };
+
+  if (loading) {
     return (
-        <>
-            <StrategyDetailView
-                form={form} setForm={setForm} isEditing={isEditing} setIsEditing={setIsEditing}
-                isApproved={articleMeta.status === 'writing' && articleMeta.approval === 'approved'}
-                isActionDisabled={isApproving || isRejecting || actionLoading}
-                actionLoading={actionLoading} dbSnapshot={dbSnapshot} lookups={lookups}
-                onBack={() => router.back()} onSave={handleSaveUpdates} onApprove={handleApprove}
-                onRejectClick={() => setShowRejectModal(true)}
-                logs={logs}
-            />
-
-            {showRejectModal && (
-                <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl animate-in zoom-in-95 duration-150">
-                        <h3 className="text-lg font-bold text-slate-900 mb-2">Reject Strategy</h3>
-                        <p className="text-sm text-slate-500 mb-4">Provide internal revision notes explaining the update conditions required.</p>
-                        <form onSubmit={handleRejectSubmit}>
-                            <textarea
-                                required rows={4}
-                                className="w-full border border-slate-200 rounded-xl p-3 text-sm outline-none resize-none focus:ring-2 focus:ring-brand-accent/40"
-                                placeholder="Type internal feedback here..."
-                                value={internalNote}
-                                onChange={(e) => setInternalNote(e.target.value)}
-                            />
-                            <div className="flex justify-end gap-2 mt-4">
-                                <button type="button" className="px-4 py-2 text-sm text-slate-650 hover:bg-slate-50 rounded-xl" onClick={() => { setShowRejectModal(false); setInternalNote(''); }}>Cancel</button>
-                                <button type="submit" disabled={!internalNote.trim() || isRejecting} className="bg-brand-accent hover:bg-brand-navy text-white px-4 py-2 text-sm font-medium rounded-xl disabled:opacity-40">Confirm Reject</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
-        </>
+      <div className="w-full h-96 flex flex-col items-center justify-center gap-3">
+        <Loader2 className="animate-spin text-brand-accent" size={28} />
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+          Compiling Strategy Metrics...
+        </p>
+      </div>
     );
+  }
+
+  return (
+    <>
+      <StrategyDetailView
+        form={form}
+        setForm={setForm}
+        isEditing={isEditing}
+        setIsEditing={setIsEditing}
+        isApproved={
+          articleMeta.status === "writing" &&
+          articleMeta.approval === "approved"
+        }
+        isActionDisabled={isApproving || isRejecting || actionLoading}
+        actionLoading={actionLoading}
+        dbSnapshot={dbSnapshot}
+        lookups={lookups}
+        onBack={() => router.back()}
+        onSave={handleSaveUpdates}
+        onApprove={handleApprove}
+        onRejectClick={() => setShowRejectModal(true)}
+        logs={logs}
+      />
+
+      {showRejectModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl animate-in zoom-in-95 duration-150">
+            <h3 className="text-lg font-bold text-slate-900 mb-2">
+              Reject Strategy
+            </h3>
+            <p className="text-sm text-slate-500 mb-4">
+              Provide internal revision notes explaining the update conditions
+              required.
+            </p>
+            <form onSubmit={handleRejectSubmit}>
+              <textarea
+                required
+                rows={4}
+                className="w-full border border-slate-200 rounded-xl p-3 text-sm outline-none resize-none focus:ring-2 focus:ring-brand-accent/40"
+                placeholder="Type internal feedback here..."
+                value={internalNote}
+                onChange={(e) => setInternalNote(e.target.value)}
+              />
+              <div className="flex justify-end gap-2 mt-4">
+                <button
+                  type="button"
+                  className="px-4 py-2 text-sm text-slate-650 hover:bg-slate-50 rounded-xl"
+                  onClick={() => {
+                    setShowRejectModal(false);
+                    setInternalNote("");
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={!internalNote.trim() || isRejecting}
+                  className="bg-brand-accent hover:bg-brand-navy text-white px-4 py-2 text-sm font-medium rounded-xl disabled:opacity-40"
+                >
+                  Confirm Reject
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </>
+  );
 }

@@ -1,26 +1,36 @@
-@import url('https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap');
+@import url("https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap");
 @import "tailwindcss";
 
 @theme {
-  --color-brand-red: #E63946;
-  --color-brand-cream: #F1FAEE;
-  --color-brand-light-blue: #A8DADC;
-  --color-brand-steel-blue: #457B9D;
-  --color-brand-navy: #1D3557;
-  --color-brand-accent: #457B9D;
+  --color-brand-red: #e63946;
+  --color-brand-cream: #f1faee;
+  --color-brand-light-blue: #a8dadc;
+  --color-brand-steel-blue: #457b9d;
+  --color-brand-navy: #1d3557;
+  --color-brand-accent: #457b9d;
 
-  --font-sans: 'Satoshi', sans-serif;
+  --font-sans: "Satoshi", sans-serif;
 
   --animate-float-slow: float-slow 15s ease-in-out infinite;
   --animate-float-slower: float-slower 20s ease-in-out infinite;
 
   @keyframes float-slow {
-    0%, 100% { transform: translate(0px, 0px) scale(1); }
-    50% { transform: translate(30px, -50px) scale(1.1); }
+    0%,
+    100% {
+      transform: translate(0px, 0px) scale(1);
+    }
+    50% {
+      transform: translate(30px, -50px) scale(1.1);
+    }
   }
   @keyframes float-slower {
-    0%, 100% { transform: translate(0px, 0px) scale(1.1); }
-    50% { transform: translate(-30px, 50px) scale(0.95); }
+    0%,
+    100% {
+      transform: translate(0px, 0px) scale(1.1);
+    }
+    50% {
+      transform: translate(-30px, 50px) scale(0.95);
+    }
   }
 }
 
@@ -61,7 +71,9 @@ body {
 }
 
 /* Premium universal input and focus overrides */
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
   outline: none !important;
   border-color: #1d3557 !important; /* Brand Navy */
   box-shadow: 0 0 0 3px rgba(69, 123, 157, 0.15) !important; /* Brand Light Accent glow */
@@ -81,4 +93,57 @@ input:focus, select:focus, textarea:focus {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* Tiptap Table Styling */
+.tiptap table {
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.tiptap th,
+.tiptap td {
+  border: 1px solid #e2e8f0; /* border-slate-200 */
+  padding: 0.75rem 1rem;
+  vertical-align: top;
+  position: relative;
+  text-align: left;
+}
+
+.tiptap th {
+  background-color: #f8fafc; /* bg-slate-50 */
+  font-weight: 700;
+  color: #1e293b; /* text-slate-800 */
+}
+
+/* Selected cells during drag selection */
+.tiptap .selectedCell::after {
+  background: rgba(69, 123, 157, 0.1);
+  content: "";
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+}
+
+/* Horizontal/vertical resizing handles */
+.tiptap .column-resize-handle {
+  background-color: #457b9d; /* Brand Steel Blue / Accent */
+  bottom: -2px;
+  position: absolute;
+  right: -2px;
+  top: 0;
+  width: 4px;
+  z-index: 20;
+  cursor: col-resize;
+}
+
+.tiptap .table-wrapper {
+  overflow-x: auto;
+  max-width: 100%;
 }

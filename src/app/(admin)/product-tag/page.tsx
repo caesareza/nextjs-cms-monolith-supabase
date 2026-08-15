@@ -2,9 +2,9 @@
 import ProductTagClient from "./ProductTagClient";
 
 export const metadata = {
-    title: 'Product Tag Configuration | Administration Engine',
+  title: "Product Tag Configuration | Administration Engine",
 };
 
 export default function ProductTagManagementPage() {
-    return <ProductTagClient />;
+  return <ProductTagClient />;
 }

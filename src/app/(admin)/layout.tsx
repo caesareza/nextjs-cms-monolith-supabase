@@ -39,10 +39,11 @@ const NAVIGATION_ITEMS = [
 const SidebarItem = ({ icon: Icon, label, href, active }: any) => (
   <Link
     href={href}
-    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 group ${active
-      ? "bg-white text-slate-900 border border-slate-200/50 shadow-2xs font-bold"
-      : "text-slate-500 hover:bg-slate-100/60 hover:text-slate-900 border border-transparent"
-      }`}
+    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 group ${
+      active
+        ? "bg-white text-slate-900 border border-slate-200/50 shadow-2xs font-bold"
+        : "text-slate-500 hover:bg-slate-100/60 hover:text-slate-900 border border-transparent"
+    }`}
   >
     <Icon
       size={16}
@@ -146,7 +147,9 @@ export default function RootLayout({
               />
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-xs font-bold text-slate-800 truncate">{user?.email}</span>
+              <span className="text-xs font-bold text-slate-800 truncate">
+                {user?.email}
+              </span>
               <span className="text-[10px] text-slate-400 truncate">
                 {user?.id}
               </span>
@@ -159,7 +162,9 @@ export default function RootLayout({
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden bg-slate-50/40">
         {/* Content */}
-        <main className="flex-1 overflow-y-auto p-8 bg-slate-50/40">{children}</main>
+        <main className="flex-1 overflow-y-auto p-8 bg-slate-50/40">
+          {children}
+        </main>
       </div>
     </div>
   );

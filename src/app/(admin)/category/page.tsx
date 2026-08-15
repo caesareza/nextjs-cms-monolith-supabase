@@ -2,9 +2,9 @@
 import CategoryClient from "./CategoryClient";
 
 export const metadata = {
-    title: 'Category Taxonomy Management | Corporate Console',
+  title: "Category Taxonomy Management | Corporate Console",
 };
 
 export default function CategoryManagementPage() {
-    return <CategoryClient />;
+  return <CategoryClient />;
 }
