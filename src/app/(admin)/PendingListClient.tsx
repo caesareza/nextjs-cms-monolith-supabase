@@ -1,20 +1,20 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
 import {
-  Clock,
-  User,
+  AlertTriangle,
+  CheckCircle,
   ChevronDown,
   ChevronUp,
-  Search,
-  CheckCircle,
-  Loader2,
-  AlertTriangle,
+  Clock,
   Flame,
-  ShieldCheck,
   HelpCircle,
   Link2,
+  Loader2,
+  Search,
+  ShieldCheck,
+  User,
 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { ArticleService } from "@/app/(admin)/article/service";
 import { formatAuditTimestamp } from "@/utils/date";
 
@@ -217,18 +217,22 @@ export default function PendingListClient() {
                 {/* MASTER LINE ROW */}
                 <div
                   onClick={() => toggleExpandTray(article.id)}
-                  className={`group flex items-center gap-8 px-10 py-6 transition-all cursor-pointer select-none border-l-4 ${
+                  className={`group flex flex-col lg:flex-row lg:items-center justify-between gap-4 px-6 py-5 sm:px-8 sm:py-6 transition-all cursor-pointer select-none border-l-4 ${
                     isOverdue
                       ? "border-l-rose-500 bg-rose-50/10 hover:bg-rose-50/20"
                       : "border-l-transparent " +
-                        (isExpanded ? "bg-slate-50/50" : "hover:bg-slate-55/70")
+                        (isExpanded ? "bg-slate-50/50" : "hover:bg-slate-50/30")
                   }`}
                 >
                   {/* Title Segment */}
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 space-y-2">
                     <div className="flex items-center gap-3 flex-wrap">
-                      <h4 className="text-sm font-bold text-brand-navy group-hover:text-brand-accent transition-colors leading-relaxed line-clamp-1">
-                        {article.title}
+                      <h4 className="text-sm sm:text-base font-extrabold text-brand-navy group-hover:text-brand-accent transition-colors leading-relaxed">
+                        {article.title?.trim() || (
+                          <span className="text-slate-400 italic font-medium">
+                            Untitled Strategy Brief
+                          </span>
+                        )}
                       </h4>
                       {isOverdue && (
                         <span className="shrink-0 inline-flex items-center gap-1 text-[8px] font-black text-rose-650 bg-rose-50 border border-rose-200/85 px-2 py-0.5 rounded-md tracking-wider uppercase animate-pulse">
@@ -238,7 +242,7 @@ export default function PendingListClient() {
                       )}
                     </div>
                     <div className="flex items-center gap-2 mt-2 flex-wrap">
-                      <span className="text-[9px] font-mono font-bold text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md tracking-wider">
+                      <span className="text-[9px] font-mono font-bold text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md tracking-wider whitespace-nowrap">
                         {article.job_code || "—"}
                       </span>
                       {priorityName && (
@@ -253,68 +257,73 @@ export default function PendingListClient() {
                         </span>
                       )}
                       {categoryName && (
-                        <span className="shrink-0 text-[8px] font-black text-slate-500 bg-slate-50 border border-slate-200/60 px-2 py-0.5 rounded-md uppercase tracking-wider">
+                        <span className="shrink-0 text-[8px] font-black text-slate-500 bg-slate-50 border border-slate-200/60 px-2 py-0.5 rounded-md uppercase tracking-wider whitespace-nowrap">
                           📂 {categoryName}
                         </span>
                       )}
                     </div>
                   </div>
 
-                  {/* Writer Track */}
-                  <div className="hidden md:flex items-center gap-3 w-44 shrink-0">
-                    <div className="w-8 h-8 bg-brand-cream/60 rounded-full flex items-center justify-center text-brand-steel-blue/60 group-hover:bg-brand-accent/10 group-hover:text-brand-accent transition-colors">
-                      <User size={14} />
+                  {/* Metadata & Actions Segment */}
+                  <div className="flex flex-wrap items-center gap-4 sm:gap-6 shrink-0 w-full lg:w-auto justify-between lg:justify-end border-t border-slate-100 pt-3 lg:border-t-0 lg:pt-0">
+                    {/* Writer Track */}
+                    <div className="flex items-center gap-2.5 w-36 shrink-0">
+                      <div className="w-7 h-7 bg-brand-cream/60 rounded-full flex items-center justify-center text-brand-steel-blue/60 group-hover:bg-brand-accent/10 group-hover:text-brand-accent transition-colors">
+                        <User size={12} />
+                      </div>
+                      <span className="text-[10px] font-bold text-slate-500 uppercase truncate">
+                        {writerName}
+                      </span>
                     </div>
-                    <span className="text-[10px] font-black text-slate-500 uppercase truncate">
-                      {writerName}
-                    </span>
-                  </div>
 
-                  {/* Timestamp Track */}
-                  <div className="hidden lg:flex items-center gap-2 w-40 shrink-0">
-                    <Clock size={12} className="text-slate-300" />
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">
-                      {formatAuditTimestamp(article.created_at)}
-                    </span>
-                  </div>
+                    {/* Timestamp Track */}
+                    <div className="flex items-center gap-2 w-32 shrink-0">
+                      <Clock size={11} className="text-slate-350" />
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">
+                        {formatAuditTimestamp(article.created_at)}
+                      </span>
+                    </div>
 
-                  {/* Quick Action Controls (Visible on Hover / Inactive State) */}
-                  <div
-                    className="opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-155 hidden md:flex items-center gap-2 shrink-0"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <button
-                      disabled={isActionBusy}
-                      onClick={() => setShowRejectModalId(article.id)}
-                      className="h-9 px-3 border border-brand-accent/25 bg-white hover:bg-brand-accent/10 text-brand-accent rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-1 disabled:opacity-40"
-                      title="Request Revision"
+                    {/* Quick Action Controls (Visible on Hover / Inactive State) */}
+                    <div
+                      className="opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-150 flex items-center gap-2 shrink-0"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      <AlertTriangle size={11} /> Revision
-                    </button>
-                    <button
-                      disabled={isActionBusy}
-                      onClick={() => handleInlineApprove(article)}
-                      className="h-9 px-3 bg-brand-accent hover:bg-brand-navy text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer flex items-center gap-1 disabled:opacity-40"
-                      title="Approve Strategy"
+                      <button
+                        type="button"
+                        disabled={isActionBusy}
+                        onClick={() => setShowRejectModalId(article.id)}
+                        className="h-8 px-3 border border-brand-accent/25 bg-white hover:bg-brand-accent/10 text-brand-accent rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-1 disabled:opacity-40"
+                        title="Request Revision"
+                      >
+                        <AlertTriangle size={11} /> Revision
+                      </button>
+                      <button
+                        type="button"
+                        disabled={isActionBusy}
+                        onClick={() => handleInlineApprove(article)}
+                        className="h-8 px-3 bg-brand-accent hover:bg-brand-navy text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer flex items-center gap-1 disabled:opacity-40"
+                        title="Approve Strategy"
+                      >
+                        {isActionBusy && actionLoadingId === article.id ? (
+                          <Loader2 size={11} className="animate-spin" />
+                        ) : (
+                          <CheckCircle size={11} />
+                        )}
+                        Approve
+                      </button>
+                    </div>
+
+                    {/* Toggle Action Control Icon */}
+                    <div
+                      className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all shrink-0 ${isExpanded ? "bg-brand-navy text-brand-cream" : "bg-brand-cream/60 text-brand-steel-blue/50 group-hover:bg-brand-cream group-hover:text-brand-navy"}`}
                     >
-                      {isActionBusy && actionLoadingId === article.id ? (
-                        <Loader2 size={11} className="animate-spin" />
+                      {isExpanded ? (
+                        <ChevronUp size={14} />
                       ) : (
-                        <CheckCircle size={11} />
+                        <ChevronDown size={14} />
                       )}
-                      Approve
-                    </button>
-                  </div>
-
-                  {/* Toggle Action Control Icon */}
-                  <div
-                    className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all shrink-0 ${isExpanded ? "bg-brand-navy text-brand-cream" : "bg-brand-cream/60 text-brand-steel-blue/50 group-hover:bg-brand-cream group-hover:text-brand-navy"}`}
-                  >
-                    {isExpanded ? (
-                      <ChevronUp size={16} />
-                    ) : (
-                      <ChevronDown size={16} />
-                    )}
+                    </div>
                   </div>
                 </div>
 
