@@ -63,7 +63,7 @@ export default async function PublicSharedArticleView({
 
   return (
     <div className="min-h-screen bg-white text-slate-800 antialiased select-text selection:bg-red-50">
-      {/* --- MULTI-TIER OCBC HEADER --- */}
+      {/* --- MULTI-TIER Posthinks HEADER --- */}
       <header className="w-full border-b border-slate-100 bg-white sticky top-0 z-50 select-none">
         {/* Top Utility Bar */}
         <div className="w-full bg-slate-50 border-b border-slate-100">
@@ -91,7 +91,7 @@ export default async function PublicSharedArticleView({
                 O
               </div>
               <span className="text-2xl font-black tracking-tighter text-slate-950">
-                OCBC
+                Posthinks
               </span>
             </div>
 
@@ -140,7 +140,7 @@ export default async function PublicSharedArticleView({
             <p className="text-slate-400 text-xs font-medium">
               {formattedDate} • Ditulis oleh:{" "}
               <span className="font-bold text-slate-600">
-                {article.writer?.name || "Redaksi OCBC"}
+                {article.writer?.name || "Redaksi Posthinks"}
               </span>
             </p>
 
@@ -209,7 +209,7 @@ export default async function PublicSharedArticleView({
                 type="button"
                 className="px-6 py-3 bg-[#EE1C25] hover:brightness-110 text-white text-xs font-black uppercase rounded-xl tracking-wider text-center"
               >
-                Jadi nasabah OCBC sekarang!
+                Jadi nasabah Posthinks sekarang!
               </button>
             </div>
           </div>
