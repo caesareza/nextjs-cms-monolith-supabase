@@ -1,6 +1,7 @@
-import { ArticleService } from "@/app/(admin)/article/service";
+import { ArrowLeft, Globe, Search } from "lucide-react";
 import { notFound } from "next/navigation";
-import { Search, Globe, ArrowLeft } from "lucide-react";
+import { ArticleService } from "@/app/(admin)/article/service";
+import StorytellerLogo from "@/components/StorytellerLogo";
 
 interface PublicViewProps {
   params: Promise<{ id: string }>;
@@ -87,12 +88,7 @@ export default async function PublicSharedArticleView({
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-12">
             <div className="flex items-center gap-2">
-              <div className="w-9 h-9 bg-[#EE1C25] rounded-full flex items-center justify-center font-black text-white text-xl">
-                O
-              </div>
-              <span className="text-2xl font-black tracking-tighter text-slate-950">
-                Posthinks
-              </span>
+              <StorytellerLogo height={28} />
             </div>
 
             <nav className="hidden lg:flex items-center gap-6 text-xs font-black uppercase tracking-wider text-slate-600">
@@ -140,7 +136,7 @@ export default async function PublicSharedArticleView({
             <p className="text-slate-400 text-xs font-medium">
               {formattedDate} • Ditulis oleh:{" "}
               <span className="font-bold text-slate-600">
-                {article.writer?.name || "Redaksi Posthinks"}
+                {article.writer?.name || "Redaksi Storyteller"}
               </span>
             </p>
 
@@ -209,7 +205,7 @@ export default async function PublicSharedArticleView({
                 type="button"
                 className="px-6 py-3 bg-[#EE1C25] hover:brightness-110 text-white text-xs font-black uppercase rounded-xl tracking-wider text-center"
               >
-                Jadi nasabah Posthinks sekarang!
+                Jadi nasabah Storyteller sekarang!
               </button>
             </div>
           </div>

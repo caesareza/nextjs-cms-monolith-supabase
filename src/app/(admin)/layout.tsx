@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import StorytellerLogo from "@/components/StorytellerLogo";
 import { useEffect, useState } from "react";
 import LogoutButton from "@/app/(admin)/LogoutButton";
 import { createClient } from "@/utils/supabase/client"; // Import from /client
@@ -111,37 +112,7 @@ export default function RootLayout({
       >
         <div className="flex items-center justify-between px-2 py-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-brand-red rounded-lg flex items-center justify-center shadow-lg shadow-brand-red/20">
-              <svg
-                className="w-5 h-5 text-brand-cream"
-                viewBox="0 0 100 100"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                role="img"
-                aria-label="Posthinks Logo"
-              >
-                <rect
-                  x="15"
-                  y="15"
-                  width="70"
-                  height="70"
-                  rx="20"
-                  fill="currentColor"
-                />
-                <rect
-                  x="30"
-                  y="30"
-                  width="40"
-                  height="30"
-                  rx="8"
-                  fill="#1D3557"
-                />
-                <path d="M35 55L32 63L43 59" fill="#1D3557" />
-              </svg>
-            </div>
-            <span className="font-extrabold tracking-tight text-xl text-brand-navy">
-              Post<span className="text-brand-red font-light">hinks</span>
-            </span>
+            <StorytellerLogo height={28} />
           </div>
           <button
             type="button"
@@ -196,37 +167,7 @@ export default function RootLayout({
         {/* Mobile Top Header */}
         <header className="lg:hidden flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-brand-red rounded-lg flex items-center justify-center shadow-lg shadow-brand-red/20">
-              <svg
-                className="w-5 h-5 text-brand-cream"
-                viewBox="0 0 100 100"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                role="img"
-                aria-label="Posthinks Logo"
-              >
-                <rect
-                  x="15"
-                  y="15"
-                  width="70"
-                  height="70"
-                  rx="20"
-                  fill="currentColor"
-                />
-                <rect
-                  x="30"
-                  y="30"
-                  width="40"
-                  height="30"
-                  rx="8"
-                  fill="#1D3557"
-                />
-                <path d="M35 55L32 63L43 59" fill="#1D3557" />
-              </svg>
-            </div>
-            <span className="font-extrabold tracking-tight text-xl text-brand-navy">
-              Post<span className="text-brand-red font-light">hinks</span>
-            </span>
+            <StorytellerLogo height={28} />
           </div>
           <button
             type="button"

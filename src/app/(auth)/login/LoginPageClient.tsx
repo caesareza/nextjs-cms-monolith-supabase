@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import type React from "react";
 import { Suspense, useTransition } from "react";
 import { login } from "./actions";
+import StorytellerLogo from "@/components/StorytellerLogo";
 
 function PosthinksLoginPage() {
   const searchParams = useSearchParams();
@@ -19,48 +20,15 @@ function PosthinksLoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen bg-brand-navy flex flex-col items-center justify-center p-6 overflow-hidden font-sans">
-      {/* Background floating gradient blobs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-brand-light-blue/20 rounded-full blur-[120px] animate-float-slow pointer-events-none" />
+    <div className="min-h-screen bg-brand-navy flex flex-col items-center justify-center p-6 relative overflow-hidden select-none font-sans">
+      {/* Decorative backdrop shapes */}
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-brand-red/15 rounded-full blur-[120px] animate-float-slower pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-brand-red/15 rounded-full blur-[120px] animate-float-slower pointer-events-none" />
 
       {/* Brand Logo & Header */}
       <div className="mb-8 flex flex-col items-center relative z-10 animate-in fade-in slide-in-from-top-4 duration-500">
-        <div className="flex flex-col items-center gap-3 mb-2">
-          <div className="w-16 h-16 bg-brand-red rounded-2xl flex items-center justify-center shadow-2xl shadow-brand-red/30 border border-brand-red/20">
-            <svg
-              className="w-10 h-10 text-brand-cream"
-              viewBox="0 0 100 100"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              role="img"
-              aria-label="Posthinks Logo"
-            >
-              <rect
-                x="15"
-                y="15"
-                width="70"
-                height="70"
-                rx="20"
-                fill="currentColor"
-              />
-              <rect
-                x="30"
-                y="30"
-                width="40"
-                height="30"
-                rx="8"
-                fill="#1D3557"
-              />
-              <path d="M35 55L32 63L43 59" fill="#1D3557" />
-            </svg>
-          </div>
-          <span className="text-3xl font-extrabold tracking-tight text-brand-cream">
-            Post<span className="text-brand-red font-light">hinks</span>
-            <span className="text-[10px] font-bold uppercase px-2 py-1 bg-brand-light-blue/20 text-brand-light-blue rounded-md ml-2 align-middle border border-brand-light-blue/10">
-              CMS
-            </span>
-          </span>
+        <div className="flex flex-col items-center gap-4 mb-2">
+          <StorytellerLogo height={48} />
         </div>
         <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-brand-light-blue/70">
           Intelligence-Driven Content Portal
