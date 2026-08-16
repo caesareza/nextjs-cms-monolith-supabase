@@ -162,9 +162,7 @@ export async function sendStaleKeywordsEmail(params: {
                 ? `${art.demand.toLocaleString("id-ID")} Vol`
                 : "0 Vol";
               const createdDate = new Date(art.created_at);
-              const diffTime = Math.abs(
-                new Date().getTime() - createdDate.getTime(),
-              );
+              const diffTime = Math.abs(Date.now() - createdDate.getTime());
               const daysPending = Math.floor(diffTime / (1000 * 60 * 60 * 24));
               const editUrl = `http://localhost:3000/seo-keyword/edit/${art.id}`;
 
@@ -219,6 +217,154 @@ export async function sendStaleKeywordsEmail(params: {
     return {
       success: false,
       message: err.message || "Failed to dispatch emails.",
+    };
+  }
+}
+
+export async function sendOTPEmail(params: { email: string; code: string }) {
+  const { email, code } = params;
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS;
+
+  if (!smtpUser || !smtpPass) {
+    console.warn(
+      "SMTP_USER or SMTP_PASS is not defined in environment variables.",
+    );
+    return {
+      success: false,
+      message:
+        "SMTP authentication credentials missing in environment configuration.",
+    };
+  }
+
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <title>CMS Posthinks 2FA Verification</title>
+        <style>
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1e293b;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 40px 20px;
+          }
+          .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border: 1px solid #f1f5f9;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+          }
+          .header {
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+            text-align: center;
+          }
+          .logo {
+            font-size: 22px;
+            font-weight: 900;
+            color: #0f172a;
+            letter-spacing: -0.04em;
+          }
+          .logo span {
+            color: #ff6b00;
+          }
+          .title {
+            font-size: 16px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+            text-align: center;
+          }
+          .desc {
+            font-size: 13px;
+            color: #64748b;
+            text-align: center;
+            margin-bottom: 28px;
+          }
+          .otp-box {
+            background-color: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: 0.25em;
+            color: #0f172a;
+            margin-bottom: 28px;
+          }
+          .warning {
+            font-size: 11px;
+            color: #94a3b8;
+            text-align: center;
+            line-height: 1.4;
+          }
+          .footer {
+            margin-top: 32px;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 16px;
+            text-align: center;
+            font-size: 11px;
+            color: #94a3b8;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">CMS Posthinks<span>.</span></div>
+          </div>
+          
+          <div class="title">Secure 2FA Login Verification</div>
+          <div class="desc">
+            To finalize your admin dashboard sign-in, please input the following 6-digit verification code:
+          </div>
+
+          <div class="otp-box">${code}</div>
+
+          <p class="warning">
+            This verification code is confidential and will expire in 5 minutes. If you did not request this login attempt, please secure your credentials immediately.
+          </p>
+            
+          <div class="footer">
+            Posthinks CMS Security Portal<br>
+            Please do not reply directly to this email.
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: smtpUser,
+        pass: smtpPass,
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"Posthinks Security" <${smtpUser}>`,
+      to: email,
+      subject: `🗝️ ${code} is your Posthinks verification code`,
+      html: htmlContent,
+    });
+
+    return { success: true, message: "OTP code dispatched!" };
+  } catch (err: any) {
+    console.error("Failed sending OTP email:", err);
+    return {
+      success: false,
+      message: err.message || "Failed to dispatch OTP code.",
     };
   }
 }

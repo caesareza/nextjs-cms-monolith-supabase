@@ -43,10 +43,11 @@ const NAVIGATION_ITEMS = [
 const SidebarItem = ({ icon: Icon, label, href, active }: any) => (
   <Link
     href={href}
-    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 group ${active
-      ? "bg-white text-slate-900 border border-slate-200/50 shadow-2xs font-bold"
-      : "text-slate-500 hover:bg-slate-100/60 hover:text-slate-900 border border-transparent"
-      }`}
+    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 group ${
+      active
+        ? "bg-white text-slate-900 border border-slate-200/50 shadow-2xs font-bold"
+        : "text-slate-500 hover:bg-slate-100/60 hover:text-slate-900 border border-transparent"
+    }`}
   >
     <Icon
       size={16}
@@ -76,9 +77,17 @@ export default function RootLayout({
   const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [isUpdatingRole, setIsUpdatingRole] = useState(false);
+  const [isLocalhost, setIsLocalhost] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsLocalhost(
+        window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1",
+      );
+    }
+
     const loadUserAndRole = async () => {
       try {
         const {
@@ -132,8 +141,9 @@ export default function RootLayout({
     if (currentRole === "author") {
       return (
         item.href === "/" ||
-        item.href === "/article" || item.href.startsWith("/article/")
-      )
+        item.href === "/article" ||
+        item.href.startsWith("/article/")
+      );
     }
     if (currentRole === "approver" || currentRole === "viewer") {
       return (
@@ -152,7 +162,8 @@ export default function RootLayout({
     if (r === "super_admin" || r === "seo_analyst") return true;
 
     const isHome = path === "/";
-    const isArticle = path === "/" || path === "/article" || path.startsWith("/article/");
+    const isArticle =
+      path === "/" || path === "/article" || path.startsWith("/article/");
     const isSeoKeyword =
       path === "/seo-keyword" || path.startsWith("/seo-keyword/");
 
@@ -202,8 +213,9 @@ export default function RootLayout({
 
       {/* Sidebar Drawer */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 border-r border-slate-200/60 flex flex-col p-4 gap-6 bg-slate-50 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${isSidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
-          }`}
+        className={`fixed inset-y-0 left-0 z-50 w-64 border-r border-slate-200/60 flex flex-col p-4 gap-6 bg-slate-50 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
+          isSidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
+        }`}
       >
         <div className="flex items-center justify-between px-2 py-4">
           <div className="flex items-center gap-2.5">
@@ -255,7 +267,7 @@ export default function RootLayout({
           </div>
 
           {/* Development Role Selector Switcher */}
-          {user && (
+          {user && isLocalhost && (
             <div className="px-2 py-2 border-t border-slate-100 flex flex-col gap-1.5">
               <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1 select-none">
                 {isUpdatingRole ? (

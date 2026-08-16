@@ -1,5 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
-import { NextResponse, NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -39,15 +39,30 @@ export async function proxy(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
   const isLoginPage = pathname === "/login";
+  const isVerifyPage = pathname === "/login/verify";
+  const otpVerified =
+    request.cookies.get("posthinks_otp_verified")?.value === "true";
 
   // Core Guardrails
-  if (!user && !isLoginPage) {
-    return NextResponse.redirect(new URL("/login", request.url));
+  if (!user) {
+    if (!isLoginPage) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+    return response;
   }
 
-  if (user && isLoginPage) {
-    return NextResponse.redirect(new URL("/", request.url));
+  // User is authenticated but needs OTP verification
+  if (!otpVerified) {
+    if (!isVerifyPage) {
+      return NextResponse.redirect(new URL("/login/verify", request.url));
+    }
+  } else {
+    // User is fully authenticated and verified
+    if (isLoginPage || isVerifyPage) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
   }
 
   return response;
