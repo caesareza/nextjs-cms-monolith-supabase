@@ -45,6 +45,8 @@ export default function PendingListClient() {
     type: "success" | "error" | null;
     message: string;
   }>({ type: null, message: "" });
+  const [showEmailConfirmModal, setShowEmailConfirmModal] = useState(false);
+  const [customEmailMessage, setCustomEmailMessage] = useState("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -75,6 +77,7 @@ export default function PendingListClient() {
     try {
       const res = await sendStaleKeywordsEmail({
         articles: staleArticles,
+        customMessage: customEmailMessage,
       });
       if (res.success) {
         const now = new Date().toISOString();
@@ -91,6 +94,8 @@ export default function PendingListClient() {
           () => setEmailAlertStatus({ type: null, message: "" }),
           6000,
         );
+        setShowEmailConfirmModal(false);
+        setCustomEmailMessage("");
       } else {
         setEmailAlertStatus({
           type: "error",
@@ -307,8 +312,8 @@ export default function PendingListClient() {
               <button
                 type="button"
                 disabled={isEmailSending || isEmailSentToday}
-                onClick={handleEmailStaleAlerts}
-                className="px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider bg-slate-900 border border-slate-950 text-white hover:bg-slate-800 transition-all flex items-center gap-1.5 cursor-pointer disabled:bg-slate-100 disabled:text-slate-400 disabled:border-slate-200 disabled:cursor-not-allowed"
+                onClick={() => setShowEmailConfirmModal(true)}
+                className="px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider bg-slate-900 border border-slate-950 text-white hover:bg-slate-800 transition-all flex items-center gap-1.5 cursor-pointer disabled:bg-slate-105 disabled:text-slate-400 disabled:border-slate-200 disabled:cursor-not-allowed"
                 title={
                   isEmailSentToday
                     ? "Revision email alert can only be sent once a day."
@@ -343,10 +348,80 @@ export default function PendingListClient() {
         >
           <span>{emailAlertStatus.message}</span>
           <button
+            type="button"
             onClick={() => setEmailAlertStatus({ type: null, message: "" })}
           >
             <X size={12} />
           </button>
+        </div>
+      )}
+
+      {/* Email Dispatch Confirmation Modal */}
+      {showEmailConfirmModal && (
+        <div className="fixed inset-0 z-[999] bg-slate-900/40 backdrop-blur-xs flex items-center justify-center animate-in fade-in duration-200">
+          <div className="bg-white p-6 border border-slate-200 rounded-2xl shadow-xl max-w-md w-full mx-4 space-y-4 animate-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-2 text-slate-800">
+              <div className="w-8 h-8 rounded-xl bg-slate-105 flex items-center justify-center text-slate-600">
+                <Mail size={16} />
+              </div>
+              <div>
+                <h3 className="text-sm font-black text-slate-900 tracking-tight">
+                  Confirm Alert Email
+                </h3>
+                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
+                  stale editorial queue
+                </p>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-550 leading-relaxed">
+              You are about to dispatch stale strategy alerts for{" "}
+              <span className="font-bold text-slate-800">{overdueCount}</span>{" "}
+              brief(s). You can append a custom message below to include
+              additional instructions.
+            </p>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                Custom Message (Optional)
+              </label>
+              <textarea
+                value={customEmailMessage}
+                onChange={(e) => setCustomEmailMessage(e.target.value)}
+                placeholder="Type any strategic instructions, priorities, or remarks to include in the email..."
+                rows={4}
+                className="w-full p-3 bg-slate-50 hover:bg-slate-50/80 border border-slate-250 rounded-xl text-xs font-semibold outline-none focus:bg-white focus:ring-4 focus:ring-brand-light-blue/20 focus:border-brand-accent/20 transition-all placeholder:text-slate-400 resize-none"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowEmailConfirmModal(false);
+                  setCustomEmailMessage("");
+                }}
+                disabled={isEmailSending}
+                className="px-4 py-2 text-slate-400 hover:text-slate-700 text-[10px] font-black uppercase tracking-wider cursor-pointer transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleEmailStaleAlerts}
+                disabled={isEmailSending}
+                className="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isEmailSending ? (
+                  <>
+                    <Loader2 size={12} className="animate-spin" /> Sending...
+                  </>
+                ) : (
+                  <>Send Alert</>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

@@ -5,8 +5,9 @@ import nodemailer from "nodemailer";
 export async function sendStaleKeywordsEmail(params: {
   articles: any[];
   toEmail?: string;
+  customMessage?: string;
 }) {
-  const { articles, toEmail } = params;
+  const { articles, toEmail, customMessage } = params;
   const smtpUser = process.env.SMTP_USER;
   const smtpPass = process.env.SMTP_PASS;
 
@@ -154,6 +155,17 @@ export async function sendStaleKeywordsEmail(params: {
           <div class="desc">
             The following content strategy keyword briefs are pending review and require immediate strategic approval to unblock the editorial writing cycle:
           </div>
+
+          ${
+            customMessage
+              ? `
+            <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+              <h4 style="margin: 0 0 8px 0; color: #b45309; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">Remarks from Administrator</h4>
+              <p style="margin: 0; font-size: 13px; color: #78350f; font-style: italic; white-space: pre-wrap;">${customMessage}</p>
+            </div>
+          `
+              : ""
+          }
 
           ${articles
             .map((art) => {
