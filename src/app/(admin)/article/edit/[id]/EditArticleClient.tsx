@@ -497,6 +497,39 @@ export default function EditArticleClient({
             </div>
           </div>
 
+          {/* CARD 4: PERSISTENT KEYWORD CONSTRAINT CHEAT SHEET */}
+          <div className="bg-white p-8 border border-slate-200 rounded-2xl shadow-xs space-y-4">
+            <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest block select-none">
+              Brief Validation Strategy
+            </h4>
+            <div className="space-y-3">
+              <div>
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-tighter block">
+                  Focus Target Keyword
+                </span>
+                <span className="text-xs font-mono font-bold text-slate-900 select-all block mt-0.5 bg-slate-50 border border-slate-100 p-2 rounded-lg">
+                  {form.target_keyword || "—"}
+                </span>
+              </div>
+              <div>
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-tighter block">
+                  Required Meta Description Tag
+                </span>
+                <p className="text-[11px] font-medium text-slate-600 leading-relaxed mt-1 bg-slate-50 border border-slate-100 p-3 rounded-xl">
+                  {form.meta_description || "No tag summaries provided."}
+                </p>
+              </div>
+              <div>
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-tighter block">
+                  Related Keywords
+                </span>
+                <p className="text-[11px] font-medium text-slate-600 leading-relaxed mt-1 bg-slate-50 border border-slate-100 p-3 rounded-xl whitespace-pre-line">
+                  {form.related_keyword || "No related keywords specified."}
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* CARD 2: TAXONOMY HIERARCHY MAP */}
           <div className="bg-white p-8 border border-slate-200 rounded-2xl shadow-xs space-y-4 font-medium text-slate-700">
             <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest block select-none">
@@ -618,39 +651,6 @@ export default function EditArticleClient({
                     {currentCampaign}
                   </span>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* CARD 4: PERSISTENT KEYWORD CONSTRAINT CHEAT SHEET */}
-          <div className="bg-white p-8 border border-slate-200 rounded-2xl shadow-xs space-y-4">
-            <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest block select-none">
-              Brief Validation Strategy
-            </h4>
-            <div className="space-y-3">
-              <div>
-                <span className="text-[9px] font-black text-slate-400 uppercase tracking-tighter block">
-                  Focus Target Keyword
-                </span>
-                <span className="text-xs font-mono font-bold text-slate-900 select-all block mt-0.5 bg-slate-50 border border-slate-100 p-2 rounded-lg">
-                  {form.target_keyword || "—"}
-                </span>
-              </div>
-              <div>
-                <span className="text-[9px] font-black text-slate-400 uppercase tracking-tighter block">
-                  Required Meta Description Tag
-                </span>
-                <p className="text-[11px] font-medium text-slate-600 leading-relaxed mt-1 bg-slate-50 border border-slate-100 p-3 rounded-xl">
-                  {form.meta_description || "No tag summaries provided."}
-                </p>
-              </div>
-              <div>
-                <span className="text-[9px] font-black text-slate-400 uppercase tracking-tighter block">
-                  Related Keywords
-                </span>
-                <p className="text-[11px] font-medium text-slate-600 leading-relaxed mt-1 bg-slate-50 border border-slate-100 p-3 rounded-xl whitespace-pre-line">
-                  {form.related_keyword || "No related keywords specified."}
-                </p>
               </div>
             </div>
           </div>
