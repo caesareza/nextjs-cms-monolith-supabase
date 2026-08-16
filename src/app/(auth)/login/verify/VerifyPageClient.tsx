@@ -1,21 +1,29 @@
 "use client";
-import { AlertCircle, Loader2, Lock, Mail, Sparkles } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { AlertCircle, KeyRound, Loader2, Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
 import type React from "react";
-import { Suspense, useTransition } from "react";
-import { login } from "./actions";
+import { useState, useTransition } from "react";
 import StorytellerLogo from "@/components/StorytellerLogo";
+import { verifyOTPCode } from "./actions";
 
-function PosthinksLoginPage() {
-  const searchParams = useSearchParams();
-  const errorMessage = searchParams.get("error");
+interface VerifyPageProps {
+  email: string;
+}
+
+export default function VerifyPageClient({ email }: VerifyPageProps) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    setError(null);
     startTransition(async () => {
-      await login(formData);
+      const res = await verifyOTPCode(null, formData);
+      if (res && !res.success) {
+        setError(res.error || "Failed to verify code.");
+      }
     });
   };
 
@@ -37,67 +45,47 @@ function PosthinksLoginPage() {
 
       <div className="w-full max-w-[400px] relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-600">
         <div className="bg-brand-cream rounded-2xl p-8 shadow-[0_24px_70px_rgba(29,53,87,0.4)] border border-brand-light-blue/20">
-          <div className="mb-8">
+          <div className="mb-8 text-center">
             <h2 className="text-2xl font-black text-brand-navy tracking-tight">
-              Welcome back
+              2FA Verification
             </h2>
-            <p className="text-xs text-brand-steel-blue font-medium mt-1">
-              Please log in to manage your publication workflow.
+            <p className="text-xs text-brand-steel-blue font-medium mt-2 leading-relaxed">
+              We sent a 6-digit security code to:
+              <span className="block font-bold text-brand-navy mt-1 break-all">
+                {email}
+              </span>
             </p>
           </div>
 
-          {errorMessage && !isPending && (
+          {error && (
             <div className="mb-6 flex items-center gap-3 p-4 bg-brand-red/10 border border-brand-red/20 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-300">
               <AlertCircle size={20} className="text-brand-red shrink-0" />
-              <p className="text-xs font-semibold text-brand-red">
-                {errorMessage}
-              </p>
+              <p className="text-xs font-semibold text-brand-red">{error}</p>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label
-                htmlFor="email"
-                className="block text-[10px] font-bold uppercase text-brand-steel-blue tracking-wider mb-2"
+                htmlFor="code"
+                className="block text-[10px] font-bold uppercase text-brand-steel-blue tracking-wider mb-2 text-center"
               >
-                Email Address
+                Verification Code
               </label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-steel-blue/50">
-                  <Mail size={16} />
+                  <KeyRound size={16} />
                 </span>
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
+                  id="code"
+                  name="code"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={6}
                   required
                   disabled={isPending}
-                  className="w-full pl-11 pr-4 py-3.5 bg-white border border-brand-light-blue/30 text-brand-navy rounded-2xl text-sm focus:border-brand-steel-blue focus:ring-4 focus:ring-brand-light-blue/30 outline-none transition-all placeholder:text-slate-400 disabled:opacity-60 disabled:cursor-not-allowed"
-                  placeholder="editor@posthinks.biz.id"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-[10px] font-bold uppercase text-brand-steel-blue tracking-wider mb-2"
-              >
-                Password
-              </label>
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-steel-blue/50">
-                  <Lock size={16} />
-                </span>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  disabled={isPending}
-                  className="w-full pl-11 pr-4 py-3.5 bg-white border border-brand-light-blue/30 text-brand-navy rounded-2xl text-sm focus:border-brand-steel-blue focus:ring-4 focus:ring-brand-light-blue/30 outline-none transition-all placeholder:text-slate-400 disabled:opacity-60 disabled:cursor-not-allowed"
-                  placeholder="••••••••"
+                  className="w-full pl-11 pr-4 py-3.5 bg-white border border-brand-light-blue/30 text-brand-navy rounded-2xl text-center text-lg font-black tracking-[0.4em] focus:border-brand-steel-blue focus:ring-4 focus:ring-brand-light-blue/30 outline-none transition-all placeholder:text-slate-300 disabled:opacity-60 disabled:cursor-not-allowed"
                 />
               </div>
             </div>
@@ -110,26 +98,32 @@ function PosthinksLoginPage() {
               {isPending ? (
                 <>
                   <Loader2 size={16} className="animate-spin" />
-                  <span>Signing In...</span>
+                  <span>Verifying Code...</span>
                 </>
               ) : (
                 <>
                   <Sparkles size={16} />
-                  <span>Sign In Securely</span>
+                  <span>Verify and Login</span>
                 </>
               )}
             </button>
           </form>
+
+          <button
+            type="button"
+            disabled={isPending}
+            onClick={() => router.push("/login")}
+            className="w-full text-center text-[10px] uppercase tracking-widest text-brand-steel-blue hover:text-brand-navy font-bold transition-colors cursor-pointer mt-6 disabled:opacity-50"
+          >
+            Back to Login
+          </button>
         </div>
 
         {/* Security Notice */}
         <div className="mt-8 text-center px-4">
           <p className="text-[10px] leading-relaxed text-brand-light-blue/50">
-            <strong>Security Note:</strong> Always verify that you are accessing{" "}
-            <span className="text-brand-light-blue/80 font-medium">
-              https://cms-article.posthinks.biz.id
-            </span>{" "}
-            before signing in.
+            Please check your spam or promotions folder if you haven't received
+            the email within 2 minutes.
           </p>
         </div>
       </div>
@@ -142,29 +136,15 @@ function PosthinksLoginPage() {
               <Loader2 className="w-8 h-8 text-brand-red animate-spin" />
             </div>
             <h3 className="text-brand-navy font-black text-lg tracking-tight">
-              Authenticating
+              Checking Verification
             </h3>
             <p className="text-brand-steel-blue text-xs leading-relaxed font-medium">
-              Please wait while we verify your credentials and establish a
-              secure session.
+              We are verifying your OTP security credentials and logging you
+              into the CMS portal.
             </p>
           </div>
         </div>
       )}
     </div>
-  );
-}
-
-export default function LoginPageClient() {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-brand-navy flex items-center justify-center text-brand-cream">
-          ...
-        </div>
-      }
-    >
-      <PosthinksLoginPage />
-    </Suspense>
   );
 }

@@ -2,9 +2,9 @@
 import SectionClient from "./SectionClient";
 
 export const metadata = {
-    title: 'Section Management | Admin Console',
+  title: "Section Management | Admin Console",
 };
 
 export default function SectionManagementPage() {
-    return <SectionClient />;
+  return <SectionClient />;
 }
