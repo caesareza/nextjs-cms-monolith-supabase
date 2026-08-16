@@ -199,9 +199,16 @@ export async function sendStaleKeywordsEmail(params: {
       },
     });
 
-    const destination = ["dreas@posthinks.com", "dreasnisa@gmail.com"];
-    if (process.env.NODE_ENV === "production") {
-      destination.push("seo@ocbc.id", "campaign.martech@ocbc.id");
+    const devEmails = process.env.STALE_ALERTS_EMAIL_DEV || "";
+    const prodEmails = process.env.STALE_ALERTS_EMAIL_PROD || "";
+
+    const destination: string[] = devEmails
+      ? devEmails.split(",").map((e) => e.trim())
+      : [];
+
+    if (process.env.NODE_ENV === "production" && prodEmails) {
+      const prodList = prodEmails.split(",").map((e) => e.trim());
+      destination.push(...prodList);
     }
 
     await transporter.sendMail({

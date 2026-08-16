@@ -76,7 +76,8 @@ export const ArticleService = {
     // Dynamic Filters
     if (writerId) query = query.eq("writer_id", writerId);
     if (categoryId) query = query.eq("category_id", categoryId);
-    if (productPriorityId) query = query.eq("product_priority_id", productPriorityId);
+    if (productPriorityId)
+      query = query.eq("product_priority_id", productPriorityId);
     if (contentType) query = query.eq("content_type", contentType);
     if (status) query = query.eq("status", status);
     if (approval) query = query.eq("approval", approval);
@@ -416,7 +417,7 @@ export const ArticleService = {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    const userEmail = user?.email || "nisa@posthink.com";
+    const userEmail = user?.email;
 
     const updateData: any = {
       status,

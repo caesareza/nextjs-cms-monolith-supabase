@@ -85,7 +85,7 @@ export default function PendingListClient() {
         setEmailAlertStatus({
           type: "success",
           message:
-            "Editorial revision alerts sent successfully to dreas@posthinks.com!",
+            "Editorial revision alerts sent successfully to the distribution list!",
         });
         setTimeout(
           () => setEmailAlertStatus({ type: null, message: "" }),
