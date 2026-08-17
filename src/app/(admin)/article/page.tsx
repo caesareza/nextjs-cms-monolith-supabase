@@ -144,6 +144,127 @@ export default function ArticleProductionPage() {
         </button>
       </div>
 
+      {/* 1.5. HIGH-DENSITY PRODUCTION STATISTICS ROW */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 select-none animate-in fade-in duration-300 delay-100">
+        {/* Card 1: Monthly Production Goal Progress */}
+        <div className="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-xs space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="block text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                Monthly Target Progress
+              </span>
+              <p className="text-2xl font-black text-slate-900 mt-1">
+                {articles.length}{" "}
+                <span className="text-xs text-slate-400 font-bold">
+                  / 80 posts
+                </span>
+              </p>
+            </div>
+            <div className="p-3 bg-brand-accent/10 text-brand-accent rounded-xl">
+              <Rocket size={18} />
+            </div>
+          </div>
+
+          {/* Progress Bar Container */}
+          <div className="space-y-1.5">
+            <div className="flex justify-between text-[10px] font-bold">
+              <span className="text-slate-500">
+                {Math.round((articles.length / 80) * 100)}% Completed
+              </span>
+              <span className="text-slate-450 font-mono">Target: 80</span>
+            </div>
+            <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+              <div
+                style={{
+                  width: `${Math.min(100, Math.round((articles.length / 80) * 100))}%`,
+                }}
+                className="bg-brand-accent h-full rounded-full transition-all duration-500 ease-out"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Card 2: Workflow Pipeline Status */}
+        <div className="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-xs space-y-3">
+          <span className="block text-[9px] font-black text-slate-400 uppercase tracking-widest">
+            Pipeline Distribution
+          </span>
+          <div className="grid grid-cols-3 gap-2 pt-1">
+            <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100 text-center">
+              <span className="block text-base font-extrabold text-slate-800">
+                {
+                  articles.filter(
+                    (a) => a.status === "draft" || a.status === "writing",
+                  ).length
+                }
+              </span>
+              <span className="text-[8px] font-black text-slate-400 uppercase tracking-wider block mt-0.5">
+                Drafts
+              </span>
+            </div>
+            <div className="p-2.5 bg-indigo-50/50 rounded-xl border border-indigo-100/50 text-center">
+              <span className="block text-base font-extrabold text-indigo-650">
+                {articles.filter((a) => a.status === "ready for review").length}
+              </span>
+              <span className="text-[8px] font-black text-slate-400 uppercase tracking-wider block mt-0.5">
+                In Review
+              </span>
+            </div>
+            <div className="p-2.5 bg-emerald-50/50 rounded-xl border border-emerald-100/50 text-center">
+              <span className="block text-base font-extrabold text-emerald-650">
+                {articles.filter((a) => a.status === "published").length}
+              </span>
+              <span className="text-[8px] font-black text-slate-400 uppercase tracking-wider block mt-0.5">
+                Live
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 3: Target Quality & Trajectory Indicator */}
+        <div className="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-xs flex flex-col justify-between">
+          <div className="flex items-start justify-between">
+            <div>
+              <span className="block text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                Production Pace Status
+              </span>
+              <h4 className="text-sm font-extrabold text-slate-800 mt-1 leading-snug">
+                {articles.length >= 80
+                  ? "🎉 Goal Reached!"
+                  : articles.length >= 60
+                    ? "⚡ On Track for Goal"
+                    : articles.length >= 40
+                      ? "📈 Moderate Pace"
+                      : "⚠️ Action Required"}
+              </h4>
+            </div>
+            <span
+              className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase ${
+                articles.length >= 80
+                  ? "bg-emerald-50 text-emerald-700"
+                  : articles.length >= 60
+                    ? "bg-blue-50 text-blue-700"
+                    : articles.length >= 40
+                      ? "bg-amber-50 text-amber-700"
+                      : "bg-rose-50 text-rose-700 animate-pulse"
+              }`}
+            >
+              {articles.length >= 80
+                ? "Goal Met"
+                : articles.length >= 40
+                  ? "On Track"
+                  : "Low Output"}
+            </span>
+          </div>
+
+          <p className="text-[10px] text-slate-450 font-medium leading-relaxed pt-2">
+            {articles.length >= 80
+              ? "Awesome! The production goal has been fully met for this period."
+              : `Needs ${80 - articles.length} more posts to satisfy the monthly target of 80.`}
+          </p>
+        </div>
+      </div>
+
       {/* 2. ENCAPSULATED CONTROLS & FILTER BAR */}
       <ProductionFilterPanel
         year={year}
