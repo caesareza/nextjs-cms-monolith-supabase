@@ -1,12 +1,12 @@
 // app/(admin)/article/edit/[id]/page.tsx
 
 import { ArticleService } from "@/app/(admin)/article/service";
-import { SectionService } from "@/app/(admin)/section/service";
-import { ProductTagService } from "@/app/(admin)/product-tag/service";
-import { ProductPriorityService } from "@/app/(admin)/product-priority/service";
-import { ThemeService } from "@/app/(admin)/theme/service";
-import { PersonaService } from "@/app/(admin)/persona/service";
 import { CampaignService } from "@/app/(admin)/campaign/service";
+import { PersonaService } from "@/app/(admin)/persona/service";
+import { ProductPriorityService } from "@/app/(admin)/product-priority/service";
+import { ProductTagService } from "@/app/(admin)/product-tag/service";
+import { SectionService } from "@/app/(admin)/section/service";
+import { ThemeService } from "@/app/(admin)/theme/service";
 import EditArticleClient from "./EditArticleClient";
 
 export default async function EditArticlePage({
@@ -31,6 +31,7 @@ export default async function EditArticlePage({
     personas,
     campaigns,
     productPriorities,
+    logs,
   ] = await Promise.all([
     ArticleService.getArticleById(Number(id)),
     ArticleService.getWriters(),
@@ -41,6 +42,7 @@ export default async function EditArticlePage({
     PersonaService.getPersonas(),
     CampaignService.getCampaigns(),
     ProductPriorityService.getAllActiveProductPriorities(),
+    ArticleService.getWorkflowLogs(id),
   ]);
 
   // Safely unwrap paginated service collections
@@ -59,6 +61,7 @@ export default async function EditArticlePage({
         personas={personas}
         campaigns={campaigns}
         productPriorities={productPriorities}
+        logs={logs || []}
       />
     </div>
   );

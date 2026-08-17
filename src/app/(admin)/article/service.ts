@@ -348,6 +348,14 @@ export const ArticleService = {
   ) {
     const supabase = createClient();
 
+    // 1. Fetch current status, approval, and content before saving the update
+    const { data: oldArticle } = await supabase
+      .from("article")
+      .select("status, approval, content")
+      .eq("id", id)
+      .single();
+
+    // 2. Perform the update
     const { data, error } = await supabase
       .from("article")
       .update({
@@ -358,6 +366,33 @@ export const ArticleService = {
       .single();
 
     if (error) throw error;
+
+    // 3. Log user action in database logs
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const userEmail = user?.email || null;
+
+      const isContentChanged =
+        oldArticle && oldArticle.content !== payload.content;
+
+      await supabase.from("workflow_logs").insert({
+        article_id: Number(id),
+        user_email: userEmail,
+        old_status: oldArticle?.status || null,
+        new_status: payload.status || oldArticle?.status || null,
+        old_approval: oldArticle?.approval || null,
+        new_approval: payload.approval || oldArticle?.approval || null,
+        notes: isContentChanged
+          ? "Draft content body updated"
+          : "Article metadata updated",
+        content_backup: isContentChanged ? oldArticle.content : null,
+      });
+    } catch (logErr) {
+      console.error("Failed to write update workflow log:", logErr);
+    }
+
     return data;
   },
 
@@ -419,6 +454,56 @@ export const ArticleService = {
     } = await supabase.auth.getUser();
     const userEmail = user?.email;
 
+    let durationSeconds: number | null = null;
+    let logNotes = url_published ? `Published to: ${url_published}` : null;
+
+    if (approval === "approved") {
+      try {
+        // Query the article's created_at
+        const { data: articleObj } = await supabase
+          .from("article")
+          .select("created_at")
+          .eq("id", id)
+          .single();
+
+        let startTime = new Date(articleObj?.created_at || new Date());
+
+        // Find the most recent log where new_approval === "pending"
+        const { data: logs } = await supabase
+          .from("workflow_logs")
+          .select("created_at")
+          .eq("article_id", Number(id))
+          .eq("new_approval", "pending")
+          .order("id", { ascending: false })
+          .limit(1);
+
+        if (logs && logs.length > 0) {
+          startTime = new Date(logs[0].created_at);
+        }
+
+        const now = new Date();
+        const diffMs = now.getTime() - startTime.getTime();
+        durationSeconds = Math.max(0, Math.floor(diffMs / 1000));
+
+        const formatSeconds = (sec: number) => {
+          const days = Math.floor(sec / (3600 * 24));
+          const hours = Math.floor((sec % (3600 * 24)) / 3600);
+          const minutes = Math.floor((sec % 3600) / 60);
+          if (days > 0) return `${days}d ${hours}h ${minutes}m`;
+          if (hours > 0) return `${hours}h ${minutes}m`;
+          return `${minutes}m`;
+        };
+
+        logNotes = `Approved. Review took ${formatSeconds(durationSeconds)}`;
+      } catch (durationErr) {
+        console.error("Failed to calculate approval duration:", durationErr);
+      }
+    }
+
+    if (approval === "rejected" && internal_notes) {
+      logNotes = `Rejected by Director. Reason: ${internal_notes}`;
+    }
+
     const updateData: any = {
       status,
       approval,
@@ -429,16 +514,28 @@ export const ArticleService = {
     if (url_published) updateData.url_published = url_published;
     if (internal_notes) updateData.internal_notes = internal_notes;
 
+    const updateDataWithDuration = { ...updateData };
+    if (durationSeconds !== null) {
+      updateDataWithDuration.approval_duration_seconds = durationSeconds;
+    }
+
     const { error: updateError } = await supabase
       .from("article")
-      .update(updateData)
+      .update(updateDataWithDuration)
       .eq("id", id);
 
-    if (updateError) throw updateError;
+    // Fallback in case approval_duration_seconds column migration hasn't run yet
+    if (updateError) {
+      console.warn(
+        "Update with duration failed, retrying without duration column:",
+        updateError,
+      );
+      const { error: retryError } = await supabase
+        .from("article")
+        .update(updateData)
+        .eq("id", id);
 
-    let logNotes = url_published ? `Published to: ${url_published}` : null;
-    if (approval === "rejected" && internal_notes) {
-      logNotes = `Rejected by Director. Reason: ${internal_notes}`;
+      if (retryError) throw retryError;
     }
 
     await supabase.from("workflow_logs").insert({

@@ -7,6 +7,7 @@ import {
   ChevronLeft,
   Flame,
   FolderKanban,
+  History,
   Info,
   Link2,
   Loader2,
@@ -18,6 +19,7 @@ import {
   Tag,
   Target,
   User,
+  X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -34,6 +36,7 @@ interface EditProps {
   personas: any[];
   campaigns: any[];
   productPriorities: any[];
+  logs?: any[];
 }
 
 export default function EditArticleClient({
@@ -46,11 +49,13 @@ export default function EditArticleClient({
   personas,
   campaigns,
   productPriorities,
+  logs = [],
 }: EditProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [previewLog, setPreviewLog] = useState<any>(null);
 
   const [form, setForm] = useState({
     writer_id: initialData.writer_id || 0,
@@ -112,9 +117,9 @@ export default function EditArticleClient({
     "Organic Strategy";
   const formattedMonth = initialData.production_month
     ? new Date(initialData.production_month).toLocaleDateString("en-US", {
-        month: "short",
-        year: "numeric",
-      })
+      month: "short",
+      year: "numeric",
+    })
     : "—";
 
   const handleUpdate = async (e: React.FormEvent) => {
@@ -159,7 +164,7 @@ export default function EditArticleClient({
       });
       setSuccess(true);
       setTimeout(() => {
-        router.push("/article");
+        router.push(`/article/${initialData.id}`);
         router.refresh();
       }, 1500);
     } catch (err) {
@@ -654,8 +659,177 @@ export default function EditArticleClient({
               </div>
             </div>
           </div>
+
+          {/* CARD 4: WORKFLOW AUDIT TIMELINE */}
+          <div className="bg-white p-8 border border-slate-200 rounded-2xl shadow-xs space-y-4">
+            <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest block select-none">
+              Workflow Audit Timeline
+            </h4>
+
+            {logs.length === 0 ? (
+              <p className="text-xs text-slate-450 italic">
+                No historical activities logged.
+              </p>
+            ) : (
+              <div className="relative border-l border-slate-100 pl-4 ml-2 space-y-6 pt-2">
+                {logs.map((log) => {
+                  const logDate = new Date(log.created_at).toLocaleString(
+                    "en-US",
+                    {
+                      month: "short",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    },
+                  );
+                  const hasBackup = !!log.content_backup;
+
+                  return (
+                    <div key={log.id} className="relative group/item">
+                      {/* Timeline Dot Indicator */}
+                      <span
+                        className={`absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full border-2 border-white shadow-xs ${hasBackup
+                          ? "bg-brand-accent animate-pulse"
+                          : "bg-slate-350"
+                          }`}
+                      />
+
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between">
+                          <p className="text-[10px] font-bold text-slate-800">
+                            {log.notes || "Workflow log update"}
+                          </p>
+                          <span className="text-[8px] font-semibold text-slate-400 tabular-nums">
+                            {logDate}
+                          </span>
+                        </div>
+
+                        {log.user_email && (
+                          <p className="text-[9px] text-slate-400 font-medium lowercase truncate">
+                            by {log.user_email}
+                          </p>
+                        )}
+
+                        {/* Status/Approval Transitions */}
+                        {(log.old_status || log.new_status) && (
+                          <div className="flex items-center gap-1.5 text-[8px] font-black uppercase text-slate-500 pt-0.5 tracking-wider">
+                            <span className="bg-slate-50 px-1 py-0.5 rounded border border-slate-100">
+                              {log.old_status || "—"}
+                            </span>
+                            <span>➔</span>
+                            <span className="bg-slate-900 text-white px-1 py-0.5 rounded">
+                              {log.new_status || "—"}
+                            </span>
+                          </div>
+                        )}
+
+                        {hasBackup && (
+                          <button
+                            type="button"
+                            onClick={() => setPreviewLog(log)}
+                            className="mt-2 text-[9px] font-black text-brand-accent hover:text-brand-navy uppercase tracking-widest flex items-center gap-1 transition-colors cursor-pointer"
+                          >
+                            <History size={10} /> Preview & Restore
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       </div>
+
+      {/* Draft Preview & Restore Modal Overlay */}
+      {previewLog && (
+        <div
+          className="fixed inset-0 z-[999] bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => setPreviewLog(null)}
+        >
+          <div
+            className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-3xl w-full max-h-[85vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-650">
+                  <History size={16} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-slate-900 tracking-tight">
+                    Preview Historical Draft
+                  </h3>
+                  <p className="text-[8px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
+                    Logged by {previewLog.user_email || "system"} on{" "}
+                    {new Date(previewLog.created_at).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPreviewLog(null)}
+                className="text-slate-400 hover:text-slate-700 p-1.5 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Modal Body: Raw HTML Preview Panel */}
+            <div className="flex-1 overflow-y-auto p-6 bg-slate-50/20">
+              <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-3xs prose prose-slate max-w-none min-h-[300px]">
+                {/* Render the backup HTML content securely */}
+                <div
+                  className="text-xs text-slate-700 leading-relaxed space-y-4"
+                  dangerouslySetInnerHTML={{
+                    __html: previewLog.content_backup || "",
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Modal Footer Controls */}
+            <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
+              <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider">
+                Restoring will overwrite current editor body canvas
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPreviewLog(null)}
+                  className="px-4 py-2 text-slate-450 hover:text-slate-700 text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer"
+                >
+                  Close Preview
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (
+                      confirm(
+                        "Are you sure you want to restore this historical draft? This will replace your current editor content.",
+                      )
+                    ) {
+                      setForm({
+                        ...form,
+                        content: previewLog.content_backup || "",
+                      });
+                      setPreviewLog(null);
+                      alert(
+                        "Draft successfully restored! Please click 'Push Updates' to save changes.",
+                      );
+                    }
+                  }}
+                  className="px-6 py-2.5 bg-brand-navy hover:bg-brand-navy/90 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 cursor-pointer flex items-center gap-1.5"
+                >
+                  <CheckCircle2 size={12} /> Restore This Draft
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </form>
   );
 }
