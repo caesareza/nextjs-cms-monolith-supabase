@@ -5,7 +5,10 @@ interface StorytellerLogoProps {
   height?: number;
 }
 
-export default function StorytellerLogo({ className = "", height = 32 }: StorytellerLogoProps) {
+export default function StorytellerLogo({
+  className = "",
+  height = 32,
+}: StorytellerLogoProps) {
   // Compute width based on H (approx 4.5:1 aspect ratio)
   const width = Math.round(height * 4.5);
 

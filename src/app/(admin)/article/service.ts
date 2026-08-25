@@ -1,5 +1,10 @@
 // app/(admin)/article/service.ts
 import { createClient } from "@/utils/supabase/client";
+import {
+  ArticleComment,
+  CreateCommentPayload,
+  ReplyCommentPayload,
+} from "@/types/article";
 
 export const ArticleService = {
   // Read records using pagination, search filters, and full taxonomy joins
@@ -599,5 +604,129 @@ export const ArticleService = {
 
     if (error) throw error;
     return data.share_active;
+  },
+
+  // ==========================================
+  // EDITORIAL COMMENTS SYSTEM
+  // ==========================================
+
+  async getArticleComments(
+    articleId: number | string,
+  ): Promise<ArticleComment[]> {
+    const supabase = createClient();
+
+    try {
+      const { data, error } = await supabase
+        .from("article_comment")
+        .select("*")
+        .eq("article_id", Number(articleId))
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        console.warn("Failed to fetch article comments:", error.message);
+        return [];
+      }
+
+      // Reconstruct threaded hierarchy
+      const roots: ArticleComment[] = [];
+      const map = new Map<number, ArticleComment>();
+
+      (data || []).forEach((c: any) => {
+        map.set(c.id, { ...c, replies: [] });
+      });
+
+      (data || []).forEach((c: any) => {
+        if (c.parent_id && map.has(c.parent_id)) {
+          map.get(c.parent_id)!.replies!.push(map.get(c.id)!);
+        } else if (!c.parent_id) {
+          roots.push(map.get(c.id)!);
+        }
+      });
+
+      return roots;
+    } catch (err) {
+      console.warn("Error in getArticleComments:", err);
+      return [];
+    }
+  },
+
+  async createArticleComment(
+    payload: CreateCommentPayload,
+  ): Promise<ArticleComment> {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("article_comment")
+      .insert({
+        article_id: payload.article_id,
+        block_index:
+          payload.block_index !== undefined ? payload.block_index : null,
+        selected_text: payload.selected_text || null,
+        content: payload.content,
+        user_email: payload.user_email,
+        user_name: payload.user_name || payload.user_email.split("@")[0],
+        is_resolved: false,
+      })
+      .select("*")
+      .single();
+
+    if (error) throw error;
+    return { ...data, replies: [] };
+  },
+
+  async replyArticleComment(
+    payload: ReplyCommentPayload,
+  ): Promise<ArticleComment> {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("article_comment")
+      .insert({
+        article_id: payload.article_id,
+        parent_id: payload.parent_id,
+        content: payload.content,
+        user_email: payload.user_email,
+        user_name: payload.user_name || payload.user_email.split("@")[0],
+        is_resolved: false,
+      })
+      .select("*")
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async toggleResolveComment(
+    commentId: number,
+    isResolved: boolean,
+    userEmail: string,
+  ): Promise<ArticleComment> {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("article_comment")
+      .update({
+        is_resolved: isResolved,
+        resolved_by: isResolved ? userEmail : null,
+        resolved_at: isResolved ? new Date().toISOString() : null,
+      })
+      .eq("id", commentId)
+      .select("*")
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async deleteArticleComment(commentId: number): Promise<boolean> {
+    const supabase = createClient();
+
+    const { error } = await supabase
+      .from("article_comment")
+      .delete()
+      .eq("id", commentId);
+
+    if (error) throw error;
+    return true;
   },
 };

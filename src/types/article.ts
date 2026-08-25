@@ -65,3 +65,37 @@ export interface EditFormState {
   cta_internal_link: string;
   gdrive_draft_content?: string;
 }
+
+export interface ArticleComment {
+  id: number;
+  article_id: number;
+  block_index: number | null;
+  selected_text?: string | null;
+  content: string;
+  user_email: string;
+  user_name?: string | null;
+  parent_id?: number | null;
+  is_resolved: boolean;
+  resolved_by?: string | null;
+  resolved_at?: string | null;
+  created_at: string;
+  updated_at: string;
+  replies?: ArticleComment[];
+}
+
+export interface CreateCommentPayload {
+  article_id: number;
+  block_index?: number | null;
+  selected_text?: string | null;
+  content: string;
+  user_email: string;
+  user_name?: string | null;
+}
+
+export interface ReplyCommentPayload {
+  article_id: number;
+  parent_id: number;
+  content: string;
+  user_email: string;
+  user_name?: string | null;
+}

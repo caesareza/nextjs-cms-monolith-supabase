@@ -117,9 +117,9 @@ export default function EditArticleClient({
     "Organic Strategy";
   const formattedMonth = initialData.production_month
     ? new Date(initialData.production_month).toLocaleDateString("en-US", {
-      month: "short",
-      year: "numeric",
-    })
+        month: "short",
+        year: "numeric",
+      })
     : "—";
 
   const handleUpdate = async (e: React.FormEvent) => {
@@ -688,10 +688,11 @@ export default function EditArticleClient({
                     <div key={log.id} className="relative group/item">
                       {/* Timeline Dot Indicator */}
                       <span
-                        className={`absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full border-2 border-white shadow-xs ${hasBackup
-                          ? "bg-brand-accent animate-pulse"
-                          : "bg-slate-350"
-                          }`}
+                        className={`absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full border-2 border-white shadow-xs ${
+                          hasBackup
+                            ? "bg-brand-accent animate-pulse"
+                            : "bg-slate-350"
+                        }`}
                       />
 
                       <div className="space-y-1">

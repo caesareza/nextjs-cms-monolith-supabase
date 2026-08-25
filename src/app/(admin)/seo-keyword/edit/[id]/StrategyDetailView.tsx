@@ -359,18 +359,20 @@ export default function StrategyDetailView({
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`pb-4 text-xs font-black uppercase tracking-wider border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${isActive
-                  ? "border-brand-accent text-brand-accent"
-                  : "border-transparent text-slate-400 hover:text-slate-650"
-                  }`}
+                className={`pb-4 text-xs font-black uppercase tracking-wider border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                  isActive
+                    ? "border-brand-accent text-brand-accent"
+                    : "border-transparent text-slate-400 hover:text-slate-650"
+                }`}
               >
                 {tab.name}
                 {tab.count !== null && (
                   <span
-                    className={`text-[8px] font-black px-1.5 py-0.5 rounded-full ${isActive
-                      ? "bg-brand-accent/10 text-brand-accent"
-                      : "bg-slate-100 text-slate-400"
-                      }`}
+                    className={`text-[8px] font-black px-1.5 py-0.5 rounded-full ${
+                      isActive
+                        ? "bg-brand-accent/10 text-brand-accent"
+                        : "bg-slate-100 text-slate-400"
+                    }`}
                   >
                     {tab.count}
                   </span>
@@ -582,9 +584,9 @@ export default function StrategyDetailView({
                     <p className="text-sm font-bold text-slate-800 mt-1 pl-[17px]">
                       {form.production_month
                         ? new Date(form.production_month).toLocaleDateString(
-                          "id-ID",
-                          { month: "long", year: "numeric" },
-                        )
+                            "id-ID",
+                            { month: "long", year: "numeric" },
+                          )
                         : "—"}
                     </p>
                   )}
@@ -894,7 +896,7 @@ export default function StrategyDetailView({
                         </span>
                       </div>
                     ) : marketingAssets.filter((a) => a.asset_type === "cta")
-                      .length > 0 ? (
+                        .length > 0 ? (
                       marketingAssets
                         .filter((a) => a.asset_type === "cta")
                         .map((a, i) => (
@@ -938,8 +940,8 @@ export default function StrategyDetailView({
                         </span>
                       </div>
                     ) : marketingAssets.filter(
-                      (a) => a.asset_type === "product",
-                    ).length > 0 ? (
+                        (a) => a.asset_type === "product",
+                      ).length > 0 ? (
                       marketingAssets
                         .filter((a) => a.asset_type === "product")
                         .map((a, i) => (
