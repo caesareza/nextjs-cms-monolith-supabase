@@ -47,14 +47,14 @@ export default async function Page({
   return (
     <div className="max-w-7xl space-y-5">
       {/* 1. Header & Navigation */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <Link
           href="/article"
-          className="flex items-center gap-2 text-slate-400 hover:text-brand-accent font-black uppercase text-[10px] tracking-widest transition-all"
+          className="inline-flex items-center gap-2 text-slate-400 hover:text-brand-accent font-black uppercase text-[10px] tracking-widest transition-all w-fit shrink-0"
         >
           <ChevronLeft size={16} /> Production Roadmap
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center flex-wrap gap-2.5 sm:gap-3">
           <ShareConsole
             articleId={Number(id)}
             initialShareToken={article.share_token || ""}
@@ -63,7 +63,7 @@ export default async function Page({
 
           <Link
             href={`/article/edit/${id}`}
-            className="px-6 py-2.5 bg-brand-accent hover:bg-brand-navy text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-md shadow-brand-accent/15 transition-all"
+            className="px-5 sm:px-6 py-2.5 bg-brand-accent hover:bg-brand-navy text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-md shadow-brand-accent/15 transition-all whitespace-nowrap shrink-0 inline-flex items-center justify-center"
           >
             Edit Article
           </Link>

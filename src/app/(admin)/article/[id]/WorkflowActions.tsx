@@ -63,7 +63,7 @@ export default function WorkflowActions({ article }: WorkflowProps) {
   // 1. Final State: Already Published
   if (status === "published") {
     return (
-      <div className="flex items-center gap-2 px-6 py-2.5 bg-emerald-50 text-emerald-600 rounded-2xl text-[10px] font-black border border-emerald-100 uppercase tracking-[0.2em] shadow-sm">
+      <div className="flex items-center gap-2 px-4 sm:px-6 py-2.5 bg-emerald-50 text-emerald-600 rounded-xl text-[10px] font-black border border-emerald-100 uppercase tracking-[0.2em] shadow-sm shrink-0 whitespace-nowrap">
         <Globe size={14} /> Live on Production
       </div>
     );
@@ -72,9 +72,9 @@ export default function WorkflowActions({ article }: WorkflowProps) {
   return (
     <>
       {/* THE MAIN ACTION BUTTONS */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center flex-wrap gap-2.5 sm:gap-3 shrink-0">
         {loading && (
-          <Loader2 size={18} className="animate-spin text-brand-accent" />
+          <Loader2 size={18} className="animate-spin text-brand-accent shrink-0" />
         )}
 
         {/* STAGE: DRAFT -> READY FOR REVIEW */}
@@ -82,7 +82,7 @@ export default function WorkflowActions({ article }: WorkflowProps) {
           <button
             disabled={loading}
             onClick={() => handleUpdate("ready for review", "pending")}
-            className="flex items-center gap-2 px-6 py-2.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all cursor-pointer disabled:bg-slate-105 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed shadow-lg shadow-slate-200"
+            className="flex items-center gap-2 px-5 sm:px-6 py-2.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all cursor-pointer disabled:bg-slate-105 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed shadow-lg shadow-slate-200 shrink-0 whitespace-nowrap"
           >
             <Send size={14} /> Submit for Review
           </button>
@@ -93,7 +93,7 @@ export default function WorkflowActions({ article }: WorkflowProps) {
           <button
             disabled={loading}
             onClick={() => handleUpdate("ready for review", "approved")}
-            className="flex items-center gap-2 px-6 py-2.5 bg-brand-accent text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-brand-accent/20 cursor-pointer hover:bg-brand-navy transition-all disabled:bg-slate-105 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-5 sm:px-6 py-2.5 bg-brand-accent text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-brand-accent/20 cursor-pointer hover:bg-brand-navy transition-all disabled:bg-slate-105 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed shrink-0 whitespace-nowrap"
           >
             <CheckCircle size={14} /> Approve Content
           </button>
@@ -103,7 +103,7 @@ export default function WorkflowActions({ article }: WorkflowProps) {
         {status !== "published" && !showUrlInput && (
           <button
             onClick={() => setShowUrlInput(true)}
-            className="flex items-center gap-2 px-6 py-2.5 bg-brand-accent text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-brand-accent/20 cursor-pointer animate-pulse active:scale-95 hover:bg-brand-navy transition-all"
+            className="flex items-center gap-2 px-5 sm:px-6 py-2.5 bg-brand-accent text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-brand-accent/20 cursor-pointer animate-pulse active:scale-95 hover:bg-brand-navy transition-all shrink-0 whitespace-nowrap"
           >
             <Globe size={14} /> Finalize Publication
           </button>

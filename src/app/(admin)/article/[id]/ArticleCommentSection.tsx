@@ -47,24 +47,24 @@ export default function ArticleCommentSection({
   return (
     <>
       {/* Editorial Feedback Sticky / Quick Bar */}
-      <div className="flex items-center justify-between p-3 bg-slate-50 border border-slate-200/80 rounded-xl mb-4 text-xs select-none">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-lg bg-brand-accent/10 text-brand-accent flex items-center justify-center font-bold">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-slate-50 border border-slate-200/80 rounded-xl mb-4 text-xs select-none">
+        <div className="flex items-center flex-wrap gap-2">
+          <div className="w-6 h-6 rounded-lg bg-brand-accent/10 text-brand-accent flex items-center justify-center font-bold shrink-0">
             <MessageSquare size={13} />
           </div>
-          <span className="font-bold text-slate-700">
+          <span className="font-bold text-slate-700 whitespace-nowrap">
             Editorial Review & Feedback
           </span>
           {unresolvedCount > 0 ? (
-            <span className="px-2 py-0.5 bg-brand-accent text-white text-[9px] font-black uppercase tracking-wider rounded-full shadow-2xs">
+            <span className="px-2 py-0.5 bg-brand-accent text-white text-[9px] font-black uppercase tracking-wider rounded-full shadow-2xs whitespace-nowrap">
               {unresolvedCount} Action Required
             </span>
           ) : totalCount > 0 ? (
-            <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[9px] font-black uppercase tracking-wider rounded-full flex items-center gap-1">
+            <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[9px] font-black uppercase tracking-wider rounded-full flex items-center gap-1 whitespace-nowrap">
               <CheckCircle2 size={10} /> All Resolved
             </span>
           ) : (
-            <span className="text-[10px] text-slate-400 font-medium">
+            <span className="text-[10px] text-slate-400 font-medium whitespace-nowrap">
               No comments yet
             </span>
           )}
@@ -73,7 +73,7 @@ export default function ArticleCommentSection({
         <button
           type="button"
           onClick={() => setIsDrawerOpen(true)}
-          className="flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shadow-3xs hover:border-slate-300 cursor-pointer"
+          className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shadow-3xs hover:border-slate-300 cursor-pointer shrink-0 whitespace-nowrap"
         >
           <span>Open Review Drawer ({totalCount})</span>
           <ChevronRight size={12} className="text-slate-400" />
