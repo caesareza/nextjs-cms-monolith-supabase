@@ -1,5 +1,10 @@
 // app/(admin)/article/service.ts
 import { createClient } from "@/utils/supabase/client";
+import {
+  ArticleComment,
+  CreateCommentPayload,
+  ReplyCommentPayload,
+} from "@/types/article";
 
 export const ArticleService = {
   // Read records using pagination, search filters, and full taxonomy joins
@@ -348,6 +353,14 @@ export const ArticleService = {
   ) {
     const supabase = createClient();
 
+    // 1. Fetch current status, approval, and content before saving the update
+    const { data: oldArticle } = await supabase
+      .from("article")
+      .select("status, approval, content")
+      .eq("id", id)
+      .single();
+
+    // 2. Perform the update
     const { data, error } = await supabase
       .from("article")
       .update({
@@ -358,6 +371,33 @@ export const ArticleService = {
       .single();
 
     if (error) throw error;
+
+    // 3. Log user action in database logs
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const userEmail = user?.email || null;
+
+      const isContentChanged =
+        oldArticle && oldArticle.content !== payload.content;
+
+      await supabase.from("workflow_logs").insert({
+        article_id: Number(id),
+        user_email: userEmail,
+        old_status: oldArticle?.status || null,
+        new_status: payload.status || oldArticle?.status || null,
+        old_approval: oldArticle?.approval || null,
+        new_approval: payload.approval || oldArticle?.approval || null,
+        notes: isContentChanged
+          ? "Draft content body updated"
+          : "Article metadata updated",
+        content_backup: isContentChanged ? oldArticle.content : null,
+      });
+    } catch (logErr) {
+      console.error("Failed to write update workflow log:", logErr);
+    }
+
     return data;
   },
 
@@ -419,6 +459,56 @@ export const ArticleService = {
     } = await supabase.auth.getUser();
     const userEmail = user?.email;
 
+    let durationSeconds: number | null = null;
+    let logNotes = url_published ? `Published to: ${url_published}` : null;
+
+    if (approval === "approved") {
+      try {
+        // Query the article's created_at
+        const { data: articleObj } = await supabase
+          .from("article")
+          .select("created_at")
+          .eq("id", id)
+          .single();
+
+        let startTime = new Date(articleObj?.created_at || new Date());
+
+        // Find the most recent log where new_approval === "pending"
+        const { data: logs } = await supabase
+          .from("workflow_logs")
+          .select("created_at")
+          .eq("article_id", Number(id))
+          .eq("new_approval", "pending")
+          .order("id", { ascending: false })
+          .limit(1);
+
+        if (logs && logs.length > 0) {
+          startTime = new Date(logs[0].created_at);
+        }
+
+        const now = new Date();
+        const diffMs = now.getTime() - startTime.getTime();
+        durationSeconds = Math.max(0, Math.floor(diffMs / 1000));
+
+        const formatSeconds = (sec: number) => {
+          const days = Math.floor(sec / (3600 * 24));
+          const hours = Math.floor((sec % (3600 * 24)) / 3600);
+          const minutes = Math.floor((sec % 3600) / 60);
+          if (days > 0) return `${days}d ${hours}h ${minutes}m`;
+          if (hours > 0) return `${hours}h ${minutes}m`;
+          return `${minutes}m`;
+        };
+
+        logNotes = `Approved. Review took ${formatSeconds(durationSeconds)}`;
+      } catch (durationErr) {
+        console.error("Failed to calculate approval duration:", durationErr);
+      }
+    }
+
+    if (approval === "rejected" && internal_notes) {
+      logNotes = `Rejected by Director. Reason: ${internal_notes}`;
+    }
+
     const updateData: any = {
       status,
       approval,
@@ -429,16 +519,28 @@ export const ArticleService = {
     if (url_published) updateData.url_published = url_published;
     if (internal_notes) updateData.internal_notes = internal_notes;
 
+    const updateDataWithDuration = { ...updateData };
+    if (durationSeconds !== null) {
+      updateDataWithDuration.approval_duration_seconds = durationSeconds;
+    }
+
     const { error: updateError } = await supabase
       .from("article")
-      .update(updateData)
+      .update(updateDataWithDuration)
       .eq("id", id);
 
-    if (updateError) throw updateError;
+    // Fallback in case approval_duration_seconds column migration hasn't run yet
+    if (updateError) {
+      console.warn(
+        "Update with duration failed, retrying without duration column:",
+        updateError,
+      );
+      const { error: retryError } = await supabase
+        .from("article")
+        .update(updateData)
+        .eq("id", id);
 
-    let logNotes = url_published ? `Published to: ${url_published}` : null;
-    if (approval === "rejected" && internal_notes) {
-      logNotes = `Rejected by Director. Reason: ${internal_notes}`;
+      if (retryError) throw retryError;
     }
 
     await supabase.from("workflow_logs").insert({
@@ -502,5 +604,129 @@ export const ArticleService = {
 
     if (error) throw error;
     return data.share_active;
+  },
+
+  // ==========================================
+  // EDITORIAL COMMENTS SYSTEM
+  // ==========================================
+
+  async getArticleComments(
+    articleId: number | string,
+  ): Promise<ArticleComment[]> {
+    const supabase = createClient();
+
+    try {
+      const { data, error } = await supabase
+        .from("article_comment")
+        .select("*")
+        .eq("article_id", Number(articleId))
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        console.warn("Failed to fetch article comments:", error.message);
+        return [];
+      }
+
+      // Reconstruct threaded hierarchy
+      const roots: ArticleComment[] = [];
+      const map = new Map<number, ArticleComment>();
+
+      (data || []).forEach((c: any) => {
+        map.set(c.id, { ...c, replies: [] });
+      });
+
+      (data || []).forEach((c: any) => {
+        if (c.parent_id && map.has(c.parent_id)) {
+          map.get(c.parent_id)!.replies!.push(map.get(c.id)!);
+        } else if (!c.parent_id) {
+          roots.push(map.get(c.id)!);
+        }
+      });
+
+      return roots;
+    } catch (err) {
+      console.warn("Error in getArticleComments:", err);
+      return [];
+    }
+  },
+
+  async createArticleComment(
+    payload: CreateCommentPayload,
+  ): Promise<ArticleComment> {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("article_comment")
+      .insert({
+        article_id: payload.article_id,
+        block_index:
+          payload.block_index !== undefined ? payload.block_index : null,
+        selected_text: payload.selected_text || null,
+        content: payload.content,
+        user_email: payload.user_email,
+        user_name: payload.user_name || payload.user_email.split("@")[0],
+        is_resolved: false,
+      })
+      .select("*")
+      .single();
+
+    if (error) throw error;
+    return { ...data, replies: [] };
+  },
+
+  async replyArticleComment(
+    payload: ReplyCommentPayload,
+  ): Promise<ArticleComment> {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("article_comment")
+      .insert({
+        article_id: payload.article_id,
+        parent_id: payload.parent_id,
+        content: payload.content,
+        user_email: payload.user_email,
+        user_name: payload.user_name || payload.user_email.split("@")[0],
+        is_resolved: false,
+      })
+      .select("*")
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async toggleResolveComment(
+    commentId: number,
+    isResolved: boolean,
+    userEmail: string,
+  ): Promise<ArticleComment> {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("article_comment")
+      .update({
+        is_resolved: isResolved,
+        resolved_by: isResolved ? userEmail : null,
+        resolved_at: isResolved ? new Date().toISOString() : null,
+      })
+      .eq("id", commentId)
+      .select("*")
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async deleteArticleComment(commentId: number): Promise<boolean> {
+    const supabase = createClient();
+
+    const { error } = await supabase
+      .from("article_comment")
+      .delete()
+      .eq("id", commentId);
+
+    if (error) throw error;
+    return true;
   },
 };

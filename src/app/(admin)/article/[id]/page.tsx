@@ -21,6 +21,7 @@ import {
 import WorkflowActions from "./WorkflowActions";
 import ArticleHistory from "./ArticleHistory";
 import ShareConsole from "./ShareConsole";
+import ArticleCommentSection from "./ArticleCommentSection";
 
 export default async function Page({
   params,
@@ -29,9 +30,10 @@ export default async function Page({
 }) {
   const { id } = await params;
 
-  // Fetch clean consolidated strategy dataset and timeline tracking arrays
+  // Fetch clean consolidated strategy dataset, comments and timeline tracking arrays
   const article = await ArticleService.getArticleById(Number(id));
   const logs = await ArticleService.getWorkflowLogs(id);
+  const comments = await ArticleService.getArticleComments(id);
 
   const formatProductionMonth = (dateString: string) => {
     if (!dateString) return "-";
@@ -98,10 +100,11 @@ export default async function Page({
               </h1>
             </div>
 
-            {/* Main Content Body Canvas */}
-            <div
-              className="prose prose-slate max-w-none prose-p:leading-relaxed prose-headings:text-slate-900"
-              dangerouslySetInnerHTML={{ __html: article.content }}
+            {/* Main Content Body Canvas with Interactive Inline & General Comments */}
+            <ArticleCommentSection
+              articleId={Number(id)}
+              content={article.content}
+              initialComments={comments}
             />
 
             {/* Old Content Reference Layout */}

@@ -1,17 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { ArticleService } from "../service";
 import {
-  Send,
-  CheckCircle,
-  Globe,
-  Loader2,
-  Link2,
   AlertCircle,
   ArrowRight,
+  CheckCircle,
+  Globe,
+  Link2,
+  Loader2,
+  Send,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { ArticleService } from "../service";
 
 interface WorkflowProps {
   article: {
@@ -99,17 +99,15 @@ export default function WorkflowActions({ article }: WorkflowProps) {
           </button>
         )}
 
-        {/* STAGE: APPROVED -> PUBLISH (Opens the Overlay) */}
-        {status === "ready for review" &&
-          approval === "approved" &&
-          !showUrlInput && (
-            <button
-              onClick={() => setShowUrlInput(true)}
-              className="flex items-center gap-2 px-6 py-2.5 bg-brand-accent text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-brand-accent/20 cursor-pointer animate-pulse active:scale-95 hover:bg-brand-navy transition-all"
-            >
-              <Globe size={14} /> Finalize Publication
-            </button>
-          )}
+        {/* STAGE: FINALIZE PUBLICATION (Available for any non-published status) */}
+        {status !== "published" && !showUrlInput && (
+          <button
+            onClick={() => setShowUrlInput(true)}
+            className="flex items-center gap-2 px-6 py-2.5 bg-brand-accent text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-brand-accent/20 cursor-pointer animate-pulse active:scale-95 hover:bg-brand-navy transition-all"
+          >
+            <Globe size={14} /> Finalize Publication
+          </button>
+        )}
       </div>
 
       {/* THE GLOBAL PUBLICATION OVERLAY */}
