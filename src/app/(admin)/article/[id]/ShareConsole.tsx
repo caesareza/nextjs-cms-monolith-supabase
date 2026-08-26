@@ -68,13 +68,13 @@ export default function ShareConsole({
   };
 
   return (
-    <div className="flex items-center gap-2 select-none">
+    <div className="flex items-center flex-wrap gap-2 select-none">
       {/* 1. Toggle Share Active status */}
       <button
         type="button"
         onClick={handleToggleActive}
         disabled={updating}
-        className={`px-4 py-2.5 rounded-2xl border text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 ${
+        className={`px-3.5 sm:px-4 py-2.5 rounded-xl border text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap ${
           shareActive
             ? "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100/50"
             : "bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100/50"
@@ -91,7 +91,7 @@ export default function ShareConsole({
         type="button"
         onClick={handleCopyShareLink}
         disabled={!shareActive || updating}
-        className={`px-4 py-2.5 text-xs font-bold rounded-2xl border transition-all flex items-center gap-1.5 justify-center min-w-[120px] ${
+        className={`px-3.5 sm:px-4 py-2.5 text-xs font-bold rounded-xl border transition-all flex items-center gap-1.5 justify-center shrink-0 whitespace-nowrap ${
           !shareActive
             ? "bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed"
             : copied
@@ -114,7 +114,7 @@ export default function ShareConsole({
           href={`/shared/${shareToken}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-10 h-10 rounded-2xl bg-white border border-slate-200 hover:border-slate-350 hover:bg-slate-50 transition-all flex items-center justify-center cursor-pointer shrink-0"
+          className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border border-slate-200 hover:border-slate-350 hover:bg-slate-50 transition-all flex items-center justify-center cursor-pointer shrink-0"
           title="Open public preview page"
         >
           <ExternalLink size={14} className="text-slate-500" />
@@ -127,7 +127,7 @@ export default function ShareConsole({
         onClick={handleRegenerate}
         disabled={updating}
         title="Regenerate secure token to invalidate old links"
-        className="w-10 h-10 rounded-2xl bg-white border border-slate-200 hover:border-slate-350 hover:bg-slate-50 transition-all flex items-center justify-center cursor-pointer shrink-0 disabled:opacity-50"
+        className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border border-slate-200 hover:border-slate-350 hover:bg-slate-50 transition-all flex items-center justify-center cursor-pointer shrink-0 disabled:opacity-50"
       >
         {updating ? (
           <Loader2 size={14} className="animate-spin text-slate-400" />
@@ -138,3 +138,4 @@ export default function ShareConsole({
     </div>
   );
 }
+
