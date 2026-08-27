@@ -45,28 +45,30 @@ export async function proxy(request: NextRequest) {
   const otpVerified =
     request.cookies.get("posthinks_otp_verified")?.value === "true";
 
-  // Core Guardrails
-  if (!user) {
-    if (!isLoginPage) {
-      return NextResponse.redirect(new URL("/login", request.url));
+  // Guardrail 1: Not fully authenticated or OTP not verified
+  if (!user || !otpVerified) {
+    // Allow access to login page
+    if (isLoginPage) {
+      return response;
     }
-    return response;
+
+    // Allow access to verify page ONLY if user just authenticated (has session awaiting OTP)
+    if (isVerifyPage && user) {
+      return response;
+    }
+
+    // For all other pages (or if unauthenticated on verify page), redirect to login
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // User is authenticated but needs OTP verification
-  if (!otpVerified) {
-    if (!isVerifyPage) {
-      return NextResponse.redirect(new URL("/login/verify", request.url));
-    }
-  } else {
-    // User is fully authenticated and verified
-    if (isLoginPage || isVerifyPage) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
+  // Guardrail 2: Fully authenticated and OTP verified
+  if (isLoginPage || isVerifyPage) {
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return response;
 }
+
 
 export const config = {
   matcher: [
