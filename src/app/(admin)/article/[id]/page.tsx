@@ -17,6 +17,8 @@ import {
   Sparkles,
   FolderKanban,
   ShieldCheck,
+  FileText,
+  Search,
 } from "lucide-react";
 import WorkflowActions from "./WorkflowActions";
 import ArticleHistory from "./ArticleHistory";
@@ -159,6 +161,67 @@ export default async function Page({
               label="Target Keyword"
               value={article.target_keyword}
             />
+
+            {/* Related Keywords Display */}
+            <div className="space-y-1">
+              <span className="block text-[9px] font-black text-slate-400 uppercase tracking-tighter">
+                Related Keywords
+              </span>
+              <div className="flex items-start gap-2">
+                <div className="text-slate-300 mt-0.5">
+                  <Search size={16} />
+                </div>
+                {article.related_keyword ? (
+                  <div className="flex flex-wrap gap-1.5 pt-0.5">
+                    {article.related_keyword
+                      .split(/[\n,]+/)
+                      .map((kw: string) => kw.trim())
+                      .filter(Boolean)
+                      .map((kw: string, idx: number) => (
+                        <span
+                          key={idx}
+                          className="px-2 py-0.5 bg-slate-100 border border-slate-200/80 rounded-md text-[10px] font-bold text-slate-700 font-mono"
+                        >
+                          {kw}
+                        </span>
+                      ))}
+                  </div>
+                ) : (
+                  <span className="text-xs font-bold text-slate-400 italic">
+                    -
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Product Tag Display */}
+            <SidebarItem
+              icon={<Tag size={16} />}
+              label="Product Tag"
+              value={article.product?.name}
+            />
+
+            {/* Meta Description Tag Display */}
+            <div className="space-y-1.5">
+              <span className="block text-[9px] font-black text-slate-400 uppercase tracking-tighter">
+                Meta Description
+              </span>
+              <div className="flex items-start gap-2">
+                <div className="text-slate-300 mt-0.5">
+                  <FileText size={16} />
+                </div>
+                {article.meta_description ? (
+                  <p className="text-xs font-medium text-slate-700 leading-relaxed bg-slate-50 border border-slate-100 p-2.5 rounded-xl flex-1">
+                    {article.meta_description}
+                  </p>
+                ) : (
+                  <span className="text-xs font-bold text-slate-400 italic">
+                    -
+                  </span>
+                )}
+              </div>
+            </div>
+
             <SidebarItem
               icon={<ExternalLink size={16} />}
               label="URL Published"
