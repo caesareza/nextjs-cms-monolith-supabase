@@ -24,6 +24,7 @@ import WorkflowActions from "./WorkflowActions";
 import ArticleHistory from "./ArticleHistory";
 import ShareConsole from "./ShareConsole";
 import ArticleCommentSection from "./ArticleCommentSection";
+import ViewHtmlModal from "./ViewHtmlModal";
 
 export default async function Page({
   params,
@@ -57,6 +58,12 @@ export default async function Page({
           <ChevronLeft size={16} /> Production Roadmap
         </Link>
         <div className="flex items-center flex-wrap gap-2.5 sm:gap-3">
+          <ViewHtmlModal
+            title={article.title}
+            htmlContent={article.content || ""}
+            jobCode={article.job_code}
+          />
+
           <ShareConsole
             articleId={Number(id)}
             initialShareToken={article.share_token || ""}
