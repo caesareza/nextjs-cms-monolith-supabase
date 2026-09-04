@@ -63,6 +63,10 @@ export const ArticleService = {
                 cta_internal_link,
                 gdrive_draft_content,
                 created_at,
+                content_approved_by_name,
+                content_approved_by_email,
+                content_approved_at,
+                content_approval_notes,
                 section:section_id(id, name),
                 category:category_id(id, name),
                 writer:writer_id(id, name),
@@ -152,6 +156,10 @@ export const ArticleService = {
           gdrive_draft_content: item.gdrive_draft_content,
           meta_description: item.meta_description,
           cta_internal_link: item.cta_internal_link,
+          content_approved_by_name: item.content_approved_by_name,
+          content_approved_by_email: item.content_approved_by_email,
+          content_approved_at: item.content_approved_at,
+          content_approval_notes: item.content_approval_notes,
         };
       }),
       total: count || 0,
@@ -604,6 +612,93 @@ export const ArticleService = {
 
     if (error) throw error;
     return data.share_active;
+  },
+
+  async submitExternalShareReview(payload: {
+    token: string;
+    action: "approve" | "revision";
+    approverName: string;
+    approverEmail: string;
+    notes?: string;
+  }) {
+    const { token, action, approverName, approverEmail, notes } = payload;
+    const supabase = createClient();
+
+    // 1. Fetch current article by share_token
+    const { data: article, error: fetchErr } = await supabase
+      .from("article")
+      .select("id, title, status, approval, share_active")
+      .eq("share_token", token)
+      .single();
+
+    if (fetchErr || !article) {
+      throw new Error("Invalid or expired preview token.");
+    }
+
+    if (!article.share_active) {
+      throw new Error("Shared preview has been paused by the administrator.");
+    }
+
+    const reviewerTag = `${approverName.trim()} <${approverEmail.trim()}> (External Stakeholder)`;
+    const nowIso = new Date().toISOString();
+
+    if (action === "approve") {
+      const { data: updated, error: updateErr } = await supabase
+        .from("article")
+        .update({
+          status: "approved",
+          content_approved_by_name: approverName.trim(),
+          content_approved_by_email: approverEmail.trim(),
+          content_approved_at: nowIso,
+          content_approval_notes: notes?.trim() || null,
+        })
+        .eq("id", article.id)
+        .select()
+        .single();
+
+      if (updateErr) throw updateErr;
+
+      // Insert workflow log
+      await supabase.from("workflow_logs").insert({
+        article_id: Number(article.id),
+        user_email: approverEmail.trim(),
+        old_status: article.status,
+        new_status: "approved",
+        old_approval: article.approval,
+        new_approval: article.approval,
+        notes: notes?.trim()
+          ? `Content approved by ${reviewerTag}. Note: ${notes.trim()}`
+          : `Content approved by ${reviewerTag}`,
+      });
+
+      return updated;
+    } else {
+      // action === "revision"
+      const { data: updated, error: updateErr } = await supabase
+        .from("article")
+        .update({
+          status: "writing",
+          internal_notes: notes?.trim() || "Revision requested by external reviewer",
+        })
+        .eq("id", article.id)
+        .select()
+        .single();
+
+      if (updateErr) throw updateErr;
+
+      // Insert workflow log
+      await supabase.from("workflow_logs").insert({
+        article_id: Number(article.id),
+        user_email: approverEmail.trim(),
+        old_status: article.status,
+        new_status: "writing",
+        old_approval: article.approval,
+        new_approval: article.approval,
+        notes: `Revisions requested by ${reviewerTag}. Remarks: ${notes?.trim() || "None specified"}`,
+      });
+
+      return updated;
+    }
   },
 
   // ==========================================

@@ -2,6 +2,7 @@ import { ArrowLeft, Globe, Search } from "lucide-react";
 import { notFound } from "next/navigation";
 import { ArticleService } from "@/app/(admin)/article/service";
 import StorytellerLogo from "@/components/StorytellerLogo";
+import SharedApprovalBar from "./SharedApprovalBar";
 
 interface PublicViewProps {
   params: Promise<{ id: string }>;
@@ -115,6 +116,17 @@ export default async function PublicSharedArticleView({
           </div>
         </div>
       </header>
+
+      {/* --- STAKEHOLDER CONTENT APPROVAL PORTAL BAR --- */}
+      <SharedApprovalBar
+        shareToken={id}
+        initialStatus={article.status}
+        approverName={article.content_approved_by_name}
+        approverEmail={article.content_approved_by_email}
+        approvedAt={article.content_approved_at}
+        approvalNotes={article.content_approval_notes}
+        articleTitle={article.title}
+      />
 
       {/* --- HERO ARTICLE BANNER FRAME --- */}
       <section className="max-w-7xl mx-auto px-6 pt-8 pb-12">

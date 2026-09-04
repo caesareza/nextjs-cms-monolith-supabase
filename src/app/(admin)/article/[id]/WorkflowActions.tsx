@@ -8,6 +8,7 @@ import {
   Link2,
   Loader2,
   Send,
+  ShieldCheck,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -19,6 +20,8 @@ interface WorkflowProps {
     status: string;
     approval: string;
     title: string;
+    content_approved_by_name?: string | null;
+    content_approved_by_email?: string | null;
   };
 }
 
@@ -28,7 +31,7 @@ export default function WorkflowActions({ article }: WorkflowProps) {
   const [urlPublished, setUrlPublished] = useState("");
   const router = useRouter();
 
-  const { id, status, approval } = article;
+  const { id, status, approval, content_approved_by_name } = article;
 
   // Validation: Must be a valid URL and preferably an OCBC domain
   const isValidUrl =
@@ -77,26 +80,36 @@ export default function WorkflowActions({ article }: WorkflowProps) {
           <Loader2 size={18} className="animate-spin text-brand-accent shrink-0" />
         )}
 
-        {/* STAGE: DRAFT -> READY FOR REVIEW */}
-        {(status === "draft" || status === "progress") && (
+        {/* STAGE: DRAFT / WRITING -> SUBMIT FOR REVIEW */}
+        {(status === "draft" || status === "progress" || status === "writing") && (
           <button
             disabled={loading}
-            onClick={() => handleUpdate("ready for review", "pending")}
+            onClick={() => handleUpdate("ready for review", approval || "pending")}
             className="flex items-center gap-2 px-5 sm:px-6 py-2.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all cursor-pointer disabled:bg-slate-105 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed shadow-lg shadow-slate-200 shrink-0 whitespace-nowrap"
           >
             <Send size={14} /> Submit for Review
           </button>
         )}
 
-        {/* STAGE: REVIEW -> APPROVED */}
-        {status === "ready for review" && approval === "pending" && (
+        {/* STAGE: READY FOR REVIEW -> APPROVE CONTENT */}
+        {status === "ready for review" && (
           <button
             disabled={loading}
-            onClick={() => handleUpdate("ready for review", "approved")}
-            className="flex items-center gap-2 px-5 sm:px-6 py-2.5 bg-brand-accent text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-brand-accent/20 cursor-pointer hover:bg-brand-navy transition-all disabled:bg-slate-105 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed shrink-0 whitespace-nowrap"
+            onClick={() => handleUpdate("approved", "approved")}
+            className="flex items-center gap-2 px-5 sm:px-6 py-2.5 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-600/20 cursor-pointer hover:bg-emerald-700 transition-all disabled:bg-slate-105 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed shrink-0 whitespace-nowrap"
           >
             <CheckCircle size={14} /> Approve Content
           </button>
+        )}
+
+        {/* STAGE: APPROVED BADGE */}
+        {status === "approved" && (
+          <div className="flex items-center gap-2 px-4 py-2.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl text-[10px] font-black uppercase tracking-wider shadow-xs shrink-0 whitespace-nowrap">
+            <ShieldCheck size={15} className="text-emerald-600" />
+            <span>
+              Approved {content_approved_by_name ? `by ${content_approved_by_name}` : ""}
+            </span>
+          </div>
         )}
 
         {/* STAGE: FINALIZE PUBLICATION (Available for any non-published status) */}
