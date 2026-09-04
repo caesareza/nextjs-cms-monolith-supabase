@@ -35,6 +35,7 @@ export interface ArticleDisplay {
   content_approved_by_email?: string | null;
   content_approved_at?: string | null;
   content_approval_notes?: string | null;
+  approval_duration_seconds?: number | null;
 }
 
 export interface ExternalShareReviewPayload {

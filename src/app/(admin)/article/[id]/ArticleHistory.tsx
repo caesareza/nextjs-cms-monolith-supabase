@@ -33,10 +33,19 @@ export default function ArticleHistory({ logs = [] }: { logs: any[] }) {
 
     const pendingLog = [...logs]
       .reverse()
-      .find((l) => l.new_approval === "pending");
+      .find(
+        (l) =>
+          l.new_approval === "pending" ||
+          l.new_status === "ready for review" ||
+          l.old_status === "writing",
+      );
     const approvedLog = [...logs]
       .reverse()
-      .find((l) => l.new_approval === "approved");
+      .find(
+        (l) =>
+          l.new_approval === "approved" ||
+          l.new_status === "approved",
+      );
     const publishedLog = [...logs]
       .reverse()
       .find((l) => l.new_status === "published");

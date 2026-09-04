@@ -481,12 +481,12 @@ export const ArticleService = {
 
         let startTime = new Date(articleObj?.created_at || new Date());
 
-        // Find the most recent log where new_approval === "pending"
+        // Find the most recent log where new_approval === "pending" or new_status === "ready for review"
         const { data: logs } = await supabase
           .from("workflow_logs")
           .select("created_at")
           .eq("article_id", Number(id))
-          .eq("new_approval", "pending")
+          .or("new_approval.eq.pending,new_status.eq.ready for review")
           .order("id", { ascending: false })
           .limit(1);
 
@@ -627,7 +627,7 @@ export const ArticleService = {
     // 1. Fetch current article by share_token
     const { data: article, error: fetchErr } = await supabase
       .from("article")
-      .select("id, title, status, approval, share_active")
+      .select("id, title, status, approval, share_active, created_at")
       .eq("share_token", token)
       .single();
 
@@ -643,20 +643,62 @@ export const ArticleService = {
     const nowIso = new Date().toISOString();
 
     if (action === "approve") {
-      const { data: updated, error: updateErr } = await supabase
+      let durationSeconds: number | null = null;
+      try {
+        let startTime = new Date(article.created_at || new Date());
+        const { data: logs } = await supabase
+          .from("workflow_logs")
+          .select("created_at")
+          .eq("article_id", Number(article.id))
+          .or("new_approval.eq.pending,new_status.eq.ready for review")
+          .order("id", { ascending: false })
+          .limit(1);
+
+        if (logs && logs.length > 0) {
+          startTime = new Date(logs[0].created_at);
+        }
+
+        const diffMs = new Date().getTime() - startTime.getTime();
+        durationSeconds = Math.max(0, Math.floor(diffMs / 1000));
+      } catch (durationErr) {
+        console.error("Failed to calculate approval duration:", durationErr);
+      }
+
+      const updateData: any = {
+        status: "approved",
+        content_approved_by_name: approverName.trim(),
+        content_approved_by_email: approverEmail.trim(),
+        content_approved_at: nowIso,
+        content_approval_notes: notes?.trim() || null,
+      };
+
+      if (durationSeconds !== null) {
+        updateData.approval_duration_seconds = durationSeconds;
+      }
+
+      let updated;
+      const { data, error: updateErr } = await supabase
         .from("article")
-        .update({
-          status: "approved",
-          content_approved_by_name: approverName.trim(),
-          content_approved_by_email: approverEmail.trim(),
-          content_approved_at: nowIso,
-          content_approval_notes: notes?.trim() || null,
-        })
+        .update(updateData)
         .eq("id", article.id)
         .select()
         .single();
 
-      if (updateErr) throw updateErr;
+      if (updateErr) {
+        // Fallback in case approval_duration_seconds column is missing in DB
+        delete updateData.approval_duration_seconds;
+        const { data: retryData, error: retryErr } = await supabase
+          .from("article")
+          .update(updateData)
+          .eq("id", article.id)
+          .select()
+          .single();
+
+        if (retryErr) throw retryErr;
+        updated = retryData;
+      } else {
+        updated = data;
+      }
 
       // Insert workflow log
       await supabase.from("workflow_logs").insert({
