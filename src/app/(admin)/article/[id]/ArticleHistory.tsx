@@ -33,10 +33,19 @@ export default function ArticleHistory({ logs = [] }: { logs: any[] }) {
 
     const pendingLog = [...logs]
       .reverse()
-      .find((l) => l.new_approval === "pending");
+      .find(
+        (l) =>
+          l.new_approval === "pending" ||
+          l.new_status === "ready for review" ||
+          l.old_status === "writing",
+      );
     const approvedLog = [...logs]
       .reverse()
-      .find((l) => l.new_approval === "approved");
+      .find(
+        (l) =>
+          l.new_approval === "approved" ||
+          l.new_status === "approved",
+      );
     const publishedLog = [...logs]
       .reverse()
       .find((l) => l.new_status === "published");
@@ -159,6 +168,9 @@ export default function ArticleHistory({ logs = [] }: { logs: any[] }) {
               const isPublished = log.new_status
                 ?.toLowerCase()
                 .includes("published");
+              const isApproved = log.new_status
+                ?.toLowerCase()
+                .includes("approved");
               const isReview = log.new_status?.toLowerCase().includes("review");
               const isWriting = log.new_status?.toLowerCase().includes("writing");
 
@@ -167,6 +179,8 @@ export default function ArticleHistory({ logs = [] }: { logs: any[] }) {
               if (isPublished) {
                 dotStyle =
                   "bg-emerald-500 ring-4 ring-emerald-100 animate-pulse";
+              } else if (isApproved) {
+                dotStyle = "bg-emerald-600 ring-4 ring-emerald-100";
               } else if (isReview) {
                 dotStyle = "bg-brand-accent ring-4 ring-brand-accent/10";
               } else if (isWriting) {
@@ -294,6 +308,8 @@ function StatusPill({
     const norm = s.toLowerCase().trim();
     if (norm.includes("published"))
       return "bg-emerald-50 text-emerald-700 border-emerald-200";
+    if (norm.includes("approved"))
+      return "bg-emerald-50 text-emerald-800 border-emerald-300 font-black";
     if (norm.includes("review"))
       return "bg-indigo-50 text-indigo-700 border-indigo-200";
     if (norm.includes("writing"))

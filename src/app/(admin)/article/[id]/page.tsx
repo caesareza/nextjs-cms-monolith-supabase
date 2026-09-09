@@ -17,11 +17,14 @@ import {
   Sparkles,
   FolderKanban,
   ShieldCheck,
+  FileText,
+  Search,
 } from "lucide-react";
 import WorkflowActions from "./WorkflowActions";
 import ArticleHistory from "./ArticleHistory";
 import ShareConsole from "./ShareConsole";
 import ArticleCommentSection from "./ArticleCommentSection";
+import ViewHtmlModal from "./ViewHtmlModal";
 
 export default async function Page({
   params,
@@ -55,6 +58,12 @@ export default async function Page({
           <ChevronLeft size={16} /> Production Roadmap
         </Link>
         <div className="flex items-center flex-wrap gap-2.5 sm:gap-3">
+          <ViewHtmlModal
+            title={article.title}
+            htmlContent={article.content || ""}
+            jobCode={article.job_code}
+          />
+
           <ShareConsole
             articleId={Number(id)}
             initialShareToken={article.share_token || ""}
@@ -159,6 +168,67 @@ export default async function Page({
               label="Target Keyword"
               value={article.target_keyword}
             />
+
+            {/* Related Keywords Display */}
+            <div className="space-y-1">
+              <span className="block text-[9px] font-black text-slate-400 uppercase tracking-tighter">
+                Related Keywords
+              </span>
+              <div className="flex items-start gap-2">
+                <div className="text-slate-300 mt-0.5">
+                  <Search size={16} />
+                </div>
+                {article.related_keyword ? (
+                  <div className="flex flex-wrap gap-1.5 pt-0.5">
+                    {article.related_keyword
+                      .split(/[\n,]+/)
+                      .map((kw: string) => kw.trim())
+                      .filter(Boolean)
+                      .map((kw: string, idx: number) => (
+                        <span
+                          key={idx}
+                          className="px-2 py-0.5 bg-slate-100 border border-slate-200/80 rounded-md text-[10px] font-bold text-slate-700 font-mono"
+                        >
+                          {kw}
+                        </span>
+                      ))}
+                  </div>
+                ) : (
+                  <span className="text-xs font-bold text-slate-400 italic">
+                    -
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Product Tag Display */}
+            <SidebarItem
+              icon={<Tag size={16} />}
+              label="Product Tag"
+              value={article.product?.name}
+            />
+
+            {/* Meta Description Tag Display */}
+            <div className="space-y-1.5">
+              <span className="block text-[9px] font-black text-slate-400 uppercase tracking-tighter">
+                Meta Description
+              </span>
+              <div className="flex items-start gap-2">
+                <div className="text-slate-300 mt-0.5">
+                  <FileText size={16} />
+                </div>
+                {article.meta_description ? (
+                  <p className="text-xs font-medium text-slate-700 leading-relaxed bg-slate-50 border border-slate-100 p-2.5 rounded-xl flex-1">
+                    {article.meta_description}
+                  </p>
+                ) : (
+                  <span className="text-xs font-bold text-slate-400 italic">
+                    -
+                  </span>
+                )}
+              </div>
+            </div>
+
             <SidebarItem
               icon={<ExternalLink size={16} />}
               label="URL Published"
@@ -280,16 +350,26 @@ export default async function Page({
                   Status
                 </span>
                 <span
-                  className={`text-[10px] font-black px-3 py-1 rounded-full ${article.status === "Published" ? "bg-emerald-500 text-white" : "bg-amber-400 text-slate-900"}`}
+                  className={`text-[10px] font-black px-3 py-1 rounded-full capitalize ${
+                    article.status === "published" || article.status === "Published"
+                      ? "bg-emerald-500 text-white"
+                      : article.status === "approved"
+                      ? "bg-emerald-400 text-slate-950 font-black"
+                      : article.status === "ready for review"
+                      ? "bg-indigo-500 text-white"
+                      : "bg-amber-400 text-slate-900"
+                  }`}
                 >
                   {article.status}
                 </span>
               </div>
+
+              {/* Stage 1 Strategy Approval */}
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black text-slate-500 uppercase">
-                  Approval
+                  Stage 1: Strategy
                 </span>
-                <span className="flex items-center gap-2 text-xs font-bold">
+                <span className="flex items-center gap-1.5 text-xs font-bold">
                   {article.approval === "approved" ||
                   article.approval === "Approved" ? (
                     <CheckCircle2 size={14} className="text-emerald-400" />
@@ -300,6 +380,63 @@ export default async function Page({
                     {article.approval || "pending"}
                   </span>
                 </span>
+              </div>
+
+              {/* Stage 2 Content Approval */}
+              <div className="border-t border-slate-800 pt-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-black text-slate-500 uppercase">
+                    Stage 2: Content Review
+                  </span>
+                  <span className="flex items-center gap-1.5 text-xs font-bold">
+                    {article.status === "approved" ||
+                    article.status === "published" ||
+                    article.content_approved_at ? (
+                      <CheckCircle2 size={14} className="text-emerald-400" />
+                    ) : (
+                      <Clock size={14} className="text-amber-400" />
+                    )}
+                    <span className="capitalize text-slate-200">
+                      {article.status === "approved" ||
+                      article.status === "published" ||
+                      article.content_approved_at
+                        ? "Approved"
+                        : "Pending"}
+                    </span>
+                  </span>
+                </div>
+
+                {article.content_approved_by_name && (
+                  <div className="text-[11px] text-slate-400 pl-1 space-y-0.5">
+                    <p className="text-slate-200 font-bold">
+                      {article.content_approved_by_name}
+                    </p>
+                    {article.content_approved_by_email && (
+                      <p className="text-slate-500 text-[10px] font-mono">
+                        {article.content_approved_by_email}
+                      </p>
+                    )}
+                    {article.content_approved_at && (
+                      <p className="text-slate-500 text-[9px]">
+                        {new Date(article.content_approved_at).toLocaleDateString(
+                          "id-ID",
+                          {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          },
+                        )}
+                      </p>
+                    )}
+                    {article.content_approval_notes && (
+                      <p className="text-emerald-300/80 text-[10px] italic pt-1 border-t border-slate-800/80 mt-1">
+                        &quot;{article.content_approval_notes}&quot;
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>

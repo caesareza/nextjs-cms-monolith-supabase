@@ -312,6 +312,7 @@ export default function EditArticleClient({
                   <option value="seo pending">seo pending</option>
                   <option value="writing">writing</option>
                   <option value="ready for review">ready for review</option>
+                  <option value="approved">approved</option>
                   <option value="published">published</option>
                   <option value="deleted">deleted</option>
                 </select>

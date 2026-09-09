@@ -31,6 +31,19 @@ export interface ArticleDisplay {
   target_keyword?: string;
   meta_description?: string;
   cta_internal_link?: string;
+  content_approved_by_name?: string | null;
+  content_approved_by_email?: string | null;
+  content_approved_at?: string | null;
+  content_approval_notes?: string | null;
+  approval_duration_seconds?: number | null;
+}
+
+export interface ExternalShareReviewPayload {
+  token: string;
+  action: "approve" | "revision";
+  approverName: string;
+  approverEmail: string;
+  notes?: string;
 }
 
 export interface LookupOptions {

@@ -1,29 +1,56 @@
 "use client";
-import { AlertCircle, KeyRound, Loader2, Sparkles } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { AlertCircle, CheckCircle2, KeyRound, Loader2, RefreshCw, Sparkles } from "lucide-react";
 import type React from "react";
 import { useState, useTransition } from "react";
 import StorytellerLogo from "@/components/StorytellerLogo";
-import { verifyOTPCode } from "./actions";
+import { cancelVerification, resendOTPCode, verifyOTPCode } from "./actions";
 
 interface VerifyPageProps {
   email: string;
 }
 
 export default function VerifyPageClient({ email }: VerifyPageProps) {
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [isResending, setIsResending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [resendMessage, setResendMessage] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     setError(null);
+    setResendMessage(null);
     startTransition(async () => {
       const res = await verifyOTPCode(null, formData);
       if (res && !res.success) {
         setError(res.error || "Failed to verify code.");
       }
+    });
+  };
+
+  const handleResend = async () => {
+    if (isResending || isPending) return;
+    setIsResending(true);
+    setError(null);
+    setResendMessage(null);
+    try {
+      const res = await resendOTPCode();
+      if (res.success) {
+        setResendMessage("A new 6-digit verification code was sent to your email!");
+      } else {
+        setError(res.error || "Failed to resend code.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Failed to request a new code. Please try again.");
+    } finally {
+      setIsResending(false);
+    }
+  };
+
+  const handleBackToLogin = () => {
+    startTransition(async () => {
+      await cancelVerification();
     });
   };
 
@@ -64,6 +91,13 @@ export default function VerifyPageClient({ email }: VerifyPageProps) {
             </div>
           )}
 
+          {resendMessage && (
+            <div className="mb-6 flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-300">
+              <CheckCircle2 size={20} className="text-emerald-600 shrink-0" />
+              <p className="text-xs font-semibold text-emerald-700">{resendMessage}</p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label
@@ -84,7 +118,7 @@ export default function VerifyPageClient({ email }: VerifyPageProps) {
                   pattern="[0-9]*"
                   maxLength={6}
                   required
-                  disabled={isPending}
+                  disabled={isPending || isResending}
                   className="w-full pl-11 pr-4 py-3.5 bg-white border border-brand-light-blue/30 text-brand-navy rounded-2xl text-center text-lg font-black tracking-[0.4em] focus:border-brand-steel-blue focus:ring-4 focus:ring-brand-light-blue/30 outline-none transition-all placeholder:text-slate-300 disabled:opacity-60 disabled:cursor-not-allowed"
                 />
               </div>
@@ -92,7 +126,7 @@ export default function VerifyPageClient({ email }: VerifyPageProps) {
 
             <button
               type="submit"
-              disabled={isPending}
+              disabled={isPending || isResending}
               className="w-full bg-brand-red hover:bg-brand-red/90 text-brand-cream py-4 rounded-2xl font-bold shadow-lg shadow-brand-red/20 hover:shadow-brand-red/30 transition-all hover:scale-[1.01] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isPending ? (
@@ -109,14 +143,31 @@ export default function VerifyPageClient({ email }: VerifyPageProps) {
             </button>
           </form>
 
-          <button
-            type="button"
-            disabled={isPending}
-            onClick={() => router.push("/login")}
-            className="w-full text-center text-[10px] uppercase tracking-widest text-brand-steel-blue hover:text-brand-navy font-bold transition-colors cursor-pointer mt-6 disabled:opacity-50"
-          >
-            Back to Login
-          </button>
+          {/* Resend Code & Back to Login Actions */}
+          <div className="mt-6 flex items-center justify-between gap-4 pt-4 border-t border-brand-light-blue/15 text-[10px] uppercase tracking-widest font-bold">
+            <button
+              type="button"
+              disabled={isResending || isPending}
+              onClick={handleResend}
+              className="text-brand-steel-blue hover:text-brand-navy transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+            >
+              {isResending ? (
+                <Loader2 size={12} className="animate-spin" />
+              ) : (
+                <RefreshCw size={12} />
+              )}
+              <span>Resend Code</span>
+            </button>
+
+            <button
+              type="button"
+              disabled={isPending || isResending}
+              onClick={handleBackToLogin}
+              className="text-brand-steel-blue hover:text-brand-navy transition-colors cursor-pointer disabled:opacity-50"
+            >
+              Back to Login
+            </button>
+          </div>
         </div>
 
         {/* Security Notice */}

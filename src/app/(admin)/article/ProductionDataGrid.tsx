@@ -31,6 +31,12 @@ function getArticleWorkflowBadge(status: string, content?: string) {
       color: "text-indigo-700 bg-indigo-50/60 border-indigo-150",
     };
   }
+  if (status === "approved") {
+    return {
+      label: "Approved",
+      color: "text-emerald-800 bg-emerald-50 border-emerald-300 font-black",
+    };
+  }
   if (status === "published") {
     return {
       label: "Published",
