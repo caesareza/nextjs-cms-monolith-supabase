@@ -21,6 +21,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { ArticleService } from "@/app/(admin)/article/service";
 import { sendStaleKeywordsEmail } from "@/app/actions/email";
+import Pagination from "@/components/Pagination";
 import { formatAuditTimestamp } from "@/utils/date";
 
 export default function PendingListClient() {
@@ -29,6 +30,10 @@ export default function PendingListClient() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSegment, setSelectedSegment] = useState("ALL");
   const [showOverdueOnly, setShowOverdueOnly] = useState(false);
+
+  // --- Pagination States ---
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   // --- Inline Expansion & Workflow Tracking States ---
   const [expandedArticleId, setExpandedArticleId] = useState<number | null>(
@@ -122,7 +127,7 @@ export default function PendingListClient() {
     setLoading(true);
     try {
       // Pull prioritised queue (Oldest First)
-      const data = await ArticleService.getTopPending(20);
+      const data = await ArticleService.getTopPending();
       setArticles(data || []);
     } catch (err) {
       console.error("Failed to fetch dashboard queue:", err);
@@ -282,6 +287,11 @@ export default function PendingListClient() {
     });
   }, [articles, selectedSegment, searchTerm, showOverdueOnly]);
 
+  const paginatedArticles = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filteredArticles.slice(start, start + pageSize);
+  }, [filteredArticles, page, pageSize]);
+
   return (
     <div className="space-y-6">
       {/* 1. EXECUTIVE SUMMARY METRIC DASHBOARD GRID */}
@@ -369,7 +379,10 @@ export default function PendingListClient() {
               placeholder="Search queue..."
               className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-[10px] font-semibold uppercase tracking-wider focus:ring-4 focus:ring-brand-light-blue/20 focus:border-brand-steel-blue outline-none transition-all placeholder:text-slate-400"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setPage(1);
+              }}
             />
           </div>
         </div>
@@ -393,8 +406,11 @@ export default function PendingListClient() {
                       <button
                         type="button"
                         key={segment}
-                        onClick={() => setSelectedSegment(segment)}
-                        className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all border ${
+                        onClick={() => {
+                          setSelectedSegment(segment);
+                          setPage(1);
+                        }}
+                        className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all border cursor-pointer ${
                           selectedSegment === segment
                             ? "bg-slate-900 border-slate-900 text-white shadow-3xs font-bold"
                             : "bg-white border-slate-200/80 text-slate-650 hover:bg-slate-50 transition-colors"
@@ -412,7 +428,10 @@ export default function PendingListClient() {
             <div className="flex items-center gap-2 ml-auto">
               <button
                 type="button"
-                onClick={() => setShowOverdueOnly(!showOverdueOnly)}
+                onClick={() => {
+                  setShowOverdueOnly(!showOverdueOnly);
+                  setPage(1);
+                }}
                 className={`px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all border flex items-center gap-1.5 cursor-pointer ${
                   showOverdueOnly
                     ? "bg-rose-600 border-rose-600 text-white shadow-3xs font-bold animate-pulse"
@@ -552,359 +571,376 @@ export default function PendingListClient() {
             </span>
           </div>
         ) : (
-          <div className="divide-y divide-slate-100">
-            {filteredArticles.map((article) => {
-              const isExpanded = expandedArticleId === article.id;
-              const isActionBusy = actionLoadingId === article.id;
+          <div>
+            <div className="divide-y divide-slate-100">
+              {paginatedArticles.map((article) => {
+                const isExpanded = expandedArticleId === article.id;
+                const isActionBusy = actionLoadingId === article.id;
 
-              // Calculate days pending to flag overdue strategy briefs (stale queue warning)
-              const createdDate = new Date(article.created_at);
-              const now = new Date();
-              const diffTime = Math.abs(now.getTime() - createdDate.getTime());
-              const daysPending = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-              const isOverdue = daysPending >= 3;
+                // Calculate days pending to flag overdue strategy briefs (stale queue warning)
+                const createdDate = new Date(article.created_at);
+                const now = new Date();
+                const diffTime = Math.abs(now.getTime() - createdDate.getTime());
+                const daysPending = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                const isOverdue = daysPending >= 3;
 
-              const writerName = article.writer?.name || "Unassigned Writer";
-              const categoryName = article.category?.name || "Uncategorized";
-              const priorityName = article.product_priority?.name;
+                const writerName = article.writer?.name || "Unassigned Writer";
+                const categoryName = article.category?.name || "Uncategorized";
+                const priorityName = article.product_priority?.name;
 
-              return (
-                <div
-                  key={article.id}
-                  className="px-6 py-4 bg-slate-50/10 border-b border-slate-100/50"
-                >
+                return (
                   <div
-                    className={`bg-white border rounded-2xl transition-all duration-300 shadow-3xs hover:shadow-2xs overflow-hidden ${
-                      isExpanded
-                        ? "border-slate-350 shadow-2xs"
-                        : "border-slate-200/80 hover:border-slate-300"
-                    }`}
+                    key={article.id}
+                    className="px-6 py-4 bg-slate-50/10 border-b border-slate-100/50"
                   >
-                    {/* MASTER LINE ROW */}
                     <div
-                      onClick={() => toggleExpandTray(article.id)}
-                      className={`group flex flex-col lg:flex-row lg:items-center justify-between gap-4 px-6 py-5 transition-all cursor-pointer select-none border-l-4 ${
-                        isOverdue
-                          ? "border-l-rose-500 bg-rose-50/5"
-                          : "border-l-transparent"
+                      className={`bg-white border rounded-2xl transition-all duration-300 shadow-3xs hover:shadow-2xs overflow-hidden ${
+                        isExpanded
+                          ? "border-slate-350 shadow-2xs"
+                          : "border-slate-200/80 hover:border-slate-300"
                       }`}
                     >
-                      {/* Title Segment */}
-                      <div className="flex-1 min-w-0 space-y-2">
-                        <div className="flex items-center gap-3 flex-wrap">
-                          <h4 className="text-sm sm:text-base font-extrabold text-brand-navy group-hover:text-brand-accent transition-colors leading-relaxed">
-                            {article.title?.trim() || (
-                              <span className="text-slate-400 italic font-medium">
-                                Untitled Strategy Brief
+                      {/* MASTER LINE ROW */}
+                      <div
+                        onClick={() => toggleExpandTray(article.id)}
+                        className={`group flex flex-col lg:flex-row lg:items-center justify-between gap-4 px-6 py-5 transition-all cursor-pointer select-none border-l-4 ${
+                          isOverdue
+                            ? "border-l-rose-500 bg-rose-50/5"
+                            : "border-l-transparent"
+                        }`}
+                      >
+                        {/* Title Segment */}
+                        <div className="flex-1 min-w-0 space-y-2">
+                          <div className="flex items-center gap-3 flex-wrap">
+                            <h4 className="text-sm sm:text-base font-extrabold text-brand-navy group-hover:text-brand-accent transition-colors leading-relaxed">
+                              {article.title?.trim() || (
+                                <span className="text-slate-400 italic font-medium">
+                                  Untitled Strategy Brief
+                                </span>
+                              )}
+                            </h4>
+                            {isOverdue && (
+                              <span className="shrink-0 inline-flex items-center gap-1 text-[8px] font-black text-rose-650 bg-rose-50 border border-rose-200/85 px-2 py-0.5 rounded-md tracking-wider uppercase animate-pulse">
+                                <AlertTriangle
+                                  size={10}
+                                  className="text-rose-500"
+                                />{" "}
+                                Stale Queue ({daysPending}d)
                               </span>
                             )}
-                          </h4>
-                          {isOverdue && (
-                            <span className="shrink-0 inline-flex items-center gap-1 text-[8px] font-black text-rose-650 bg-rose-50 border border-rose-200/85 px-2 py-0.5 rounded-md tracking-wider uppercase animate-pulse">
-                              <AlertTriangle
-                                size={10}
-                                className="text-rose-500"
-                              />{" "}
-                              Stale Queue ({daysPending}d)
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2 mt-2 flex-wrap">
-                          <span className="text-[9px] font-mono font-bold text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md tracking-wider whitespace-nowrap">
-                            {article.job_code || "—"}
-                          </span>
-                          {priorityName && (
-                            <span
-                              className={`shrink-0 inline-flex items-center gap-1 text-[8px] font-black border px-2.5 py-0.5 rounded-full uppercase tracking-wider select-none ${getSegmentBadgeStyle(priorityName)}`}
-                            >
-                              <ShieldCheck size={9} /> {priorityName}
-                            </span>
-                          )}
-                          {article.demand !== undefined && (
-                            <span className="shrink-0 inline-flex items-center gap-1 text-[8px] font-bold text-amber-700 bg-amber-50 border border-amber-250/70 px-2 py-0.5 rounded-md">
-                              <Flame size={9} className="text-amber-500" />{" "}
-                              {(article.demand || 0).toLocaleString("id-ID")}{" "}
-                              Vol
-                            </span>
-                          )}
-                          {categoryName && (
-                            <span className="shrink-0 text-[8px] font-black text-slate-500 bg-slate-50 border border-slate-200/60 px-2 py-0.5 rounded-md uppercase tracking-wider whitespace-nowrap">
-                              📂 {categoryName}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Metadata & Actions Segment */}
-                      <div className="flex flex-wrap items-center gap-4 sm:gap-6 shrink-0 w-full lg:w-auto justify-between lg:justify-end border-t border-slate-100 pt-3 lg:border-t-0 lg:pt-0">
-                        {/* Writer Track */}
-                        <div className="flex items-center gap-2.5 w-36 shrink-0">
-                          <div
-                            className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
-                              article.writer?.name
-                                ? "bg-slate-100 text-slate-700 group-hover:bg-slate-200"
-                                : "bg-slate-50 text-slate-400 group-hover:bg-rose-50 group-hover:text-rose-500"
-                            }`}
-                          >
-                            <User size={12} />
                           </div>
-                          <span
-                            className={`text-[10px] font-bold uppercase truncate ${
-                              article.writer?.name
-                                ? "text-slate-700"
-                                : "text-slate-400 italic"
-                            }`}
+                          <div className="flex items-center gap-2 mt-2 flex-wrap">
+                            <span className="text-[9px] font-mono font-bold text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md tracking-wider whitespace-nowrap">
+                              {article.job_code || "—"}
+                            </span>
+                            {priorityName && (
+                              <span
+                                className={`shrink-0 inline-flex items-center gap-1 text-[8px] font-black border px-2.5 py-0.5 rounded-full uppercase tracking-wider select-none ${getSegmentBadgeStyle(priorityName)}`}
+                              >
+                                <ShieldCheck size={9} /> {priorityName}
+                              </span>
+                            )}
+                            {article.demand !== undefined && (
+                              <span className="shrink-0 inline-flex items-center gap-1 text-[8px] font-bold text-amber-700 bg-amber-50 border border-amber-250/70 px-2 py-0.5 rounded-md">
+                                <Flame size={9} className="text-amber-500" />{" "}
+                                {(article.demand || 0).toLocaleString("id-ID")}{" "}
+                                Vol
+                              </span>
+                            )}
+                            {categoryName && (
+                              <span className="shrink-0 text-[8px] font-black text-slate-500 bg-slate-50 border border-slate-200/60 px-2 py-0.5 rounded-md uppercase tracking-wider whitespace-nowrap">
+                                📂 {categoryName}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Metadata & Actions Segment */}
+                        <div className="flex flex-wrap items-center gap-4 sm:gap-6 shrink-0 w-full lg:w-auto justify-between lg:justify-end border-t border-slate-100 pt-3 lg:border-t-0 lg:pt-0">
+                          {/* Writer Track */}
+                          <div className="flex items-center gap-2.5 w-36 shrink-0">
+                            <div
+                              className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
+                                article.writer?.name
+                                  ? "bg-slate-100 text-slate-700 group-hover:bg-slate-200"
+                                  : "bg-slate-50 text-slate-400 group-hover:bg-rose-50 group-hover:text-rose-500"
+                              }`}
+                            >
+                              <User size={12} />
+                            </div>
+                            <span
+                              className={`text-[10px] font-bold uppercase truncate ${
+                                article.writer?.name
+                                  ? "text-slate-700"
+                                  : "text-slate-400 italic"
+                              }`}
+                            >
+                              {writerName}
+                            </span>
+                          </div>
+
+                          {/* Timestamp Track */}
+                          <div className="flex items-center gap-2 w-32 shrink-0">
+                            <Clock size={11} className="text-slate-350" />
+                            <span className="text-[10px] font-bold text-slate-400 uppercase">
+                              {formatAuditTimestamp(article.created_at)}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Quick Action Controls (Visible on Hover / Inactive State) */}
+                        <div
+                          className="opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-150 flex items-center gap-2 shrink-0"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <button
+                            type="button"
+                            disabled={isActionBusy}
+                            onClick={() => setShowRejectModalId(article.id)}
+                            className="h-8 px-3 border border-brand-accent/25 bg-white hover:bg-brand-accent/10 text-brand-accent rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-1 disabled:opacity-40"
+                            title="Request Revision"
                           >
-                            {writerName}
-                          </span>
-                        </div>
-
-                        {/* Timestamp Track */}
-                        <div className="flex items-center gap-2 w-32 shrink-0">
-                          <Clock size={11} className="text-slate-350" />
-                          <span className="text-[10px] font-bold text-slate-400 uppercase">
-                            {formatAuditTimestamp(article.created_at)}
-                          </span>
+                            <AlertTriangle size={11} /> Revision
+                          </button>
+                          <button
+                            type="button"
+                            disabled={isActionBusy}
+                            onClick={() => handleInlineApprove(article)}
+                            className="h-8 px-3 bg-brand-accent hover:bg-brand-navy text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer flex items-center gap-1 disabled:opacity-40"
+                            title="Approve Strategy"
+                          >
+                            {isActionBusy && actionLoadingId === article.id ? (
+                              <Loader2 size={11} className="animate-spin" />
+                            ) : (
+                              <CheckCircle size={11} />
+                            )}
+                            Approve
+                          </button>
                         </div>
                       </div>
 
-                      {/* Quick Action Controls (Visible on Hover / Inactive State) */}
-                      <div
-                        className="opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-150 flex items-center gap-2 shrink-0"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <button
-                          type="button"
-                          disabled={isActionBusy}
-                          onClick={() => setShowRejectModalId(article.id)}
-                          className="h-8 px-3 border border-brand-accent/25 bg-white hover:bg-brand-accent/10 text-brand-accent rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-1 disabled:opacity-40"
-                          title="Request Revision"
-                        >
-                          <AlertTriangle size={11} /> Revision
-                        </button>
-                        <button
-                          type="button"
-                          disabled={isActionBusy}
-                          onClick={() => handleInlineApprove(article)}
-                          className="h-8 px-3 bg-brand-accent hover:bg-brand-navy text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer flex items-center gap-1 disabled:opacity-40"
-                          title="Approve Strategy"
-                        >
-                          {isActionBusy && actionLoadingId === article.id ? (
-                            <Loader2 size={11} className="animate-spin" />
-                          ) : (
-                            <CheckCircle size={11} />
-                          )}
-                          Approve
-                        </button>
-                      </div>
+                      {/* CONTEXTUAL DETAIL REVIEW TRAY BLOCK */}
+                      {isExpanded && (
+                        <div className="px-10 pb-8 pt-2 bg-slate-50/40 border-y border-slate-100 flex flex-col space-y-6 animate-in slide-in-from-top-2 duration-200">
+                          {/* Row 1: Triple Metrics Overview Context */}
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div className="bg-white p-4 border border-brand-light-blue/20 rounded-2xl flex items-center gap-3">
+                              <div className="p-2.5 bg-orange-50 text-orange-500 rounded-xl">
+                                <Flame size={16} />
+                              </div>
+                              <div>
+                                <p className="text-[9px] font-black text-brand-steel-blue/60 uppercase tracking-wider">
+                                  Search Demand
+                                </p>
+                                <p className="text-sm font-black text-brand-navy tabular-nums">
+                                  {(article.demand || 0).toLocaleString("id-ID")}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="bg-white p-4 border border-brand-light-blue/20 rounded-2xl flex items-center gap-3">
+                              <div className="p-2.5 bg-brand-light-blue/10 text-brand-steel-blue rounded-xl">
+                                <HelpCircle size={16} />
+                              </div>
+                              <div>
+                                <p className="text-[9px] font-black text-brand-steel-blue/60 uppercase tracking-wider">
+                                  Search Intent
+                                </p>
+                                <p className="text-xs font-black text-brand-steel-blue">
+                                  {article.intent || "Informational"}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="bg-white p-4 border border-brand-light-blue/20 rounded-2xl flex items-center gap-3">
+                              <div className="p-2.5 bg-brand-accent/10 text-brand-accent rounded-xl">
+                                <ShieldCheck size={16} />
+                              </div>
+                              <div>
+                                <p className="text-[9px] font-black text-brand-steel-blue/60 uppercase tracking-wider">
+                                  Classification
+                                </p>
+                                <p className="text-xs font-black text-brand-accent">
+                                  {article.classification || "Infantry"}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Row 2: Deep Intent Keyword Copy Deck Data */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-1 bg-white p-4 border border-brand-light-blue/20 rounded-2xl flex flex-col justify-between">
+                              <span className="text-[9px] font-black uppercase tracking-widest text-brand-steel-blue/60 block">
+                                Target Focus Keyword
+                              </span>
+                              <div className="relative flex items-center mt-2.5">
+                                <p className="text-xs font-mono font-bold text-brand-navy bg-brand-cream/40 px-3.5 py-2.5 rounded-xl border border-brand-light-blue/10 w-full pr-12 truncate select-all">
+                                  {article.target_keyword || "—"}
+                                </p>
+                                {article.target_keyword && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      handleCopyKeyword(
+                                        article.id,
+                                        article.target_keyword,
+                                      )
+                                    }
+                                    className="absolute right-2 p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg cursor-pointer transition-colors"
+                                    title="Copy Keyword"
+                                  >
+                                    {copiedKeywordId === article.id ? (
+                                      <CheckCircle
+                                        size={14}
+                                        className="text-emerald-500"
+                                      />
+                                    ) : (
+                                      <Copy size={14} />
+                                    )}
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="space-y-1 bg-white p-4 border border-brand-light-blue/20 rounded-2xl flex flex-col justify-between">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[9px] font-black uppercase tracking-widest text-brand-steel-blue/60">
+                                  Meta Description Snippet
+                                </span>
+                                <span
+                                  className={`text-[8px] font-black border px-2 py-0.5 rounded-md uppercase tracking-wider ${getMetaValidation(article.meta_description || "").style}`}
+                                >
+                                  {
+                                    getMetaValidation(
+                                      article.meta_description || "",
+                                    ).label
+                                  }
+                                </span>
+                              </div>
+                              <p className="text-xs font-medium text-brand-steel-blue leading-relaxed mt-2.5">
+                                {article.meta_description || "—"}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Row 3: Live Decision Trigger Toolbar */}
+                          <div className="flex items-center justify-between gap-3 pt-2 border-t border-brand-light-blue/15">
+                            <a
+                              href={`/seo-keyword/edit/${article.id}`}
+                              className="text-[10px] font-black text-brand-navy/60 hover:text-brand-accent uppercase tracking-wider transition-colors flex items-center gap-1.5"
+                            >
+                              <Link2 size={12} /> View Full Specification
+                            </a>
+
+                            <div className="flex items-center gap-3">
+                              <button
+                                disabled={isActionBusy}
+                                onClick={() => setShowRejectModalId(article.id)}
+                                className="px-5 py-2.5 border border-brand-accent/20 bg-white hover:bg-brand-accent/10 text-brand-accent rounded-xl text-xs font-black uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-40"
+                              >
+                                <AlertTriangle size={14} /> Request Revision
+                              </button>
+
+                              <button
+                                disabled={isActionBusy}
+                                onClick={() => handleInlineApprove(article)}
+                                className="px-6 py-2.5 bg-brand-accent hover:bg-brand-navy text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer flex items-center gap-1.5 disabled:opacity-40"
+                              >
+                                {isActionBusy &&
+                                actionLoadingId === article.id ? (
+                                  <>
+                                    <Loader2 size={14} className="animate-spin" />{" "}
+                                    Authorizing...
+                                  </>
+                                ) : (
+                                  <>
+                                    <CheckCircle size={14} /> Approve Strategy
+                                  </>
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
-                    {/* CONTEXTUAL DETAIL REVIEW TRAY BLOCK */}
-                    {isExpanded && (
-                      <div className="px-10 pb-8 pt-2 bg-slate-50/40 border-y border-slate-100 flex flex-col space-y-6 animate-in slide-in-from-top-2 duration-200">
-                        {/* Row 1: Triple Metrics Overview Context */}
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                          <div className="bg-white p-4 border border-brand-light-blue/20 rounded-2xl flex items-center gap-3">
-                            <div className="p-2.5 bg-orange-50 text-orange-500 rounded-xl">
-                              <Flame size={16} />
-                            </div>
-                            <div>
-                              <p className="text-[9px] font-black text-brand-steel-blue/60 uppercase tracking-wider">
-                                Search Demand
-                              </p>
-                              <p className="text-sm font-black text-brand-navy tabular-nums">
-                                {(article.demand || 0).toLocaleString("id-ID")}
-                              </p>
-                            </div>
-                          </div>
+                    {/* INDEPENDENT FLOATING INLINE OVERLAY FOR ENTRY LEVEL REJECTIONS */}
+                    {showRejectModalId === article.id && (
+                      <div className="fixed inset-0 bg-brand-navy/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+                        <div className="bg-brand-cream rounded-2xl max-w-md w-full p-6 shadow-2xl border border-brand-light-blue/20 animate-in zoom-in-95 duration-150">
+                          <h3 className="text-base font-black text-brand-navy mb-1">
+                            Reject Strategic Concepts
+                          </h3>
+                          <p className="text-xs text-brand-steel-blue font-bold uppercase tracking-wider mb-4">
+                            Provide clear internal instructions
+                          </p>
 
-                          <div className="bg-white p-4 border border-brand-light-blue/20 rounded-2xl flex items-center gap-3">
-                            <div className="p-2.5 bg-brand-light-blue/10 text-brand-steel-blue rounded-xl">
-                              <HelpCircle size={16} />
-                            </div>
-                            <div>
-                              <p className="text-[9px] font-black text-brand-steel-blue/60 uppercase tracking-wider">
-                                Search Intent
-                              </p>
-                              <p className="text-xs font-black text-brand-steel-blue">
-                                {article.intent || "Informational"}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="bg-white p-4 border border-brand-light-blue/20 rounded-2xl flex items-center gap-3">
-                            <div className="p-2.5 bg-brand-accent/10 text-brand-accent rounded-xl">
-                              <ShieldCheck size={16} />
-                            </div>
-                            <div>
-                              <p className="text-[9px] font-black text-brand-steel-blue/60 uppercase tracking-wider">
-                                Classification
-                              </p>
-                              <p className="text-xs font-black text-brand-accent">
-                                {article.classification || "Infantry"}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Row 2: Deep Intent Keyword Copy Deck Data */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-1 bg-white p-4 border border-brand-light-blue/20 rounded-2xl flex flex-col justify-between">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-brand-steel-blue/60 block">
-                              Target Focus Keyword
-                            </span>
-                            <div className="relative flex items-center mt-2.5">
-                              <p className="text-xs font-mono font-bold text-brand-navy bg-brand-cream/40 px-3.5 py-2.5 rounded-xl border border-brand-light-blue/10 w-full pr-12 truncate select-all">
-                                {article.target_keyword || "—"}
-                              </p>
-                              {article.target_keyword && (
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    handleCopyKeyword(
-                                      article.id,
-                                      article.target_keyword,
-                                    )
-                                  }
-                                  className="absolute right-2 p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg cursor-pointer transition-colors"
-                                  title="Copy Keyword"
-                                >
-                                  {copiedKeywordId === article.id ? (
-                                    <CheckCircle
-                                      size={14}
-                                      className="text-emerald-500"
-                                    />
-                                  ) : (
-                                    <Copy size={14} />
-                                  )}
-                                </button>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className="space-y-1 bg-white p-4 border border-brand-light-blue/20 rounded-2xl flex flex-col justify-between">
-                            <div className="flex items-center justify-between">
-                              <span className="text-[9px] font-black uppercase tracking-widest text-brand-steel-blue/60">
-                                Meta Description Snippet
-                              </span>
-                              <span
-                                className={`text-[8px] font-black border px-2 py-0.5 rounded-md uppercase tracking-wider ${getMetaValidation(article.meta_description || "").style}`}
-                              >
-                                {
-                                  getMetaValidation(
-                                    article.meta_description || "",
-                                  ).label
-                                }
-                              </span>
-                            </div>
-                            <p className="text-xs font-medium text-brand-steel-blue leading-relaxed mt-2.5">
-                              {article.meta_description || "—"}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Row 3: Live Decision Trigger Toolbar */}
-                        <div className="flex items-center justify-between gap-3 pt-2 border-t border-brand-light-blue/15">
-                          <a
-                            href={`/seo-keyword/edit/${article.id}`}
-                            className="text-[10px] font-black text-brand-navy/60 hover:text-brand-accent uppercase tracking-wider transition-colors flex items-center gap-1.5"
+                          <form
+                            onSubmit={(e) => handleInlineRejectSubmit(e, article)}
                           >
-                            <Link2 size={12} /> View Full Specification
-                          </a>
+                            <textarea
+                              required
+                              value={internalNote}
+                              onChange={(e) => setInternalNote(e.target.value)}
+                              placeholder="Type revision requirements or instructions for content editor..."
+                              rows={4}
+                              className="w-full p-3.5 bg-white border border-brand-light-blue/20 rounded-xl text-xs font-medium focus:ring-4 focus:ring-brand-light-blue/20 outline-none transition-all placeholder:text-slate-400"
+                            />
 
-                          <div className="flex items-center gap-3">
-                            <button
-                              disabled={isActionBusy}
-                              onClick={() => setShowRejectModalId(article.id)}
-                              className="px-5 py-2.5 border border-brand-accent/20 bg-white hover:bg-brand-accent/10 text-brand-accent rounded-xl text-xs font-black uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-40"
-                            >
-                              <AlertTriangle size={14} /> Request Revision
-                            </button>
-
-                            <button
-                              disabled={isActionBusy}
-                              onClick={() => handleInlineApprove(article)}
-                              className="px-6 py-2.5 bg-brand-accent hover:bg-brand-navy text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-sm cursor-pointer flex items-center gap-1.5 disabled:opacity-40"
-                            >
-                              {isActionBusy &&
-                              actionLoadingId === article.id ? (
-                                <>
-                                  <Loader2 size={14} className="animate-spin" />{" "}
-                                  Authorizing...
-                                </>
-                              ) : (
-                                <>
-                                  <CheckCircle size={14} /> Approve Strategy
-                                </>
-                              )}
-                            </button>
-                          </div>
+                            <div className="flex items-center justify-end gap-2.5 mt-4">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setShowRejectModalId(null);
+                                  setInternalNote("");
+                                }}
+                                className="px-4 py-2 text-slate-400 hover:text-slate-700 text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer"
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                type="submit"
+                                className="px-6 py-2.5 bg-brand-accent hover:bg-brand-navy text-white text-[10px] font-black uppercase tracking-wider rounded-xl transition-all shadow-sm cursor-pointer"
+                              >
+                                Submit Reject
+                              </button>
+                            </div>
+                          </form>
                         </div>
                       </div>
                     )}
                   </div>
+                );
+              })}
 
-                  {/* INDEPENDENT FLOATING INLINE OVERLAY FOR ENTRY LEVEL REJECTIONS */}
-                  {showRejectModalId === article.id && (
-                    <div className="fixed inset-0 bg-brand-navy/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-                      <div className="bg-brand-cream rounded-2xl max-w-md w-full p-6 shadow-2xl border border-brand-light-blue/20 animate-in zoom-in-95 duration-150">
-                        <h3 className="text-base font-black text-brand-navy mb-1">
-                          Reject Strategic Concepts
-                        </h3>
-                        <p className="text-xs text-brand-steel-blue font-bold uppercase tracking-wider mb-4">
-                          Provide clear internal instructions
-                        </p>
-
-                        <form
-                          onSubmit={(e) => handleInlineRejectSubmit(e, article)}
-                        >
-                          <textarea
-                            required
-                            value={internalNote}
-                            onChange={(e) => setInternalNote(e.target.value)}
-                            placeholder="Type revision requirements or instructions for content editor..."
-                            rows={4}
-                            className="w-full p-3.5 bg-white border border-brand-light-blue/20 rounded-xl text-xs font-medium focus:ring-4 focus:ring-brand-light-blue/20 outline-none transition-all placeholder:text-slate-400"
-                          />
-
-                          <div className="flex items-center justify-end gap-2.5 mt-4">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setShowRejectModalId(null);
-                                setInternalNote("");
-                              }}
-                              className="px-4 py-2 text-slate-400 hover:text-slate-700 text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer"
-                            >
-                              Cancel
-                            </button>
-                            <button
-                              type="submit"
-                              className="px-6 py-2.5 bg-brand-accent hover:bg-brand-navy text-white text-[10px] font-black uppercase tracking-wider rounded-xl transition-all shadow-sm cursor-pointer"
-                            >
-                              Submit Reject
-                            </button>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  )}
+              {/* EMPTY RESULTS STATE */}
+              {filteredArticles.length === 0 && (
+                <div className="p-24 flex flex-col items-center justify-center gap-4 bg-slate-50/10">
+                  <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                    <CheckCircle size={32} />
+                  </div>
+                  <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">
+                    {searchTerm
+                      ? "No matching pending articles"
+                      : "All caught up! Queue is empty"}
+                  </p>
                 </div>
-              );
-            })}
+              )}
+            </div>
 
-            {/* EMPTY RESULTS STATE */}
-            {filteredArticles.length === 0 && (
-              <div className="p-24 flex flex-col items-center justify-center gap-4 bg-slate-50/10">
-                <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
-                  <CheckCircle size={32} />
-                </div>
-                <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">
-                  {searchTerm
-                    ? "No matching pending articles"
-                    : "All caught up! Queue is empty"}
-                </p>
-              </div>
+            {/* SHARED PAGINATION COMPONENT */}
+            {filteredArticles.length > 0 && (
+              <Pagination
+                currentPage={page}
+                totalItems={filteredArticles.length}
+                pageSize={pageSize}
+                onPageChange={setPage}
+                onPageSizeChange={(newSize) => {
+                  setPageSize(newSize);
+                  setPage(1);
+                }}
+                itemLabel="Briefs"
+              />
             )}
           </div>
         )}

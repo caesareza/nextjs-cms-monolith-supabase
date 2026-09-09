@@ -2,8 +2,6 @@
 
 import {
   AlertTriangle,
-  ArrowLeft,
-  ArrowRight,
   Filter,
   KeySquare,
   Loader2,
@@ -13,6 +11,7 @@ import {
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import type { LookupOptions } from "@/types/article";
+import Pagination from "@/components/Pagination";
 import { ArticleService } from "../article/service";
 import { CampaignService } from "../campaign/service";
 import { CategoryService } from "../category/service";
@@ -518,94 +517,19 @@ export default function UnifiedSeoKeywordPage() {
           </table>
         </div>
 
-        {/* PAGINATION SECTION FOOTER */}
+        {/* SHARED PAGINATION COMPONENT */}
         {total > 0 && (
-          <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/40 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-bold text-slate-500 select-none">
-            <div className="flex items-center gap-3 flex-wrap">
-              <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">
-                Showing {Math.min((page - 1) * limit + 1, total)}–{Math.min(page * limit, total)} of {total} Records
-              </span>
-              <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-bold">
-                <span>• Show</span>
-                <select
-                  value={limit}
-                  onChange={(e) => {
-                    setLimit(Number(e.target.value));
-                    setPage(1);
-                  }}
-                  className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-700 font-bold outline-none cursor-pointer focus:border-brand-accent/40 text-xs shadow-xs"
-                >
-                  <option value={10}>10</option>
-                  <option value={20}>20</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
-                </select>
-                <span>per page</span>
-              </div>
-            </div>
-
-            {totalPages > 1 && (
-              <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  disabled={page === 1}
-                  onClick={() => setPage((p) => Math.max(p - 1, 1))}
-                  className="p-2 bg-white border border-slate-200 rounded-xl text-slate-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 transition-colors shadow-xs cursor-pointer flex items-center justify-center"
-                  title="Previous Page"
-                >
-                  <ArrowLeft size={14} />
-                </button>
-
-                {Array.from({ length: totalPages }, (_, i) => i + 1)
-                  .filter(
-                    (p) =>
-                      p === 1 ||
-                      p === totalPages ||
-                      Math.abs(p - page) <= 1,
-                  )
-                  .reduce<(number | string)[]>((acc, p, idx, arr) => {
-                    if (idx > 0 && (p as number) - (arr[idx - 1] as number) > 1) {
-                      acc.push("...");
-                    }
-                    acc.push(p);
-                    return acc;
-                  }, [])
-                  .map((p, idx) =>
-                    typeof p === "string" ? (
-                      <span
-                        key={`dots-${idx}`}
-                        className="px-1.5 text-slate-400 text-xs font-bold"
-                      >
-                        ...
-                      </span>
-                    ) : (
-                      <button
-                        key={p}
-                        type="button"
-                        onClick={() => setPage(p)}
-                        className={`min-w-[32px] h-8 px-2 rounded-lg text-xs font-black transition-all cursor-pointer ${
-                          page === p
-                            ? "bg-brand-accent text-white shadow-xs"
-                            : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
-                        }`}
-                      >
-                        {p}
-                      </button>
-                    ),
-                  )}
-
-                <button
-                  type="button"
-                  disabled={page === totalPages}
-                  onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-                  className="p-2 bg-white border border-slate-200 rounded-xl text-slate-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 transition-colors shadow-xs cursor-pointer flex items-center justify-center"
-                  title="Next Page"
-                >
-                  <ArrowRight size={14} />
-                </button>
-              </div>
-            )}
-          </div>
+          <Pagination
+            currentPage={page}
+            totalItems={total}
+            pageSize={limit}
+            onPageChange={setPage}
+            onPageSizeChange={(newLimit) => {
+              setLimit(newLimit);
+              setPage(1);
+            }}
+            itemLabel="Records"
+          />
         )}
       </div>
 
