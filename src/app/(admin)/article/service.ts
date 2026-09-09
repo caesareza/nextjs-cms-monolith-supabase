@@ -12,6 +12,7 @@ export const ArticleService = {
     year: number;
     month: number;
     page: number;
+    limit?: number;
     writerId?: string | null;
     categoryId?: string | null;
     productPriorityId?: string | null;
@@ -24,6 +25,7 @@ export const ArticleService = {
       year,
       month,
       page = 1,
+      limit = 10,
       writerId,
       categoryId,
       productPriorityId,
@@ -33,7 +35,7 @@ export const ArticleService = {
       approval,
     } = params;
     const supabase = createClient();
-    const pageSize = 10;
+    const pageSize = limit || 10;
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 

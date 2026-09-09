@@ -2,6 +2,8 @@
 
 import {
   AlertTriangle,
+  ArrowLeft,
+  ArrowRight,
   Filter,
   KeySquare,
   Loader2,
@@ -83,6 +85,10 @@ export default function UnifiedSeoKeywordPage() {
   const [categoryId, setCategoryId] = useState<string>("");
   const [contentType, setContentType] = useState<string>("");
 
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
+
   const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -97,7 +103,10 @@ export default function UnifiedSeoKeywordPage() {
   });
 
   useEffect(() => {
-    const handler = setTimeout(() => setDebouncedSearch(inputValue), 300);
+    const handler = setTimeout(() => {
+      setDebouncedSearch(inputValue);
+      setPage(1);
+    }, 300);
     return () => clearTimeout(handler);
   }, [inputValue]);
 
@@ -143,23 +152,26 @@ export default function UnifiedSeoKeywordPage() {
   const loadTableData = useCallback(async () => {
     setLoading(true);
     try {
-      const { articles: dataRows } = await ArticleService.getArticles({
-        year: now.getFullYear(),
-        month,
-        page: 1,
-        categoryId: categoryId || null,
-        contentType: contentType || null,
-        searchQuery: debouncedSearch || null,
-        status: "seo pending",
-        approval: activeTab === "all_briefs" ? null : activeTab,
-      });
+      const { articles: dataRows, total: totalRows } =
+        await ArticleService.getArticles({
+          year: now.getFullYear(),
+          month,
+          page,
+          limit,
+          categoryId: categoryId || null,
+          contentType: contentType || null,
+          searchQuery: debouncedSearch || null,
+          status: "seo pending",
+          approval: activeTab === "all_briefs" ? null : activeTab,
+        });
       setArticles(dataRows);
+      setTotal(totalRows || 0);
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
-  }, [month, categoryId, contentType, debouncedSearch, activeTab]);
+  }, [month, categoryId, contentType, debouncedSearch, activeTab, page, limit]);
 
   useEffect(() => {
     loadTableData();
@@ -228,12 +240,15 @@ export default function UnifiedSeoKeywordPage() {
         cta_internal_link: formData.cta_internal_link,
       });
       setShowCreateForm(false);
+      setPage(1);
       loadTableData();
     } catch (err) {
       alert("Failed to initialize strategy record brief.");
       throw err;
     }
   };
+
+  const totalPages = Math.ceil(total / limit) || 1;
 
   return (
     <div className="space-y-8">
@@ -252,21 +267,29 @@ export default function UnifiedSeoKeywordPage() {
             </p>
           </div>
         </div>
-        <button
-          onClick={() => setShowCreateForm(true)}
-          className="bg-brand-accent text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-brand-navy transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
-        >
-          <Plus size={14} /> Create Strategy
-        </button>
+        <div className="flex items-center gap-3">
+          <div className="bg-slate-100 text-slate-650 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-wider border border-slate-200/40 hidden sm:block">
+            Matches Found: {total} {total === 1 ? "Brief" : "Briefs"}
+          </div>
+          <button
+            onClick={() => setShowCreateForm(true)}
+            className="bg-brand-accent text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-brand-navy transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
+          >
+            <Plus size={14} /> Create Strategy
+          </button>
+        </div>
       </div>
 
-      {/* FILTERING Rowan CONTROLS */}
+      {/* FILTERING ROW CONTROLS */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
         <div className="flex items-center gap-1 bg-slate-100/70 p-1 rounded-xl w-fit">
           {["pending", "rejected", "all_briefs"].map((tab) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab as any)}
+              onClick={() => {
+                setActiveTab(tab as any);
+                setPage(1);
+              }}
               className={`px-4 py-2 rounded-lg text-xs font-black transition-all cursor-pointer capitalize ${
                 activeTab === tab
                   ? "bg-white text-slate-900 shadow-sm"
@@ -299,7 +322,10 @@ export default function UnifiedSeoKeywordPage() {
 
           <select
             value={month}
-            onChange={(e) => setMonth(Number(e.target.value))}
+            onChange={(e) => {
+              setMonth(Number(e.target.value));
+              setPage(1);
+            }}
             className="w-full sm:w-auto bg-slate-50 border border-slate-200/60 text-xs font-black py-2.5 px-3 rounded-xl outline-none cursor-pointer text-slate-705 transition-all"
           >
             {MONTHS.map((m, i) => (
@@ -327,7 +353,10 @@ export default function UnifiedSeoKeywordPage() {
             </label>
             <select
               value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
+              onChange={(e) => {
+                setCategoryId(e.target.value);
+                setPage(1);
+              }}
               className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs font-bold outline-none cursor-pointer"
             >
               <option value="">All Categories</option>
@@ -344,7 +373,10 @@ export default function UnifiedSeoKeywordPage() {
             </label>
             <select
               value={contentType}
-              onChange={(e) => setContentType(e.target.value)}
+              onChange={(e) => {
+                setContentType(e.target.value);
+                setPage(1);
+              }}
               className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs font-bold outline-none cursor-pointer"
             >
               <option value="">All Types</option>
@@ -356,133 +388,225 @@ export default function UnifiedSeoKeywordPage() {
       )}
 
       {/* DATATABLE LIST BOARD */}
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-x-auto">
-        <table className="w-full min-w-[800px] text-left border-collapse">
-          <thead>
-            <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] font-black uppercase tracking-widest text-slate-400 select-none">
-              <th className="px-6 py-4.5">JOB_CODE</th>
-              <th className="px-6 py-4.5 w-1/3">
-                Proposed Strategy / Headline
-              </th>
-              <th className="px-6 py-4.5">Metrics / Ops</th>
-              <th className="px-6 py-4.5">Focus Keyword</th>
-              <th className="px-6 py-4.5">Audit Status</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100/60">
-            {loading ? (
-              <tr>
-                <td colSpan={5} className="py-24 text-center">
-                  <div className="flex flex-col items-center justify-center gap-2">
-                    <Loader2
-                      className="animate-spin text-slate-300"
-                      size={24}
-                    />
-                    <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest">
-                      Loading structural records...
-                    </span>
-                  </div>
-                </td>
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[800px] text-left border-collapse">
+            <thead>
+              <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] font-black uppercase tracking-widest text-slate-400 select-none">
+                <th className="px-6 py-4.5">JOB_CODE</th>
+                <th className="px-6 py-4.5 w-1/3">
+                  Proposed Strategy / Headline
+                </th>
+                <th className="px-6 py-4.5">Metrics / Ops</th>
+                <th className="px-6 py-4.5">Focus Keyword</th>
+                <th className="px-6 py-4.5">Audit Status</th>
               </tr>
-            ) : articles.length > 0 ? (
-              articles.map((item) => {
-                const badge = getStrategyApprovalBadge(
-                  item.approval || "pending",
-                );
+            </thead>
+            <tbody className="divide-y divide-slate-100/60">
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="py-24 text-center">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <Loader2
+                        className="animate-spin text-slate-300"
+                        size={24}
+                      />
+                      <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest">
+                        Loading structural records...
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              ) : articles.length > 0 ? (
+                articles.map((item) => {
+                  const badge = getStrategyApprovalBadge(
+                    item.approval || "pending",
+                  );
 
-                // Calculate days pending to highlight overdue review items
-                const createdDate = new Date(item.created_at);
-                const now = new Date();
-                const diffTime = Math.abs(
-                  now.getTime() - createdDate.getTime(),
-                );
-                const daysPending = Math.floor(
-                  diffTime / (1000 * 60 * 60 * 24),
-                );
-                const isOverdue =
-                  daysPending >= 3 && item.approval === "pending";
+                  // Calculate days pending to highlight overdue review items
+                  const createdDate = new Date(item.created_at);
+                  const now = new Date();
+                  const diffTime = Math.abs(
+                    now.getTime() - createdDate.getTime(),
+                  );
+                  const daysPending = Math.floor(
+                    diffTime / (1000 * 60 * 60 * 24),
+                  );
+                  const isOverdue =
+                    daysPending >= 3 && item.approval === "pending";
 
-                return (
-                  <tr
-                    key={item.id}
-                    className={`group transition-colors ${isOverdue ? "bg-rose-50/20 hover:bg-rose-50/30" : "hover:bg-slate-50/40"}`}
-                  >
-                    <td className="px-6 py-5 whitespace-nowrap align-middle">
-                      <Link
-                        href={`/seo-keyword/edit/${item.id}`}
-                        className="inline-block"
-                      >
-                        <span className="text-[10px] font-mono font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200/80 hover:border-brand-accent/40 hover:text-brand-accent px-2.5 py-1 rounded-md tracking-wider whitespace-nowrap select-all shadow-xs transition-all cursor-pointer">
-                          {item.job_code || "—"}
-                        </span>
-                      </Link>
-                    </td>
-                    <td className="px-6 py-5 align-middle">
-                      <div className="flex flex-col min-w-[200px]">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-bold text-slate-900 group-hover:text-brand-accent transition-colors line-clamp-1">
-                            {item.title}
+                  return (
+                    <tr
+                      key={item.id}
+                      className={`group transition-colors ${isOverdue ? "bg-rose-50/20 hover:bg-rose-50/30" : "hover:bg-slate-50/40"}`}
+                    >
+                      <td className="px-6 py-5 whitespace-nowrap align-middle">
+                        <Link
+                          href={`/seo-keyword/edit/${item.id}`}
+                          className="inline-block"
+                        >
+                          <span className="text-[10px] font-mono font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200/80 hover:border-brand-accent/40 hover:text-brand-accent px-2.5 py-1 rounded-md tracking-wider whitespace-nowrap select-all shadow-xs transition-all cursor-pointer">
+                            {item.job_code || "—"}
                           </span>
-                          {isOverdue && (
-                            <span className="shrink-0 inline-flex items-center gap-1 text-[8px] font-black text-rose-650 bg-rose-50 border border-rose-200/80 px-2 py-0.5 rounded-md tracking-wider uppercase animate-pulse">
-                              <AlertTriangle
-                                size={10}
-                                className="text-rose-500"
-                              />{" "}
-                              Overdue ({daysPending}d)
+                        </Link>
+                      </td>
+                      <td className="px-6 py-5 align-middle">
+                        <div className="flex flex-col min-w-[200px]">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-sm font-bold text-slate-900 group-hover:text-brand-accent transition-colors line-clamp-1">
+                              {item.title}
                             </span>
-                          )}
-                        </div>
-                        <span className="text-[9px] text-slate-400 font-black mt-1.5 uppercase tracking-wider block">
-                          {item.section || item.category} • 🛠️{" "}
-                          {item.contentType === "new" ? "NEW" : "ADJUST"}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5 whitespace-nowrap align-middle">
-                      <div className="flex flex-col gap-1">
-                        <div className="flex gap-1.5 items-center">
-                          <span
-                            className={`px-2 py-0.5 border text-[9px] font-black uppercase tracking-wider rounded-md whitespace-nowrap ${getIntentBadgeStyle(item.intent)}`}
-                          >
-                            {item.intent || "Info"}
-                          </span>
-                          <span className="px-1.5 py-0.5 bg-slate-100 text-slate-700 border border-slate-200 text-[9px] font-black uppercase rounded-md tracking-wider whitespace-nowrap">
-                            {item.classification}
+                            {isOverdue && (
+                              <span className="shrink-0 inline-flex items-center gap-1 text-[8px] font-black text-rose-650 bg-rose-50 border border-rose-200/80 px-2 py-0.5 rounded-md tracking-wider uppercase animate-pulse">
+                                <AlertTriangle
+                                  size={10}
+                                  className="text-rose-500"
+                                />{" "}
+                                Overdue ({daysPending}d)
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-[9px] text-slate-400 font-black mt-1.5 uppercase tracking-wider block">
+                            {item.section || item.category} • 🛠️{" "}
+                            {item.contentType === "new" ? "NEW" : "ADJUST"}
                           </span>
                         </div>
-                        <span className="text-[10px] font-bold text-slate-400 tabular-nums">
-                          🔥 {(item.demand || 0).toLocaleString("id-ID")}
+                      </td>
+                      <td className="px-6 py-5 whitespace-nowrap align-middle">
+                        <div className="flex flex-col gap-1">
+                          <div className="flex gap-1.5 items-center">
+                            <span
+                              className={`px-2 py-0.5 border text-[9px] font-black uppercase tracking-wider rounded-md whitespace-nowrap ${getIntentBadgeStyle(item.intent)}`}
+                            >
+                              {item.intent || "Info"}
+                            </span>
+                            <span className="px-1.5 py-0.5 bg-slate-100 text-slate-700 border border-slate-200 text-[9px] font-black uppercase rounded-md tracking-wider whitespace-nowrap">
+                              {item.classification}
+                            </span>
+                          </div>
+                          <span className="text-[10px] font-bold text-slate-400 tabular-nums">
+                            🔥 {(item.demand || 0).toLocaleString("id-ID")}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-5 whitespace-nowrap align-middle">
+                        <span className="text-xs font-mono font-bold text-slate-700 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-100 whitespace-nowrap">
+                          {item.target_keyword || "—"}
                         </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5 whitespace-nowrap align-middle">
-                      <span className="text-xs font-mono font-bold text-slate-700 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-100 whitespace-nowrap">
-                        {item.target_keyword || "—"}
-                      </span>
-                    </td>
-                    <td className="px-6 py-5 whitespace-nowrap align-middle">
-                      <span
-                        className={`text-[9px] font-black uppercase px-2.5 py-1 rounded-md border whitespace-nowrap ${badge.color}`}
-                      >
-                        {badge.label}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })
-            ) : (
-              <tr>
-                <td
-                  colSpan={5}
-                  className="p-16 text-center text-slate-400 font-bold text-xs uppercase tracking-wider italic"
+                      </td>
+                      <td className="px-6 py-5 whitespace-nowrap align-middle">
+                        <span
+                          className={`text-[9px] font-black uppercase px-2.5 py-1 rounded-md border whitespace-nowrap ${badge.color}`}
+                        >
+                          {badge.label}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="p-16 text-center text-slate-400 font-bold text-xs uppercase tracking-wider italic"
+                  >
+                    No assets available.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* PAGINATION SECTION FOOTER */}
+        {total > 0 && (
+          <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/40 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-bold text-slate-500 select-none">
+            <div className="flex items-center gap-3 flex-wrap">
+              <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">
+                Showing {Math.min((page - 1) * limit + 1, total)}–{Math.min(page * limit, total)} of {total} Records
+              </span>
+              <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-bold">
+                <span>• Show</span>
+                <select
+                  value={limit}
+                  onChange={(e) => {
+                    setLimit(Number(e.target.value));
+                    setPage(1);
+                  }}
+                  className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-700 font-bold outline-none cursor-pointer focus:border-brand-accent/40 text-xs shadow-xs"
                 >
-                  No assets available.
-                </td>
-              </tr>
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+                <span>per page</span>
+              </div>
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  disabled={page === 1}
+                  onClick={() => setPage((p) => Math.max(p - 1, 1))}
+                  className="p-2 bg-white border border-slate-200 rounded-xl text-slate-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 transition-colors shadow-xs cursor-pointer flex items-center justify-center"
+                  title="Previous Page"
+                >
+                  <ArrowLeft size={14} />
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(
+                    (p) =>
+                      p === 1 ||
+                      p === totalPages ||
+                      Math.abs(p - page) <= 1,
+                  )
+                  .reduce<(number | string)[]>((acc, p, idx, arr) => {
+                    if (idx > 0 && (p as number) - (arr[idx - 1] as number) > 1) {
+                      acc.push("...");
+                    }
+                    acc.push(p);
+                    return acc;
+                  }, [])
+                  .map((p, idx) =>
+                    typeof p === "string" ? (
+                      <span
+                        key={`dots-${idx}`}
+                        className="px-1.5 text-slate-400 text-xs font-bold"
+                      >
+                        ...
+                      </span>
+                    ) : (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => setPage(p)}
+                        className={`min-w-[32px] h-8 px-2 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                          page === p
+                            ? "bg-brand-accent text-white shadow-xs"
+                            : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    ),
+                  )}
+
+                <button
+                  type="button"
+                  disabled={page === totalPages}
+                  onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+                  className="p-2 bg-white border border-slate-200 rounded-xl text-slate-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 transition-colors shadow-xs cursor-pointer flex items-center justify-center"
+                  title="Next Page"
+                >
+                  <ArrowRight size={14} />
+                </button>
+              </div>
             )}
-          </tbody>
-        </table>
+          </div>
+        )}
       </div>
 
       {/* SEPARATED DRAWER VIEW */}
