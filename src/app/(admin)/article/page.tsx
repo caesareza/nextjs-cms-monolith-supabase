@@ -21,7 +21,9 @@ export default function ArticleProductionPage() {
   const [writerId, setWriterId] = useState<string>("");
   const [productPriorityId, setProductPriorityId] = useState<string>("");
   const [contentType, setContentType] = useState<string>("");
-  const [page] = useState(1);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
 
   // --- Operational Lifecycle State ---
   const [articles, setArticles] = useState<ArticleDisplay[]>([]);
@@ -41,7 +43,10 @@ export default function ArticleProductionPage() {
 
   // Handle smooth search text input debounce execution cycles
   useEffect(() => {
-    const handler = setTimeout(() => setDebouncedSearch(searchTerm), 300);
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setPage(1);
+    }, 300);
     return () => clearTimeout(handler);
   }, [searchTerm]);
 
@@ -79,17 +84,20 @@ export default function ArticleProductionPage() {
   const loadProductionData = useCallback(async () => {
     setLoading(true);
     try {
-      const { articles: collectedData } = await ArticleService.getArticles({
-        year,
-        month,
-        page,
-        writerId: writerId || null,
-        productPriorityId: productPriorityId || null,
-        categoryId: null,
-        contentType: contentType || null,
-        searchQuery: debouncedSearch || null,
-      });
+      const { articles: collectedData, total: totalCount } =
+        await ArticleService.getArticles({
+          year,
+          month,
+          page,
+          limit,
+          writerId: writerId || null,
+          productPriorityId: productPriorityId || null,
+          categoryId: null,
+          contentType: contentType || null,
+          searchQuery: debouncedSearch || null,
+        });
       setArticles(collectedData || []);
+      setTotal(totalCount || 0);
     } catch (err) {
       console.error("Error executing sheet synchronization loop:", err);
     } finally {
@@ -99,6 +107,7 @@ export default function ArticleProductionPage() {
     year,
     month,
     page,
+    limit,
     writerId,
     productPriorityId,
     contentType,
@@ -154,7 +163,7 @@ export default function ArticleProductionPage() {
                 Monthly Target Progress
               </span>
               <p className="text-2xl font-black text-slate-900 mt-1">
-                {articles.length}{" "}
+                {total}{" "}
                 <span className="text-xs text-slate-400 font-bold">
                   / 80 posts
                 </span>
@@ -169,14 +178,14 @@ export default function ArticleProductionPage() {
           <div className="space-y-1.5">
             <div className="flex justify-between text-[10px] font-bold">
               <span className="text-slate-500">
-                {Math.round((articles.length / 80) * 100)}% Completed
+                {Math.round((total / 80) * 100)}% Completed
               </span>
               <span className="text-slate-450 font-mono">Target: 80</span>
             </div>
             <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
               <div
                 style={{
-                  width: `${Math.min(100, Math.round((articles.length / 80) * 100))}%`,
+                  width: `${Math.min(100, Math.round((total / 80) * 100))}%`,
                 }}
                 className="bg-brand-accent h-full rounded-full transition-all duration-500 ease-out"
               />
@@ -229,38 +238,38 @@ export default function ArticleProductionPage() {
                 Production Pace Status
               </span>
               <h4 className="text-sm font-extrabold text-slate-800 mt-1 leading-snug">
-                {articles.length >= 80
+                {total >= 80
                   ? "🎉 Goal Reached!"
-                  : articles.length >= 60
+                  : total >= 60
                     ? "⚡ On Track for Goal"
-                    : articles.length >= 40
+                    : total >= 40
                       ? "📈 Moderate Pace"
                       : "⚠️ Action Required"}
               </h4>
             </div>
             <span
               className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase ${
-                articles.length >= 80
+                total >= 80
                   ? "bg-emerald-50 text-emerald-700"
-                  : articles.length >= 60
+                  : total >= 60
                     ? "bg-blue-50 text-blue-700"
-                    : articles.length >= 40
+                    : total >= 40
                       ? "bg-amber-50 text-amber-700"
                       : "bg-rose-50 text-rose-700 animate-pulse"
               }`}
             >
-              {articles.length >= 80
+              {total >= 80
                 ? "Goal Met"
-                : articles.length >= 40
+                : total >= 40
                   ? "On Track"
                   : "Low Output"}
             </span>
           </div>
 
           <p className="text-[10px] text-slate-450 font-medium leading-relaxed pt-2">
-            {articles.length >= 80
+            {total >= 80
               ? "Awesome! The production goal has been fully met for this period."
-              : `Needs ${80 - articles.length} more posts to satisfy the monthly target of 80.`}
+              : `Needs ${Math.max(0, 80 - total)} more posts to satisfy the monthly target of 80.`}
           </p>
         </div>
       </div>
@@ -268,23 +277,49 @@ export default function ArticleProductionPage() {
       {/* 2. ENCAPSULATED CONTROLS & FILTER BAR */}
       <ProductionFilterPanel
         year={year}
-        setYear={setYear}
+        setYear={(y) => {
+          setYear(y);
+          setPage(1);
+        }}
         month={month}
-        setMonth={setMonth}
+        setMonth={(m) => {
+          setMonth(m);
+          setPage(1);
+        }}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         writerId={writerId}
-        setWriterId={setWriterId}
+        setWriterId={(id) => {
+          setWriterId(id);
+          setPage(1);
+        }}
         productPriorityId={productPriorityId}
-        setProductPriorityId={setProductPriorityId}
+        setProductPriorityId={(id) => {
+          setProductPriorityId(id);
+          setPage(1);
+        }}
         contentType={contentType}
-        setContentType={setContentType}
+        setContentType={(type) => {
+          setContentType(type);
+          setPage(1);
+        }}
         writers={writers}
         options={options}
       />
 
       {/* 3. HIGH-DENSITY VISUAL DATA GRID */}
-      <ProductionDataGrid articles={articles} loading={loading} />
+      <ProductionDataGrid
+        articles={articles}
+        loading={loading}
+        page={page}
+        limit={limit}
+        total={total}
+        onPageChange={setPage}
+        onPageSizeChange={(newLimit) => {
+          setLimit(newLimit);
+          setPage(1);
+        }}
+      />
     </div>
   );
 }

@@ -203,10 +203,10 @@ export const ArticleService = {
     return data || [];
   },
 
-  async getTopPending(limit = 10) {
+  async getTopPending(limit?: number) {
     const supabase = createClient();
 
-    const { data, error } = await supabase
+    let query = supabase
       .from("article")
       .select(`
                 id, 
@@ -228,8 +228,13 @@ export const ArticleService = {
                 product_priority:product_priority_id(id, name, code)
             `)
       .eq("approval", "pending")
-      .order("id", { ascending: true })
-      .limit(limit);
+      .order("id", { ascending: true });
+
+    if (limit) {
+      query = query.limit(limit);
+    }
+
+    const { data, error } = await query;
 
     if (error) throw error;
     return data;
